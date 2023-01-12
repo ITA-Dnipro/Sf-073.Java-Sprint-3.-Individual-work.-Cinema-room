@@ -34,7 +34,6 @@ public class RoomService {
         return new ResponseEntity<>(gson.toJson(createRoomResponseObject(room)), HttpStatus.OK);
     }
 
-//    src/main/resources
 
     public String writeJsonDataToFile(Room room) {
         String message;
