@@ -1,8 +1,11 @@
 package com.example.cinema.model;
 
-import lombok.Value;
+import lombok.*;
 
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Seat {
     int row;
     int column;
