@@ -1,1 +1,1 @@
-# Sf-073.Java-Sprint-3.-Individual-work.-Cinema-room-
+# Simple Spring REST service that manages a small movie theatre.
