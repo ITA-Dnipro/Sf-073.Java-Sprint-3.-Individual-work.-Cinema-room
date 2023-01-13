@@ -5,7 +5,8 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>stage-one</module>
-	</modules>
+        <module>stage-two</module>
+    </modules>
 	<!--	<modules>-->
 <!--		<module>stage-one</module>-->
 <!--	</modules>-->
