@@ -1,0 +1,19 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+/CinemaRoom REST Service/Cinema Room REST Service/A change of plans/
+/CinemaRoom REST Service/.idea/
+/CinemaRoom REST Service/Cinema Room REST Service/Take your seat/
+/CinemaRoom REST Service/Cinema Room REST Service/The show begins/
+/CinemaRoom REST Service/Cinema Room REST Service/The statistics/
+/CinemaRoom REST Service/gradle/
+/CinemaRoom REST Service/.gradle/
+/.idea/
+/.gradle/
+/CinemaRoom REST Service/Cinema Room REST Service/task/out/
+/CinemaRoom REST Service/Cinema Room REST Service/task/build/
