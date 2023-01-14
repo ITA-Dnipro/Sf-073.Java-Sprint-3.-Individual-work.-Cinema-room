@@ -1,10 +1,16 @@
-/CinemaRoom REST Service/Cinema Room REST Service/A change of plans/
-/CinemaRoom REST Service/.idea/
-/CinemaRoom REST Service/Cinema Room REST Service/Take your seat/
-/CinemaRoom REST Service/Cinema Room REST Service/The show begins/
-/CinemaRoom REST Service/Cinema Room REST Service/The statistics/
-/CinemaRoom REST Service/gradle/
-/CinemaRoom REST Service/.gradle/
+/.gradle/
 /.idea/
-/CinemaRoom REST Service/Cinema Room REST Service/task/out/
-/CinemaRoom REST Service/Cinema Room REST Service/task/build/
+/gradle/
+/Cinema Room REST Service/A change of plans/
+/Cinema Room REST Service/Take your seat/
+/Cinema Room REST Service/The show begins/
+/Cinema Room REST Service/The statistics/
+/Cinema Room REST Service/task/out/
+/Cinema Room REST Service/task/src/generated/
+/build.gradle
+/course-info.yaml
+/course-remote-info.yaml
+/gradlew
+/gradlew.bat
+/settings.gradle
+/Cinema Room REST Service/lesson-info.yaml
