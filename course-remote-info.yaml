@@ -3,11 +3,11 @@ hyperskill_project:
   ide_files: https://stepik.org/media/attachments/lesson/539847/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: "Thu, 12 Jan 2023 12:51:41 UTC"
+update_date: "Sun, 15 Jan 2023 16:44:23 UTC"
 stages:
 - id: 945
   step: 13375
-  is_completed: false
+  is_completed: true
 - id: 946
   step: 13376
   is_completed: false
@@ -31,16 +31,16 @@ topics:
     theory_id: 16547
   - title: Immutability
     theory_id: 7929
+  - title: World Wide Web
+    theory_id: 6633
+  - title: HyperText Transfer Protocol
+    theory_id: 6569
   - title: The big O notation
     theory_id: 16699
   - title: "Best, average and worst cases"
     theory_id: 20084
   - title: Data structures
     theory_id: 16927
-  - title: World Wide Web
-    theory_id: 6633
-  - title: HyperText Transfer Protocol
-    theory_id: 6569
   - title: Introduction to Spring Boot
     theory_id: 7944
   - title: Getting started with Spring Boot
@@ -185,10 +185,10 @@ topics:
     theory_id: 20078
   - title: Dynamic array
     theory_id: 5357
-  - title: External resources
-    theory_id: 6216
   - title: Web development
     theory_id: 13931
+  - title: External resources
+    theory_id: 6216
   - title: HTML basics
     theory_id: 6434
   - title: Libraries

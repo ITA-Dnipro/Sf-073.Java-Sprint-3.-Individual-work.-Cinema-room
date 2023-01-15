@@ -223,6 +223,84 @@ files:
         };
     }
   learner_created: false
+- name: src/cinema/models/CinemaRoom.java
+  visible: true
+  text: |
+    package cinema.models;
+
+    import lombok.Getter;
+
+
+    import java.util.ArrayList;
+    import java.util.List;
+    @Getter
+    public class CinemaRoom {
+        private int total_rows = 9;
+        private int total_columns = 9;
+        private List<Seat> available_seats;
+
+        public CinemaRoom() {
+            this.available_seats = new ArrayList<>();
+            for (int i = 1; i <= total_rows; i++) {
+                for (int j = 1; j <= total_columns; j++) {
+                    available_seats.add(new Seat(i, j));
+                }
+            }
+        }
+    }
+  learner_created: true
+- name: src/cinema/controllers/CinemaRoomController.java
+  visible: true
+  text: |
+    package cinema.controllers;
+
+    import cinema.models.CinemaRoom;
+    import org.springframework.web.bind.annotation.GetMapping;
+    import org.springframework.web.bind.annotation.RestController;
+
+    @RestController
+    public class CinemaRoomController {
+
+        @GetMapping("/seats")
+        CinemaRoom room() {
+            return new CinemaRoom();
+        }
+    }
+  learner_created: true
+- name: src/cinema/models/Seat.java
+  visible: true
+  text: |
+    package cinema.models;
+
+    import lombok.Value;
+
+    @Value
+    public class Seat {
+        int row;
+        int column;
+    }
+  learner_created: true
+- name: src/cinema/repositories/SeatRepository.java
+  visible: true
+  learner_created: true
+- name: src/cinema/config/CinemaProperties.java
+  visible: true
+  learner_created: true
+- name: src/cinema/services/CinemaRoomService.java
+  visible: true
+  learner_created: true
+- name: src/cinema/services/CinemaRoomServiceImpl.java
+  visible: true
+  learner_created: true
+- name: src/cinema/models/DTOs/SeatPriceDTO.java
+  visible: true
+  learner_created: true
+- name: src/cinema/config/AppConfig.java
+  visible: true
+  learner_created: true
+- name: src/resources/cinema.properties
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/13376#comment
 status: Unchecked
-record: -1
+record: 2
