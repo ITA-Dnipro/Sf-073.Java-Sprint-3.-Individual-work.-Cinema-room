@@ -29,11 +29,6 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public CinemaRoom getAllSeats() {
-        CinemaRoom room = new CinemaRoom(seatRepository.getAvailableSeats().stream()
-                .map(this::seatToSeatInfo).toList());
-        System.out.println(room.seats);
-
-        System.out.println(seatRepository.getAvailableSeats());
         return new CinemaRoom(seatRepository.getAvailableSeats().stream()
                 .map(this::seatToSeatInfo).toList());
     }
