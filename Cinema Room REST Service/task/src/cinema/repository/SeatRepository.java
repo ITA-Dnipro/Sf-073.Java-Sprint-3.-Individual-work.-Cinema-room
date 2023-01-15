@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 
@@ -16,9 +15,6 @@ public class SeatRepository {
 
     int totalRows = 9;
     int totalColumns = 9;
-    int frontRows = 4;
-    int frontRowsPrice = 10;
-    int backRowsPrice = 8;
     List<Seat> seats = new ArrayList<>();
     List<Ticket> tickets = new ArrayList<>();
 
@@ -37,9 +33,9 @@ public class SeatRepository {
 
     public Ticket markSeatAsBooked(Seat seat) {
         seats.stream().filter(s -> s.getRow() == seat.getRow() &&
-                s.getColumn() == seat.getColumn())
+                        s.getColumn() == seat.getColumn())
                 .findFirst().ifPresent(s -> s.setBooked(true));
-        Ticket ticket = new Ticket(String.valueOf(randomUUID()),new SeatInfo(seat.row,seat.column));
+        Ticket ticket = new Ticket(String.valueOf(randomUUID()), new SeatInfo(seat.row, seat.column));
         tickets.add(ticket);
         return ticket;
     }
@@ -48,15 +44,12 @@ public class SeatRepository {
         seats.stream().filter(s -> s.getRow() == seat.getRow() &&
                         s.getColumn() == seat.getColumn())
                 .findFirst().ifPresent(s -> s.setBooked(false));
-
     }
 
     public boolean isBooked(Seat seat) {
         return seats.stream()
                 .filter(s -> s.getRow() == seat.getRow() && s.getColumn() == seat.getColumn())
-                .filter(s -> s.isBooked)
-                .findFirst()
-                .isPresent();
+                .anyMatch(s -> s.isBooked);
     }
 
     public boolean isSeatPresent(Seat seat) {
@@ -65,5 +58,11 @@ public class SeatRepository {
 
     public List<Ticket> getTickets() {
         return tickets;
+    }
+
+    public int income() {
+        int result = tickets.stream().mapToInt(ticket -> ticket.getTicket().getPrice()).sum();
+        System.out.println(result);
+        return result;
     }
 }

@@ -1,23 +1,19 @@
 package cinema.service;
 
-import cinema.exeption.AlreadyBookedException;
-import cinema.exeption.BusinessException;
-import cinema.exeption.SeatOutOfBoundsException;
-import cinema.exeption.WrongTokenException;
+import cinema.exeption.*;
 import cinema.model.*;
 import cinema.repository.SeatRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
-import java.util.UUID;
-
-import static java.util.UUID.randomUUID;
 
 @Service
 public class CinemaServiceImpl implements CinemaService {
-    @Autowired
-    SeatRepository seatRepository;
+    private final SeatRepository seatRepository;
+
+    public CinemaServiceImpl(SeatRepository seatRepository) {
+        this.seatRepository = seatRepository;
+    }
 
     public Ticket purchase(Seat seat) {
 
@@ -50,6 +46,18 @@ public class CinemaServiceImpl implements CinemaService {
         seatRepository.markSeatAsFree(seatInfoToSeat(ticket.getTicket()));
 
         return new ReturnedTicket(ticket.getTicket());
+    }
+
+    @Override
+    public Stats listStats(String statsLogin) {
+        System.out.println(statsLogin);
+        if (statsLogin == null ||!statsLogin.equals("super_secret") ){
+            throw new WrongPasswordException();
+        }
+        return new Stats(
+                seatRepository.income(),
+                seatRepository.getAvailableSeats().size(),
+                seatRepository.getTickets().size());
     }
 
     private SeatInfo seatToSeatInfo(Seat seat) {

@@ -3,8 +3,7 @@ package cinema.model;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Getter @Setter
 public class ReturnedTicket {
 
     SeatInfo returnedTicket;
