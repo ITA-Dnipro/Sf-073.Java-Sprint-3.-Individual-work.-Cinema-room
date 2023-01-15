@@ -14,4 +14,5 @@ public record CinemaRoomDTO(int totalRows,
                 cinemaRoom.getTotalColumns(),
                 cinemaRoom.getAvailableSeats());
     }
+
 }

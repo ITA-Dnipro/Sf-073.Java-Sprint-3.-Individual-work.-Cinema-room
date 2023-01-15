@@ -1,8 +1,11 @@
 package cinema.domain.service;
 
 import cinema.domain.model.CinemaRoom;
+import cinema.domain.model.Seat;
 
 public interface CinemaService {
 
-    CinemaRoom getAvailableSeats();
+    CinemaRoom getCinemaRoomInfo();
+
+    Seat purchaseTicket(Seat seat);
 }

@@ -1,7 +1,11 @@
 package cinema.domain.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter@Setter
 public class CinemaRoom {
     private int totalRows;
     private int totalColumns;
@@ -13,27 +17,6 @@ public class CinemaRoom {
         this.availableSeats = availableSeats;
     }
 
-    public int getTotalRows() {
-        return totalRows;
-    }
-
-    public void setTotalRows(int totalRows) {
-        this.totalRows = totalRows;
-    }
-
-    public int getTotalColumns() {
-        return totalColumns;
-    }
-
-    public void setTotalColumns(int totalColumns) {
-        this.totalColumns = totalColumns;
-    }
-
-    public List<Seat> getAvailableSeats() {
-        return availableSeats;
-    }
-
-    public void setAvailableSeats(List<Seat> availableSeats) {
-        this.availableSeats = availableSeats;
+    public CinemaRoom() {
     }
 }
