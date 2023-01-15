@@ -3,9 +3,7 @@ package cinema.service;
 import cinema.configuration.CinemaProperties;
 import cinema.exception.AlreadySoldException;
 import cinema.exception.OutOfBoundsException;
-import cinema.model.CinemaRoom;
-import cinema.model.Seat;
-import cinema.model.SeatInfo;
+import cinema.model.*;
 import cinema.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -34,20 +32,35 @@ public class CinemaServiceImpl implements CinemaService{
 
 
     @Override
-    public SeatInfo purchase(Seat seat) {
+    public SoldTicket purchase(Seat seat) {
         if(!seatRepository.isValid(seat)){
             throw new OutOfBoundsException();
         }
+
        else if(!seatRepository.isAvailable(seat))
         {
             throw new AlreadySoldException();
         }
-        return addPrice(seat);
+       int price = calculatePrice(seat);
+       Seat soldTicket = seatRepository.sell(seat, price);
+        return new SoldTicket(soldTicket);
     }
+
+    @Override
+    public ReturnedTickedResponse returnedTicket(String token) {
+        Seat seat = seatRepository.getSeatByToken(token).get();
+        ReturnedTickedResponse ret = new ReturnedTickedResponse(new SeatInfo(seat.getRow(),
+                seat.getColumn(),
+                seat.getPrice()));
+        seatRepository.setAvailable(seat);
+        return ret;
+    }
+
     private int calculatePrice(Seat seat){
         return seat.getRow()<=4?10:8;
     }
     private SeatInfo addPrice(Seat seat){
+
         int price = calculatePrice(seat);
         return new SeatInfo(seat.getRow(),seat.getColumn(),price);
     }

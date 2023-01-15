@@ -1,11 +1,11 @@
 package cinema.service;
 
-import cinema.model.CinemaRoom;
-import cinema.model.Seat;
-import cinema.model.SeatInfo;
+import cinema.model.*;
 
 public interface CinemaService {
     CinemaRoom getCinemaRoomInfo();
 
-    SeatInfo purchase(Seat seat);
+    SoldTicket purchase(Seat seat);
+    ReturnedTickedResponse returnedTicket(String token);
+
 }
