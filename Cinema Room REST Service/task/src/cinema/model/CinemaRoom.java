@@ -1,11 +1,19 @@
 package cinema.model;
 
-import java.util.List;
+import lombok.Value;
 
+import java.util.List;
+@Value
 public class CinemaRoom {
  int total_rows;
  int total_columns;
- List<Seat> available_seats;
+ List<SeatInfo> available_seats;
+
+ public CinemaRoom(int total_rows, int total_columns, List<SeatInfo> available_seats) {
+  this.total_rows = total_rows;
+  this.total_columns = total_columns;
+  this.available_seats = available_seats;
+ }
 
  public int getTotal_rows() {
   return total_rows;
@@ -15,13 +23,7 @@ public class CinemaRoom {
   return total_columns;
  }
 
- public List<Seat> getAvailable_seats() {
+ public List<SeatInfo> getAvailable_seats() {
   return available_seats;
- }
-
- public CinemaRoom(int total_rows, int total_columns, List<Seat> available_seats) {
-  this.total_rows = total_rows;
-  this.total_columns = total_columns;
-  this.available_seats = available_seats;
  }
 }
