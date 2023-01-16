@@ -64,11 +64,7 @@ public class CinemaServiceImpl implements CinemaService{
             if(password==null||!password.equals("super_secret")){
                 throw new WrongPassword();
             }
-            int income = 0;
-            for (int i = 0; i < seatRepository.getSoldSeats().size(); i++) {
-                income += seatRepository.getSoldSeats().get(i).getPrice();
-            }
-            Statistics stats = new Statistics(income,
+            Statistics stats = new Statistics(seatRepository.income(),
                     seatRepository.getAvailableSeats().size(),
                     seatRepository.getPurchasedTickets());
             return stats;

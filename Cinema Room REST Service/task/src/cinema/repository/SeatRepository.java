@@ -42,6 +42,9 @@ public class SeatRepository {
     public int getPurchasedTickets() {
         return purchasedTickets;
     }
+    public int income(){
+        return  soldSeats.stream().mapToInt(Seat::getPrice).sum();
+    }
 
     public void setPurchasedTickets(int purchasedTickets) {
         this.purchasedTickets = purchasedTickets;
