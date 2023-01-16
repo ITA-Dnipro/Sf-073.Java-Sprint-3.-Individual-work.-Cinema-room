@@ -1,31 +1,22 @@
 package cinema.config;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Positive;
 
 @Slf4j
-@Getter
-@Setter
+@Value
 @ConfigurationProperties(prefix = "cinema")
-@PropertySource("classpath:cinema.properties")
 @Validated
-@Component
+@ConstructorBinding
 public class CinemaProperties {
-    @Positive
-    private int totalRows;
-    @Positive
-    private int totalColumns;
-    @Positive
-    private int frontRows;
-    @Positive
-    private int ticketPriceFront;
-    @Positive
-    private int ticketPriceBack;
+    @Positive int totalRows;
+    @Positive int totalColumns;
+    @Positive int frontRows;
+    @Positive int ticketPriceFront;
+    @Positive int ticketPriceBack;
 }

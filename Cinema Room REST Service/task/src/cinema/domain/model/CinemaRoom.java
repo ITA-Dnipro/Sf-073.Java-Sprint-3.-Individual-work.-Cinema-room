@@ -5,7 +5,8 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter@Setter
+@Getter
+@Setter
 public class CinemaRoom {
     private int totalRows;
     private int totalColumns;

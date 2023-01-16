@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter@Setter
+@Getter
+@Setter
 public class Seat {
-    @JsonProperty("row")
     private int rowPosition;
-    @JsonProperty("column")
     private int columnPosition;
-    @JsonProperty("price")
     private int ticketPrice;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean isAvailable;
 
     public Seat(int rowPosition, int columnPosition) {
@@ -23,8 +22,4 @@ public class Seat {
     public Seat() {
     }
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public boolean isAvailable() {
-        return isAvailable;
-    }
 }
