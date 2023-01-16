@@ -1,5 +1,6 @@
 package cinema.controller;
 
+import cinema.exception.WrongPassword;
 import cinema.model.*;
 import cinema.service.CinemaService;
 import cinema.model.ReturnedTickedResponse;
@@ -26,8 +27,19 @@ public class CinemaController {
     ResponseEntity<ErrorDTO> errorHandler(Exception ex){
         return ResponseEntity.badRequest().body(new ErrorDTO(ex.getMessage()));
     }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    ResponseEntity<ErrorDTO> wrongPass(WrongPassword ex){
+        return ResponseEntity.status(401).body(new ErrorDTO(ex.getMessage()));
+    }
     @PostMapping("/return")
     ReturnedTickedResponse returnTicket(@RequestBody TicketReturnRequest req){
         return cinemaService.returnedTicket(req.getToken());
     }
+    @PostMapping(path = "/stats")
+        Statistics returnedPasswordResponse(@RequestParam(value ="password",
+            required = false) String password){
+
+            return cinemaService.returnedStats(password);
+        }
 }

@@ -20,6 +20,7 @@ public class SeatRepository {
  CinemaProperties props;
     private List<Seat> seats;
     private List<Seat> soldSeats;
+    private int purchasedTickets;
     @PostConstruct
     public void init(){
 
@@ -33,6 +34,17 @@ public class SeatRepository {
     }
    public List<Seat> getAvailableSeats(){
         return seats;
+    }
+    public List<Seat> getSoldSeats(){
+        return soldSeats;
+    }
+
+    public int getPurchasedTickets() {
+        return purchasedTickets;
+    }
+
+    public void setPurchasedTickets(int purchasedTickets) {
+        this.purchasedTickets = purchasedTickets;
     }
 
     public boolean isAvailable(Seat seat) {
@@ -75,6 +87,7 @@ public class SeatRepository {
       seat.setToken(UUID.randomUUID().toString());
       seat.setPrice(price);
       soldSeats.add(seat);
+      purchasedTickets++;
       return seat;
     }
 }

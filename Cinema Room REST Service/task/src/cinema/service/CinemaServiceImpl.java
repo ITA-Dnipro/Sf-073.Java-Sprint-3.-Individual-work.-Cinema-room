@@ -3,12 +3,14 @@ package cinema.service;
 import cinema.configuration.CinemaProperties;
 import cinema.exception.AlreadySoldException;
 import cinema.exception.OutOfBoundsException;
+import cinema.exception.WrongPassword;
 import cinema.model.*;
 import cinema.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -53,7 +55,23 @@ public class CinemaServiceImpl implements CinemaService{
                 seat.getColumn(),
                 seat.getPrice()));
         seatRepository.setAvailable(seat);
+        seatRepository.setPurchasedTickets(seatRepository.getPurchasedTickets()-1);
         return ret;
+    }
+
+    @Override
+    public Statistics returnedStats(String password) {
+            if(password==null||!password.equals("super_secret")){
+                throw new WrongPassword();
+            }
+            int income = 0;
+            for (int i = 0; i < seatRepository.getSoldSeats().size(); i++) {
+                income += seatRepository.getSoldSeats().get(i).getPrice();
+            }
+            Statistics stats = new Statistics(income,
+                    seatRepository.getAvailableSeats().size(),
+                    seatRepository.getPurchasedTickets());
+            return stats;
     }
 
     private int calculatePrice(Seat seat){
