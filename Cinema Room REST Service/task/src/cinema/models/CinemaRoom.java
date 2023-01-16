@@ -1,13 +1,10 @@
 package cinema.models;
 
-import cinema.models.DTOs.SeatPriceDTO;
-import lombok.Getter;
+import cinema.models._model_DTOs.SeatPriceDTO;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j

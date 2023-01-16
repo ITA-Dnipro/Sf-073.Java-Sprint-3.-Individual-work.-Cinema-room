@@ -1,12 +1,15 @@
 package cinema.services;
 
 import cinema.models.CinemaRoom;
-import cinema.models.DTOs.SeatPriceDTO;
-import cinema.models.DTOs.SeatCoordinates;
+import cinema.models._model_DTOs.ReturnedTicketDTO;
+import cinema.models._model_DTOs.SeatCoordinates;
+import cinema.models._model_DTOs.SeatTokenDTO;
 
 public interface CinemaRoomService {
 
     CinemaRoom getCinemaRoomInfo();
 
-    SeatPriceDTO purchase(SeatCoordinates seat);
+    SeatTokenDTO purchase(SeatCoordinates seat);
+
+    ReturnedTicketDTO returnTicket(String token);
 }

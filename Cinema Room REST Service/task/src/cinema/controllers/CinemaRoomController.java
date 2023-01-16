@@ -1,10 +1,10 @@
 package cinema.controllers;
 
 import cinema.exceptions.BusinessException;
+import cinema.exceptions._exception_DTOs.ErrorDTO;
 import cinema.models.CinemaRoom;
-import cinema.models.DTOs.ErrorDTO;
-import cinema.models.DTOs.SeatPriceDTO;
-import cinema.models.DTOs.SeatCoordinates;
+import cinema.models._model_DTOs.*;
+import cinema.models.ReturnTicketRequest;
 import cinema.services.CinemaRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +25,13 @@ public class CinemaRoomController {
     }
 
     @PostMapping("/purchase")
-    SeatPriceDTO seatPrice(@RequestBody SeatCoordinates seat) {
+    SeatTokenDTO seatPrice(@RequestBody SeatCoordinates seat) {
         return cinemaRoomService.purchase(seat);
+    }
+
+    @PostMapping("/return")
+    ReturnedTicketDTO returnTicket(@RequestBody ReturnTicketRequest request) {
+        return cinemaRoomService.returnTicket(request.getToken());
     }
 
     @ExceptionHandler

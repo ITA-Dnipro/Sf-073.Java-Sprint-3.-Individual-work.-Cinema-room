@@ -9,5 +9,15 @@ import lombok.*;
 public class Seat {
     int row;
     int column;
-    boolean isSold;
+    Integer sellPrice;
+    String token;
+
+    public Seat(int row, int column) {
+        this.row = row;
+        this.column = column;
+    }
+
+    public boolean isSold() {
+        return token != null;
+    }
 }

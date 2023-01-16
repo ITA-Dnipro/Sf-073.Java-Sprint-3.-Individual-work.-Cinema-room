@@ -3,9 +3,13 @@ package cinema.services;
 import cinema.config.CinemaProperties;
 import cinema.exceptions.AlreadySoldException;
 import cinema.exceptions.OutOfBoundsException;
+import cinema.exceptions.WrongTokenException;
 import cinema.models.CinemaRoom;
-import cinema.models.DTOs.SeatPriceDTO;
-import cinema.models.DTOs.SeatCoordinates;
+import cinema.models._model_DTOs.ReturnedTicketDTO;
+import cinema.models._model_DTOs.SeatPriceDTO;
+import cinema.models._model_DTOs.SeatCoordinates;
+import cinema.models._model_DTOs.SeatTokenDTO;
+import cinema.models.Seat;
 import cinema.repositories.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +34,7 @@ public class CinemaRoomServiceImpl implements CinemaRoomService {
     }
 
     @Override
-    public SeatPriceDTO purchase(SeatCoordinates seat) {
+    public SeatTokenDTO purchase(SeatCoordinates seat) {
         if ((seat.getRow() < 1 || seat.getRow() > properties.getTotalRows()) ||
                 (seat.getColumn() < 1 || seat.getColumn() > properties.getTotalColumns())) {
             throw new OutOfBoundsException();
@@ -38,8 +42,18 @@ public class CinemaRoomServiceImpl implements CinemaRoomService {
         if (!seatRepository.isAvailable(seat)) {
             throw new AlreadySoldException();
         }
-        seatRepository.markAsSold(seat);
-        return convertSeatWithPrice(seat);
+        int price = calculatedPrice(seat);
+        Seat soldTicket = seatRepository.sell(seat, price);
+        return new SeatTokenDTO(soldTicket);
+    }
+
+    @Override
+    public ReturnedTicketDTO returnTicket(String token) {
+        Seat seat = seatRepository.getSeatByToken(token).orElseThrow(WrongTokenException::new);
+        ReturnedTicketDTO ticket = new ReturnedTicketDTO(new SeatPriceDTO(seat.getRow(), seat.getColumn(), seat.getSellPrice()));
+        SeatCoordinates seatCoordinates = new SeatCoordinates(seat);
+        seatRepository.setAsAvailable(seatCoordinates);
+        return ticket;
     }
 
     private int calculatedPrice(SeatCoordinates seat) {

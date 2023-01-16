@@ -1,4 +1,4 @@
-package cinema.models.DTOs;
+package cinema.models._model_DTOs;
 
 import cinema.models.Seat;
 import lombok.AllArgsConstructor;
