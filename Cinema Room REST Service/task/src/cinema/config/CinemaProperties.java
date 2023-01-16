@@ -13,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Positive;
 
-@Slf4j
+@Slf4j(topic = "CinemaProperties.class-logger")
 @lombok.Value
 @Validated
 @ConstructorBinding

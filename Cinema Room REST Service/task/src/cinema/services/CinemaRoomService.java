@@ -2,11 +2,11 @@ package cinema.services;
 
 import cinema.models.CinemaRoom;
 import cinema.models.DTOs.SeatPriceDTO;
-import cinema.models.Seat;
+import cinema.models.DTOs.SeatCoordinates;
 
 public interface CinemaRoomService {
 
     CinemaRoom getCinemaRoomInfo();
 
-    SeatPriceDTO purchase(Seat seat);
+    SeatPriceDTO purchase(SeatCoordinates seat);
 }

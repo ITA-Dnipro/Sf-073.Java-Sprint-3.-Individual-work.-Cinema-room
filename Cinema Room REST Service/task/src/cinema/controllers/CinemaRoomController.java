@@ -1,15 +1,18 @@
 package cinema.controllers;
 
+import cinema.exceptions.BusinessException;
 import cinema.models.CinemaRoom;
+import cinema.models.DTOs.ErrorDTO;
 import cinema.models.DTOs.SeatPriceDTO;
-import cinema.models.Seat;
+import cinema.models.DTOs.SeatCoordinates;
 import cinema.services.CinemaRoomService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
+
+@Slf4j(topic = "CinemaController-logger")
 @RestController
 @RequiredArgsConstructor
 public class CinemaRoomController {
@@ -22,7 +25,15 @@ public class CinemaRoomController {
     }
 
     @PostMapping("/purchase")
-    SeatPriceDTO seatPrice(@RequestBody Seat seat) {
+    SeatPriceDTO seatPrice(@RequestBody SeatCoordinates seat) {
         return cinemaRoomService.purchase(seat);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ErrorDTO errorHandler(BusinessException exception) {
+        log.info("exception: {}", exception.getMessage());
+        return new ErrorDTO(exception.getMessage());
+        // can be done with Map<String,String> -> Map.of("error", exception.getMessage())
     }
 }

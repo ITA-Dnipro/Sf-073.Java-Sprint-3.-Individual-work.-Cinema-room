@@ -1,5 +1,6 @@
 package cinema.models;
 
+import cinema.models.DTOs.SeatPriceDTO;
 import lombok.Getter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,6 @@ import java.util.List;
 public class CinemaRoom {
     int totalRows;
     int totalColumns;
-    List<Seat> availableSeats;
+    List<SeatPriceDTO> availableSeats;
 
 }
