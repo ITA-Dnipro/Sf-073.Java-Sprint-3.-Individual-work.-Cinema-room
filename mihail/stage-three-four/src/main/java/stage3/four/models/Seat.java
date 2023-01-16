@@ -6,8 +6,8 @@ public class Seat {
     int column;
 
     public Seat(int row, int column) {
-        this.row = row;
-        this.column = column;
+        setRow(row);
+        setColumn(column);
     }
 
     public int getRow() {
@@ -18,11 +18,11 @@ public class Seat {
         return column;
     }
 
-    public void setRow(int row) {
+    private void setRow(int row) {
         this.row = row;
     }
 
-    public void setColumn(int column) {
+    private void setColumn(int column) {
         this.column = column;
     }
 
