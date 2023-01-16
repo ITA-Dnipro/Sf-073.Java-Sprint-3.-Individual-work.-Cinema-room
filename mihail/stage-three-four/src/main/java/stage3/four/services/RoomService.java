@@ -6,45 +6,32 @@ import com.google.gson.GsonBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import stage3.four.configs.RoomConfig;
 
-import stage3.four.models.Room;
+import stage3.four.modelsDTO.AllAvailableRoomSeatsDTO;
+import stage3.four.repositories.RoomRepository;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Service
 public class RoomService {
-    private final Gson gson;
-    private final RoomConfig roomConfig;
 
+    private final RoomRepository roomRepository;
+    private final AllAvailableRoomSeatsDTO allAvailableRoomSeatsDTO;
 
-    public RoomService(RoomConfig roomConfig) {
-        this.roomConfig = roomConfig;
-        this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+    public RoomService(RoomRepository roomRepository, AllAvailableRoomSeatsDTO allAvailableRoomSeatsDTO) {
+        this.roomRepository = roomRepository;
+        this.allAvailableRoomSeatsDTO = allAvailableRoomSeatsDTO;
     }
 
-    public Collection<Object> createRoomResponseObject(){
-        Room room = new Room(roomConfig.getTotalRows(), roomConfig.getTotalColumns());
-        List<Object> collection = new ArrayList<>();
-        collection.add(room);
-        collection.add(room.getAvailableSeats());
-        return collection;
+    public ResponseEntity<Object> getAllAvailableRoomSeats(){
+        return new ResponseEntity<>(allAvailableRoomSeatsDTO.createGetAllAvailableSeatsResponseObject(roomRepository), HttpStatus.OK);
     }
-
-
-    public ResponseEntity<Object> generateRoomResponse(){
-        return new ResponseEntity<>(gson.toJson(createRoomResponseObject()), HttpStatus.OK);
-    }
-
 
     public String writeJsonDataToFile() {
         String message;
         try(FileWriter file = new FileWriter("src\\main\\resources\\seats-response.json")){
-            file.write(gson.toJson(createRoomResponseObject()));
+            file.write(allAvailableRoomSeatsDTO.createGetAllAvailableSeatsResponseObject(roomRepository));
             file.flush();
             message = "Successfully write available seat list to file";
         }catch (IOException ex){
