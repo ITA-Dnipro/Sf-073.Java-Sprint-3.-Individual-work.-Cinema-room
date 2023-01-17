@@ -1,6 +1,7 @@
 package cinema.rest.dto;
 
 import cinema.domain.model.CinemaRoom;
+import cinema.domain.model.Seat;
 
 import java.util.List;
 

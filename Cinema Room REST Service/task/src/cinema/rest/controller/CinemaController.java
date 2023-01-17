@@ -1,13 +1,11 @@
 package cinema.rest.controller;
 
 import cinema.domain.model.CinemaRoom;
+import cinema.domain.model.Stats;
 import cinema.domain.model.Ticket;
 import cinema.domain.service.CinemaService;
 import cinema.rest.dto.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CinemaController {
@@ -31,7 +29,13 @@ public class CinemaController {
 
     @PostMapping("/return")
     public ReturnedTicketDTO refundTicket(@RequestBody TokenDTO tokenDTO) {
-        Ticket ticket = cinemaService.returnTicket(tokenDTO.toModel());
-        return ReturnedTicketDTO.fromModel(ticket);
+        Ticket returnedTicket = cinemaService.returnTicket(tokenDTO.toModel());
+        return ReturnedTicketDTO.fromModel(returnedTicket);
+    }
+
+    @PostMapping("/stats")
+    public StatsDTO getStats(@RequestParam(required = false) String password) {
+        Stats stats = cinemaService.calculateStats(password);
+        return StatsDTO.fromModel(stats);
     }
 }

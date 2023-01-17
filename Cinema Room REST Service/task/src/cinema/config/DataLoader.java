@@ -1,13 +1,16 @@
 package cinema.config;
 
 import cinema.domain.model.Seat;
+import cinema.domain.model.Ticket;
 import cinema.persistence.repository.SeatRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+@Slf4j
 @Component
 public class DataLoader implements CommandLineRunner {
     private final SeatRepository seatRepository;
@@ -20,12 +23,17 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        List<Seat> seats = new ArrayList<>();
+        Map<Seat, Ticket> seats = new LinkedHashMap<>();
         for (int row = 1; row <= cinemaProperties.getTotalRows(); row++) {
             for (int column = 1; column <= cinemaProperties.getTotalColumns(); column++) {
-                seats.add(new Seat(row, column));
+                seats.put(new Seat(row, column), null);
             }
         }
+        log.info("Created Cinema Room with {} rows and {} columns",
+                cinemaProperties.getTotalRows(), cinemaProperties.getTotalColumns());
+        log.info("Front rows({}) ticket price: {}; Back rows ticket price: {}",
+                cinemaProperties.getFrontRows(), cinemaProperties.getTicketPriceFront(),
+                cinemaProperties.getTicketPriceBack());
         seatRepository.saveCinemaRoom(seats);
     }
 

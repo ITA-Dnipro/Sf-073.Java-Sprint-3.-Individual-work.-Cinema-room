@@ -2,55 +2,54 @@ package cinema.persistence.repository;
 
 import cinema.config.CinemaProperties;
 import cinema.domain.model.Seat;
+import cinema.domain.model.Stats;
 import cinema.domain.model.Ticket;
 import cinema.domain.model.TokenInfo;
+import cinema.exception.ExpiredTokenException;
+import cinema.exception.SeatOutOfBoundsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Repository
 public class SeatRepository {
     private final CinemaProperties cinemaProperties;
-    private final List<Ticket> tickets = new ArrayList<>();
-    private List<Seat> seats;
+    private Map<Seat, Ticket> seats;
 
     public SeatRepository(CinemaProperties cinemaProperties) {
         this.cinemaProperties = cinemaProperties;
     }
 
-    public void saveCinemaRoom(List<Seat> seats) {
+    public void saveCinemaRoom(Map<Seat, Ticket> seats) {
         this.seats = seats;
-    }
-
-    public List<Seat> getAvailableSeats() {
-        return seats.stream()
-                .filter(Seat::isAvailable)
-                .toList();
     }
 
     public Optional<Ticket> save(Seat seat) {
         boolean seatAvailable = isSeatAvailable(seat);
+        Seat seatInRoom = seats.keySet().stream()
+                .filter(s -> s.getRowPosition() == seat.getRowPosition() &&
+                        s.getColumnPosition() == seat.getColumnPosition())
+                .findFirst()
+                .orElseThrow(() -> new SeatOutOfBoundsException(seat));
+
         if (seatAvailable) {
             Ticket ticket = new Ticket(String.valueOf(UUID.randomUUID()), seat);
-            tickets.add(ticket);
+            seats.put(seatInRoom, ticket);
             return Optional.of(ticket);
         }
         return Optional.empty();
     }
 
     private boolean isSeatAvailable(Seat seat) {
-        boolean availability = seats.stream()
+        boolean availability = seats.keySet().stream()
                 .filter(s -> s.getRowPosition() == seat.getRowPosition() &&
                         s.getColumnPosition() == seat.getColumnPosition())
                 .anyMatch(Seat::isAvailable);
 
         if (availability) {
-            seats.stream()
+            seats.keySet().stream()
                     .filter(s -> s.getRowPosition() == seat.getRowPosition() &&
                             s.getColumnPosition() == seat.getColumnPosition())
                     .findFirst()
@@ -60,20 +59,49 @@ public class SeatRepository {
         return availability;
     }
 
-    public Optional<Ticket> delete(TokenInfo tokenInfo) {
-        Optional<Ticket> ticket = tickets.stream()
-                .filter(t -> t.getToken().equals(tokenInfo.getToken()))
-                .findFirst();
+    public Optional<Stats> calculate() {
+        return Optional.of(new Stats(totalIncome(),
+                getAvailableSeats().size(),
+                getPurchasedTickets()));
+    }
 
-        if (ticket.isPresent()) {
-            Seat seatFromTicket = ticket.get().getSeat();
-            seats.stream()
-                    .filter(s -> s.getRowPosition() == seatFromTicket.getRowPosition() &&
-                            s.getColumnPosition() == seatFromTicket.getColumnPosition())
-                    .findFirst()
-                    .ifPresent(s -> s.setAvailable(true));
-            tickets.remove(ticket.get());
-        }
+    private int totalIncome() {
+        return seats.values().stream()
+                .filter(Objects::nonNull)
+                .mapToInt(t -> t.getSeat().getTicketPrice())
+                .sum();
+    }
+
+    public List<Seat> getAvailableSeats() {
+        return seats.keySet().stream()
+                .filter(Seat::isAvailable)
+                .toList();
+    }
+
+    private int getPurchasedTickets() {
+        return (int) seats.values().stream()
+                .filter(Objects::nonNull)
+                .count();
+    }
+
+    public Optional<Ticket> delete(TokenInfo tokenInfo) {
+        Optional<Ticket> ticket = seats.values().stream()
+                .filter(Objects::nonNull)
+                .filter(t -> tokenInfo.getUniqueIdentifier().equals(t.getToken()))
+                .findFirst();
+        Seat seatFromTicket = ticket
+                .orElseThrow(() -> new ExpiredTokenException(tokenInfo))
+                .getSeat();
+
+        Seat seatInRoom = seats.keySet().stream()
+                .filter(s -> s.getRowPosition() == seatFromTicket.getRowPosition() &&
+                        s.getColumnPosition() == seatFromTicket.getColumnPosition())
+                .findFirst()
+                .orElseThrow(() -> new SeatOutOfBoundsException(seatFromTicket));
+
+        seatInRoom.setAvailable(true);
+        seats.replace(seatInRoom, null);
+        ticket.orElseThrow(() -> new ExpiredTokenException(tokenInfo)).setToken(null);
         return ticket;
     }
 

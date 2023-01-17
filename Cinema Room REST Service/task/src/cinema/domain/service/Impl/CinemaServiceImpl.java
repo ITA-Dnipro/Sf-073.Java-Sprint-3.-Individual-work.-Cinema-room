@@ -1,14 +1,12 @@
 package cinema.domain.service.Impl;
 
 import cinema.config.CinemaProperties;
-import cinema.domain.model.CinemaRoom;
-import cinema.domain.model.Seat;
-import cinema.domain.model.Ticket;
-import cinema.domain.model.TokenInfo;
+import cinema.domain.model.*;
 import cinema.domain.service.CinemaService;
 import cinema.exception.AlreadyPurchasedTicketException;
 import cinema.exception.ExpiredTokenException;
 import cinema.exception.SeatOutOfBoundsException;
+import cinema.exception.WrongPasswordException;
 import cinema.persistence.repository.SeatRepository;
 import org.springframework.stereotype.Service;
 
@@ -31,18 +29,18 @@ public class CinemaServiceImpl implements CinemaService {
         return new CinemaRoom(cinemaProperties.getTotalRows(),
                 cinemaProperties.getTotalColumns(),
                 availableSeats.stream()
-                        .map(this::addPrice)
+                        .map(this::addTicketPrice)
                         .toList());
     }
 
-    private Seat addPrice(Seat seat) {
-        int ticketPrice = calculateTicketPrice(seat);
+    private Seat addTicketPrice(Seat seat) {
+        int ticketPrice = ticketPrice(seat);
         seat.setTicketPrice(ticketPrice);
         return seat;
     }
 
     @Override
-    public int calculateTicketPrice(Seat seat) {
+    public int ticketPrice(Seat seat) {
         return seat.getRowPosition() <= cinemaProperties.getFrontRows() ?
                 cinemaProperties.getTicketPriceFront() :
                 cinemaProperties.getTicketPriceBack();
@@ -55,11 +53,21 @@ public class CinemaServiceImpl implements CinemaService {
     }
 
     @Override
+    public Stats calculateStats(String password) {
+        String managerPass = "super_secret";
+        if (!managerPass.equals(password)) {
+            throw new WrongPasswordException(password);
+        }
+        return seatRepository.calculate()
+                .orElseThrow(() -> new WrongPasswordException(password));
+    }
+
+    @Override
     public Ticket purchaseTicket(Seat seat) {
         if (!seatRepository.isSeatPresent(seat)) {
             throw new SeatOutOfBoundsException(seat);
         }
-        addPrice(seat);
+        addTicketPrice(seat);
         return seatRepository.save(seat)
                 .orElseThrow(() -> new AlreadyPurchasedTicketException(seat));
     }

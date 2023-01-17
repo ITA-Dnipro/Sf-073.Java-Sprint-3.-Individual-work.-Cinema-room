@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class TokenInfo {
-    private String token;
+    private final String uniqueIdentifier;
 
-    public TokenInfo(String token) {
-        this.token = token;
+    public TokenInfo(String uniqueIdentifier) {
+        this.uniqueIdentifier = uniqueIdentifier;
     }
 
 }
