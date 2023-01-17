@@ -1,0 +1,200 @@
+{
+	"info": {
+		"_postman_id": "ee2618aa-d262-450c-9358-5e9ddb5471e9",
+		"name": "CinemaRoomRestApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12381976"
+	},
+	"item": [
+		{
+			"name": "Purchase",
+			"item": [
+				{
+					"name": "new purchase",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"row\": 1,\r\n    \"column\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER_URL:PORT}}/purchase",
+							"host": [
+								"{{SERVER_URL:PORT}}"
+							],
+							"path": [
+								"purchase"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sold purchase",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER_URL:PORT}}/purchase",
+							"host": [
+								"{{SERVER_URL:PORT}}"
+							],
+							"path": [
+								"purchase"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "wrong seat row purchase",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"row\": 10,\r\n    \"column\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER_URL:PORT}}/purchase",
+							"host": [
+								"{{SERVER_URL:PORT}}"
+							],
+							"path": [
+								"purchase"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refund purchase happy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"e739267a-7031-4eed-a49c-65d8ac11f556\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER_URL:PORT}}/return",
+							"host": [
+								"{{SERVER_URL:PORT}}"
+							],
+							"path": [
+								"return"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refund purchase unhappy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\":\"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER_URL:PORT}}/purchase",
+							"host": [
+								"{{SERVER_URL:PORT}}"
+							],
+							"path": [
+								"purchase"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Room",
+			"item": [
+				{
+					"name": "get all available seats",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Statistic",
+			"item": [
+				{
+					"name": "get stats with password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER_URL:PORT}}/stats?password=pass123",
+							"host": [
+								"{{SERVER_URL:PORT}}"
+							],
+							"path": [
+								"stats"
+							],
+							"query": [
+								{
+									"key": "password",
+									"value": "pass123"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get stats without password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER_URL:PORT}}/stats?password=",
+							"host": [
+								"{{SERVER_URL:PORT}}"
+							],
+							"path": [
+								"stats"
+							],
+							"query": [
+								{
+									"key": "password",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
