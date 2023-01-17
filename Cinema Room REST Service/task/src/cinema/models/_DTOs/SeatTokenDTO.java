@@ -1,4 +1,4 @@
-package cinema.models._model_DTOs;
+package cinema.models._DTOs;
 
 import cinema.models.Seat;
 import lombok.Value;

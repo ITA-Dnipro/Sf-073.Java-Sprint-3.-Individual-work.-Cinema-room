@@ -5,10 +5,7 @@ import cinema.exceptions.AlreadySoldException;
 import cinema.exceptions.OutOfBoundsException;
 import cinema.exceptions.WrongTokenException;
 import cinema.models.CinemaRoom;
-import cinema.models._model_DTOs.ReturnedTicketDTO;
-import cinema.models._model_DTOs.SeatPriceDTO;
-import cinema.models._model_DTOs.SeatCoordinates;
-import cinema.models._model_DTOs.SeatTokenDTO;
+import cinema.models._DTOs.*;
 import cinema.models.Seat;
 import cinema.repositories.SeatRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +51,14 @@ public class CinemaRoomServiceImpl implements CinemaRoomService {
         SeatCoordinates seatCoordinates = new SeatCoordinates(seat);
         seatRepository.setAsAvailable(seatCoordinates);
         return ticket;
+    }
+
+    @Override
+    public StatsDTO calcStats() {
+        int income = seatRepository.totalIncome();
+        int availableSeats = seatRepository.getAvailableSeats().size();
+        int purchasedTickets = (int) seatRepository.countPurchased();
+        return new StatsDTO(income, availableSeats, purchasedTickets);
     }
 
     private int calculatedPrice(SeatCoordinates seat) {

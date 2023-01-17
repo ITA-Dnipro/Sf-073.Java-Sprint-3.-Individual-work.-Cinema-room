@@ -1,6 +1,6 @@
 package cinema.models;
 
-import cinema.models._model_DTOs.SeatPriceDTO;
+import cinema.models._DTOs.SeatPriceDTO;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 

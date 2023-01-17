@@ -3,16 +3,13 @@ package cinema.repositories;
 import cinema.config.CinemaProperties;
 import cinema.exceptions.BusinessException;
 import cinema.exceptions.OutOfBoundsException;
-import cinema.models._model_DTOs.SeatCoordinates;
+import cinema.models._DTOs.SeatCoordinates;
 import cinema.models.Seat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -76,5 +73,18 @@ public class SeatRepository {
 
         seatEntity.setToken(null);
         seatEntity.setSellPrice(null);
+    }
+
+    public int totalIncome() {
+        return seats.stream()
+                .map(Seat::getSellPrice)
+                .filter(Objects::nonNull)
+                .mapToInt(i -> i).sum();
+    }
+
+    public long countPurchased() {
+        return seats.stream()
+                .filter(s -> s.getSellPrice() != null)
+                .count();
     }
 }
