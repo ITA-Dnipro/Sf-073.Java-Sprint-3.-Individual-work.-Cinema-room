@@ -9,32 +9,32 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(WrongToken.class)
+    @ExceptionHandler(WrongTokenException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleWrongTokenException() {
-        return new ErrorResponse(new WrongToken().getMessage());
+        return new ErrorResponse(new WrongTokenException().getMessage());
     }
 
-    @ExceptionHandler(TicketAlreadyPurchased.class)
+    @ExceptionHandler(TicketAlreadyPurchasedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleTicketAlreadyPurchasedException() {
-        return new ErrorResponse(new TicketAlreadyPurchased().getMessage());
+        return new ErrorResponse(new TicketAlreadyPurchasedException().getMessage());
     }
 
-    @ExceptionHandler(MissingOrWrongPassword.class)
+    @ExceptionHandler(MissingOrWrongPasswordException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleMissingOrWrongPasswordException() {
-        return new ErrorResponse(new MissingOrWrongPassword().getMessage());
+        return new ErrorResponse(new MissingOrWrongPasswordException().getMessage());
     }
 
-    @ExceptionHandler(SeatsOutOfBounds.class)
+    @ExceptionHandler(SeatsOutOfBoundsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleSeatsOutOfBoundsException() {
-        return new ErrorResponse(new SeatsOutOfBounds().getMessage());
+        return new ErrorResponse(new SeatsOutOfBoundsException().getMessage());
     }
 
 }

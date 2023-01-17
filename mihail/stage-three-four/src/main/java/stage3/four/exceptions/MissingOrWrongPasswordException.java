@@ -3,7 +3,7 @@ package stage3.four.exceptions;
 import static stage3.four.exceptions.ExConstants.WRONG_OR_MISSING_PASSWORD;
 import static stage3.four.exceptions.ExConstants.WRONG_TOKEN;
 
-public class MissingOrWrongPassword extends RuntimeException{
+public class MissingOrWrongPasswordException extends RuntimeException{
 
     @Override
     public String getMessage() {
