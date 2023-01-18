@@ -11,6 +11,8 @@ import cinema.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CinemaServiceImpl implements CinemaService {
@@ -43,11 +45,23 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public boolean authorizationIsValid(String password) {
-        return false;
+        return props.getAdminPassword()!=null && props.getAdminPassword().equals(password);
     }
 
     @Override
     public StatisticResponse getStats() {
-        return null;
+        var availableSeats = seatRepository.getAvailableSeats();
+        var purchasedSeats = seatRepository.getPurchasedSeats();
+        var income = calculateIncome(purchasedSeats);
+
+        return new StatisticResponse(income,availableSeats.size(),purchasedSeats.size());
+    }
+
+    private int calculateIncome(List<Seat> purchasedSeats) {
+        int income = 0;
+        for (Seat seat : purchasedSeats) {
+            income += seat.getPrice();
+        }
+        return income;
     }
 }

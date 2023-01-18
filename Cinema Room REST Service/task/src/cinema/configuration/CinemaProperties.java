@@ -28,7 +28,6 @@ public class CinemaProperties {
       log.info("cinema.front-rows = {}", frontRows);
       log.info("cinema.front-rows-price = {}", frontRowsPrice);
       log.info("cinema.back-rows-price = {}", backRowsPrice);
-        log.info("cinema.back-rows-price = {}", adminPassword);
     }
 
 }

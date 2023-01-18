@@ -40,6 +40,12 @@ public class SeatRepository {
         return listOfSeats;
     }
 
+    public List<Seat> getPurchasedSeats(){
+        return seats.stream()
+                .filter(Seat::isSold)
+                .collect(Collectors.toList());
+    }
+
     public TicketResponse purchaseSeat(Seat seat){
         if (!seatAreInAvailableSeats(seat)){
             throw new SeatOutOfBounceException();
@@ -91,4 +97,6 @@ public class SeatRepository {
         }
         return null;
     }
+
+
 }
