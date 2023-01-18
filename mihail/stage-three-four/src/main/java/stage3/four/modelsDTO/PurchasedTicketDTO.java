@@ -1,17 +1,21 @@
 package stage3.four.modelsDTO;
 
+import com.google.gson.annotations.SerializedName;
+
 public class PurchasedTicketDTO {
 
-    private final TokenDTO tokenDTO;
+    @SerializedName("token")
+    private final String token;
+    @SerializedName("ticket")
     private final TicketDTO ticketDTO;
 
-    public PurchasedTicketDTO(TokenDTO tokenDTO, TicketDTO ticketDTO) {
-        this.tokenDTO = tokenDTO;
+    public PurchasedTicketDTO(String token, TicketDTO ticketDTO) {
+        this.token = token;
         this.ticketDTO = ticketDTO;
     }
 
-    public TokenDTO getTokenDTO() {
-        return tokenDTO;
+    public String getToken() {
+        return token;
     }
 
     public TicketDTO getTicketDTO() {

@@ -24,7 +24,7 @@ public class RoomRepository {
         return availableSeats;
     }
 
-    private void setAvailableSeats(List<Seat> availableSeats) {
+    public void setAvailableSeats(List<Seat> availableSeats) {
         for (int i = 0; i < roomConfig.getTotalRows(); i++) {
             for (int j = 0; j < roomConfig.getTotalColumns(); j++) {
                 this.availableSeats.add(new Seat(i + 1, j + 1));
