@@ -1,45 +1,44 @@
 package cinema.controller;
 
-import cinema.exceprion.AppError;
+import cinema.exceprion.WrongAuthorizationException;
 import cinema.model.CinemaRoom;
 import cinema.model.Seat;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import cinema.model.request.ReturnTicketRequest;
+import cinema.model.request.SeatRequest;
+import cinema.model.response.ReturnedTicketResponse;
+import cinema.model.response.StatisticResponse;
+import cinema.model.response.TicketResponse;
+import cinema.service.CinemaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 public class CinemaController {
-    @Autowired
-    private CinemaRoom cinemaRoom;
+    private final CinemaService cinemaService;
 
     @GetMapping("/seats")
     public CinemaRoom getSeats(){
-        return cinemaRoom;
+        return cinemaService.getCinemaInfo();
     }
 
-    @PostMapping(value = "/purchase",
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity purchase(@RequestBody Seat seat) {
-        if(cinemaRoom.seatWasPurchased(seat)){
-            return new ResponseEntity(new AppError(
-                    "The ticket has been already purchased!"),
-                    HttpStatus.BAD_REQUEST);
-        }
-
-        if(!cinemaRoom.seatAreInAvailableSeats(seat)){
-            return new ResponseEntity(new AppError(
-                    "The number of a row or a column is out of bounds!"),
-                    HttpStatus.BAD_REQUEST);
-        }
-
-        seat.setPrice(seat.calculatePrice());
-        cinemaRoom.purchaseSeat(seat);
-        return new ResponseEntity(seat,
-                HttpStatus.OK);
+    @PostMapping(value = "/purchase")
+    public TicketResponse purchase(@RequestBody SeatRequest seatDTO) {
+        Seat seat = cinemaService.mapSeatDTOToEntity(seatDTO);
+        return cinemaService.purchaseSeat(seat);
     }
+
+    @PostMapping("/return")
+    ReturnedTicketResponse returnTicket(@RequestBody ReturnTicketRequest ticket) {
+        return cinemaService.returnTicket(ticket.getToken());
+    }
+
+    @PostMapping("/stats")
+    StatisticResponse statistics(@RequestParam(required = false) String password) {
+        if (!cinemaService.authorizationIsValid(password)) {
+            throw new WrongAuthorizationException();
+        }
+        return cinemaService.getStats();
+    }
+
 }

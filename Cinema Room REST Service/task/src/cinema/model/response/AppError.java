@@ -1,5 +1,8 @@
-package cinema.exceprion;
+package cinema.model.response;
 
+import lombok.Value;
+
+@Value
 public class AppError {
     public String error;
 

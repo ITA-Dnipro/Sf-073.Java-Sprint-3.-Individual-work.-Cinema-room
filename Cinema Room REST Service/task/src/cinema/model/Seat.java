@@ -1,6 +1,9 @@
 package cinema.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Value;
 
 import java.util.Objects;
 
@@ -9,19 +12,18 @@ public class Seat {
     public int row;
     public int column;
     public int price;
-
-    public Seat() {
-
-    }
+    @JsonIgnore
+    private String sellToken;
 
     public Seat(int row, int column) {
         this.row = row;
         this.column = column;
-        this.price = calculatePrice();
     }
 
-    public int calculatePrice() {
-        return row < 4? 10:8;
+
+    @JsonIgnore
+    public boolean isSold() {
+        return sellToken != null;
     }
 
     @Override
