@@ -33,7 +33,60 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "new purchase response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"row\": 4,\r\n    \"column\": 4\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{SERVER_URL:PORT}}/purchase",
+									"host": [
+										"{{SERVER_URL:PORT}}"
+									],
+									"path": [
+										"purchase"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "89"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 18 Jan 2023 06:47:49 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"token\": \"1fe65753-675d-47c7-a3e9-85f2bfe75bf5\",\n    \"ticket\": {\n        \"row\": 4,\n        \"column\": 4,\n        \"price\": 10\n    }\n}"
+						}
+					]
 				},
 				{
 					"name": "sold purchase",
@@ -50,7 +103,56 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "sold purchase  response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"row\": 4,\r\n    \"column\": 4\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{SERVER_URL:PORT}}/purchase",
+									"host": [
+										"{{SERVER_URL:PORT}}"
+									],
+									"path": [
+										"purchase"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 18 Jan 2023 06:49:07 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"The ticket has been already purchased!\"\n}"
+						}
+					]
 				},
 				{
 					"name": "wrong seat row purchase",
@@ -76,7 +178,56 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "wrong seat row purchase response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"row\": 10,\r\n    \"column\": 4\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{SERVER_URL:PORT}}/purchase",
+									"host": [
+										"{{SERVER_URL:PORT}}"
+									],
+									"path": [
+										"purchase"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 18 Jan 2023 06:49:32 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Tha number of a row or a column is out of bounds!\"\n}"
+						}
+					]
 				},
 				{
 					"name": "refund purchase happy",
@@ -102,7 +253,60 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "refund purchase happy response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"token\": \"1fe65753-675d-47c7-a3e9-85f2bfe75bf5\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{SERVER_URL:PORT}}/return",
+									"host": [
+										"{{SERVER_URL:PORT}}"
+									],
+									"path": [
+										"return"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "51"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 18 Jan 2023 06:50:18 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"returned_ticket\": {\n        \"row\": 4,\n        \"column\": 4,\n        \"price\": 10\n    }\n}"
+						}
+					]
 				},
 				{
 					"name": "refund purchase unhappy",
@@ -119,16 +323,65 @@
 							}
 						},
 						"url": {
-							"raw": "{{SERVER_URL:PORT}}/purchase",
+							"raw": "{{SERVER_URL:PORT}}/return",
 							"host": [
 								"{{SERVER_URL:PORT}}"
 							],
 							"path": [
-								"purchase"
+								"return"
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "refund purchase unhappy response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"token\":\"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{SERVER_URL:PORT}}/return",
+									"host": [
+										"{{SERVER_URL:PORT}}"
+									],
+									"path": [
+										"return"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 18 Jan 2023 06:50:41 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Wrong token!\"\n}"
+						}
+					]
 				}
 			]
 		},
@@ -141,7 +394,51 @@
 						"method": "GET",
 						"header": []
 					},
-					"response": []
+					"response": [
+						{
+							"name": "get all available seats response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{SERVER_URL:PORT}}/seats",
+									"host": [
+										"{{SERVER_URL:PORT}}"
+									],
+									"path": [
+										"seats"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1755"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 18 Jan 2023 06:51:01 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"total_rows\": 9,\n    \"total_columns\": 9,\n    \"available_seats\": [\n        {\n            \"row\": 1,\n            \"column\": 1\n        },\n        {\n            \"row\": 1,\n            \"column\": 2\n        },\n        {\n            \"row\": 1,\n            \"column\": 3\n        },\n        {\n            \"row\": 1,\n            \"column\": 4\n        },\n        {\n            \"row\": 1,\n            \"column\": 5\n        },\n        {\n            \"row\": 1,\n            \"column\": 6\n        },\n        {\n            \"row\": 1,\n            \"column\": 7\n        },\n        {\n            \"row\": 1,\n            \"column\": 8\n        },\n        {\n            \"row\": 1,\n            \"column\": 9\n        },\n        {\n            \"row\": 2,\n            \"column\": 1\n        },\n        {\n            \"row\": 2,\n            \"column\": 2\n        },\n        {\n            \"row\": 2,\n            \"column\": 3\n        },\n        {\n            \"row\": 2,\n            \"column\": 4\n        },\n        {\n            \"row\": 2,\n            \"column\": 5\n        },\n        {\n            \"row\": 2,\n            \"column\": 6\n        },\n        {\n            \"row\": 2,\n            \"column\": 7\n        },\n        {\n            \"row\": 2,\n            \"column\": 8\n        },\n        {\n            \"row\": 2,\n            \"column\": 9\n        },\n        {\n            \"row\": 3,\n            \"column\": 1\n        },\n        {\n            \"row\": 3,\n            \"column\": 2\n        },\n        {\n            \"row\": 3,\n            \"column\": 3\n        },\n        {\n            \"row\": 3,\n            \"column\": 4\n        },\n        {\n            \"row\": 3,\n            \"column\": 5\n        },\n        {\n            \"row\": 3,\n            \"column\": 6\n        },\n        {\n            \"row\": 3,\n            \"column\": 7\n        },\n        {\n            \"row\": 3,\n            \"column\": 8\n        },\n        {\n            \"row\": 3,\n            \"column\": 9\n        },\n        {\n            \"row\": 4,\n            \"column\": 1\n        },\n        {\n            \"row\": 4,\n            \"column\": 2\n        },\n        {\n            \"row\": 4,\n            \"column\": 3\n        },\n        {\n            \"row\": 4,\n            \"column\": 4\n        },\n        {\n            \"row\": 4,\n            \"column\": 5\n        },\n        {\n            \"row\": 4,\n            \"column\": 6\n        },\n        {\n            \"row\": 4,\n            \"column\": 7\n        },\n        {\n            \"row\": 4,\n            \"column\": 8\n        },\n        {\n            \"row\": 4,\n            \"column\": 9\n        },\n        {\n            \"row\": 5,\n            \"column\": 1\n        },\n        {\n            \"row\": 5,\n            \"column\": 2\n        },\n        {\n            \"row\": 5,\n            \"column\": 3\n        },\n        {\n            \"row\": 5,\n            \"column\": 4\n        },\n        {\n            \"row\": 5,\n            \"column\": 5\n        },\n        {\n            \"row\": 5,\n            \"column\": 6\n        },\n        {\n            \"row\": 5,\n            \"column\": 7\n        },\n        {\n            \"row\": 5,\n            \"column\": 8\n        },\n        {\n            \"row\": 5,\n            \"column\": 9\n        },\n        {\n            \"row\": 6,\n            \"column\": 1\n        },\n        {\n            \"row\": 6,\n            \"column\": 2\n        },\n        {\n            \"row\": 6,\n            \"column\": 3\n        },\n        {\n            \"row\": 6,\n            \"column\": 4\n        },\n        {\n            \"row\": 6,\n            \"column\": 5\n        },\n        {\n            \"row\": 6,\n            \"column\": 6\n        },\n        {\n            \"row\": 6,\n            \"column\": 7\n        },\n        {\n            \"row\": 6,\n            \"column\": 8\n        },\n        {\n            \"row\": 6,\n            \"column\": 9\n        },\n        {\n            \"row\": 7,\n            \"column\": 1\n        },\n        {\n            \"row\": 7,\n            \"column\": 2\n        },\n        {\n            \"row\": 7,\n            \"column\": 3\n        },\n        {\n            \"row\": 7,\n            \"column\": 4\n        },\n        {\n            \"row\": 7,\n            \"column\": 5\n        },\n        {\n            \"row\": 7,\n            \"column\": 6\n        },\n        {\n            \"row\": 7,\n            \"column\": 7\n        },\n        {\n            \"row\": 7,\n            \"column\": 8\n        },\n        {\n            \"row\": 7,\n            \"column\": 9\n        },\n        {\n            \"row\": 8,\n            \"column\": 1\n        },\n        {\n            \"row\": 8,\n            \"column\": 2\n        },\n        {\n            \"row\": 8,\n            \"column\": 3\n        },\n        {\n            \"row\": 8,\n            \"column\": 4\n        },\n        {\n            \"row\": 8,\n            \"column\": 5\n        },\n        {\n            \"row\": 8,\n            \"column\": 6\n        },\n        {\n            \"row\": 8,\n            \"column\": 7\n        },\n        {\n            \"row\": 8,\n            \"column\": 8\n        },\n        {\n            \"row\": 8,\n            \"column\": 9\n        },\n        {\n            \"row\": 9,\n            \"column\": 1\n        },\n        {\n            \"row\": 9,\n            \"column\": 2\n        },\n        {\n            \"row\": 9,\n            \"column\": 3\n        },\n        {\n            \"row\": 9,\n            \"column\": 4\n        },\n        {\n            \"row\": 9,\n            \"column\": 5\n        },\n        {\n            \"row\": 9,\n            \"column\": 6\n        },\n        {\n            \"row\": 9,\n            \"column\": 7\n        },\n        {\n            \"row\": 9,\n            \"column\": 8\n        },\n        {\n            \"row\": 9,\n            \"column\": 9\n        }\n    ]\n}"
+						}
+					]
 				}
 			]
 		},
