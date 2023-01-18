@@ -466,7 +466,57 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "get stats with password response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{SERVER_URL:PORT}}/stats?password=pass123",
+									"host": [
+										"{{SERVER_URL:PORT}}"
+									],
+									"path": [
+										"stats"
+									],
+									"query": [
+										{
+											"key": "password",
+											"value": "pass123"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain;charset=UTF-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "84"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 18 Jan 2023 07:52:38 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\"current_income\":30,\"number_of_available_seats\":78,\"number_of_purchased_tickets\":3}"
+						}
+					]
 				},
 				{
 					"name": "get stats without password",
@@ -489,7 +539,53 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "get stats without password response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{SERVER_URL:PORT}}/stats?password=",
+									"host": [
+										"{{SERVER_URL:PORT}}"
+									],
+									"path": [
+										"stats"
+									],
+									"query": [
+										{
+											"key": "password",
+											"value": ""
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 18 Jan 2023 07:53:36 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"The password is wrong!\"\n}"
+						}
+					]
 				}
 			]
 		}
