@@ -55,6 +55,14 @@ public class CinemaServiceImpl implements CinemaService {
         return ret;
     }
 
+    @Override
+    public Stats calcStats() {
+        int total = seatRepository.totalIncome();
+        int availableSeats = seatRepository.getAvailableSeats().size();
+        int purchasedTickets = (int) seatRepository.countPurchased();
+        return new Stats(total, availableSeats, purchasedTickets);
+    }
+
     private int calculatePrice(SeatCoordinates seat) {
         return seat.getRow() <= props.getFrontRows()
                 ? props.getPrices().getFrontRows() : props.getPrices().getBackRows();

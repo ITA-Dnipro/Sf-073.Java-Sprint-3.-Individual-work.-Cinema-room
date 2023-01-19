@@ -9,10 +9,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -68,6 +65,20 @@ public class SeatRepository {
                 .findFirst().orElseThrow(BusinessException::new);
         seatEntity.setToken(null);
         seatEntity.setSellPrice(null);
+    }
+
+    public int totalIncome() {
+        return seats.stream()
+                .map(SeatEntity::getSellPrice)
+                .filter(Objects::nonNull)
+                .mapToInt(i-> i)
+                .sum();
+    }
+
+    public long countPurchased() {
+        return seats.stream()
+                .filter(s-> s.getSellPrice() != null)
+                .count();
     }
 }
 
