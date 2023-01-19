@@ -11,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -21,10 +19,12 @@ import java.util.stream.Collectors;
 public class SeatRepository {
     private final CinemaProperties prop;
     private List<Seat> seats;
+    private Map<String,Seat> purchasedSeats;
 
     @PostConstruct
     void init(){
         seats = new ArrayList<>();
+        purchasedSeats = new HashMap<>();
         for (int i = 1; i <= prop.getTotalRows(); i++) {
             for (int j = 1; j <= prop.getTotalColumns(); j++) {
                 seats.add(new Seat(i, j));
@@ -41,25 +41,23 @@ public class SeatRepository {
     }
 
     public List<Seat> getPurchasedSeats(){
-        return seats.stream()
-                .filter(Seat::isSold)
-                .collect(Collectors.toList());
+        return new ArrayList<>(purchasedSeats.values());
     }
 
     public TicketResponse purchaseSeat(Seat seat){
         if (!seatAreInAvailableSeats(seat)){
-            throw new SeatOutOfBounceException();
+            throw new SeatOutOfBounceException("The number of a row or a column is out of bounds!");
         }
 
         if (seatWasPurchased(seat)){
-            throw new TicketAlreadySoldException();
+            throw new TicketAlreadySoldException("The ticket has been already purchased!");
         }
 
         var index = seats.indexOf(seat);
         var currSeat = seats.get(index);
 
         currSeat.setSellToken(UUID.randomUUID().toString());
-
+        purchasedSeats.put(currSeat.getSellToken(),currSeat);
         return new TicketResponse(currSeat);
     }
 
@@ -68,9 +66,14 @@ public class SeatRepository {
     }
 
     public boolean seatWasPurchased(Seat seat){
-        var index = seats.indexOf(seat);
-        var currSeat = seats.get(index);
-        return currSeat.isSold();
+        var purchasedSeat = purchasedSeats.values().stream()
+                .filter(currSeat -> currSeat.equals(seat))
+                .findAny()
+                .orElse(null);
+        if (purchasedSeat != null) {
+            return purchasedSeat.isSold();
+        }
+        return false;
     }
 
     public int getPrice(Seat seat) {
@@ -82,20 +85,17 @@ public class SeatRepository {
     public ReturnedTicketResponse returnTicket(String token) {
         var currSeat = findSeatByToken(token);
         if (currSeat == null){
-            throw new WrongSellTokenException();
+            throw new WrongSellTokenException("Wrong token!");
         }
 
         currSeat.setSellToken(null);
+        purchasedSeats.remove(token);
         return new ReturnedTicketResponse(currSeat);
     }
 
     private Seat findSeatByToken(String token) {
-        for (Seat seat : seats) {
-            if (seat.getSellToken() != null && seat.getSellToken().equals(token)) {
-                return seat;
-            }
-        }
-        return null;
+
+        return purchasedSeats.get(token);
     }
 
 

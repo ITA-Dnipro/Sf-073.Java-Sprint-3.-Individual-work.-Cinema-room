@@ -22,7 +22,7 @@ public class CinemaController {
         return cinemaService.getCinemaInfo();
     }
 
-    @PostMapping(value = "/purchase")
+    @PostMapping("/purchase")
     public TicketResponse purchase(@RequestBody SeatRequest seatDTO) {
         Seat seat = cinemaService.mapSeatDTOToEntity(seatDTO);
         return cinemaService.purchaseSeat(seat);
@@ -36,7 +36,7 @@ public class CinemaController {
     @PostMapping("/stats")
     StatisticResponse statistics(@RequestParam(required = false) String password) {
         if (!cinemaService.authorizationIsValid(password)) {
-            throw new WrongAuthorizationException();
+            throw new WrongAuthorizationException("The password is wrong!");
         }
         return cinemaService.getStats();
     }

@@ -1,4 +1,4 @@
-package cinema.controller;
+package cinema.exceprion;
 
 import cinema.exceprion.BusinessException;
 import cinema.exceprion.WrongAuthorizationException;
@@ -11,19 +11,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class ErrorController {
+public class GlobalExceptionHandlerController {
 
     @ExceptionHandler()
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     AppError errorHandler(BusinessException exception) {
-        log.info("exception {}", exception);
         return new AppError(exception.getMessage());
     }
 
     @ExceptionHandler()
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     AppError errorHandler(WrongAuthorizationException exception) {
-        log.info("exception {}", exception);
         return new AppError(exception.getMessage());
     }
 }
