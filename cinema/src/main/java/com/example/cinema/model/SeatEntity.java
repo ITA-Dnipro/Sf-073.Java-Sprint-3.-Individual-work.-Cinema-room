@@ -1,6 +1,5 @@
 package com.example.cinema.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,12 +9,18 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SeatCoordinates {
+public class SeatEntity {
     int row;
     int column;
+    Integer sellPrice;
+    String token;
 
-    public SeatCoordinates(SeatEntity seat) {
-        this.row = seat.getRow();
-        this.column = seat.getColumn();
+    public SeatEntity(int row, int column) {
+        this.row = row;
+        this.column = column;
+    }
+
+    public boolean isSold() {
+        return token != null;
     }
 }

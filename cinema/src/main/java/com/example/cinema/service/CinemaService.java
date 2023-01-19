@@ -1,11 +1,10 @@
 package com.example.cinema.service;
 
-import com.example.cinema.model.CinemaRoom;
-
-import com.example.cinema.model.SeatCoordinates;
-import com.example.cinema.model.SeatInfo;
+import com.example.cinema.model.*;
 
 public interface CinemaService {
     CinemaRoom getCinemaRoomInfo();
-    SeatInfo purchase(SeatCoordinates seat);
+    SoldTicket purchase(SeatCoordinates seat);
+
+    ReturnedTicketResponse returnTicket(String token);
 }

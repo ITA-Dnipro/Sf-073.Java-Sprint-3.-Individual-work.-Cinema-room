@@ -3,9 +3,8 @@ package com.example.cinema.service;
 import com.example.cinema.configuration.CinemaProperties;
 import com.example.cinema.exception.AlreadySoldException;
 import com.example.cinema.exception.OutOfBoundsException;
-import com.example.cinema.model.CinemaRoom;
-import com.example.cinema.model.SeatCoordinates;
-import com.example.cinema.model.SeatInfo;
+import com.example.cinema.exception.WrongTokenException;
+import com.example.cinema.model.*;
 import com.example.cinema.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class CinemaServiceImpl implements CinemaService {
     }
 
     @Override
-    public SeatInfo purchase(SeatCoordinates seat) {
+    public SoldTicket purchase(SeatCoordinates seat) {
         if (seat.getRow() < 1 || seat.getRow() > props.getTotalRows() ||
                 seat.getColumn() < 1 || seat.getColumn() > props.getTotalColumns()) {
             throw new OutOfBoundsException();
@@ -37,8 +36,23 @@ public class CinemaServiceImpl implements CinemaService {
         if (!seatRepository.isAvailable(seat)) {
             throw new AlreadySoldException();
         }
-        seatRepository.markAsSold(seat);
-        return addPrice(seat);
+        int price = calculatePrice(seat);
+        SeatEntity soldTicket = seatRepository.sell(seat, price);
+        return new SoldTicket(soldTicket);
+    }
+
+    @Override
+    public ReturnedTicketResponse returnTicket(String token) {
+        SeatEntity seat = seatRepository.getSeatByToken(token)
+                .orElseThrow(WrongTokenException::new);
+        ReturnedTicketResponse ret = new ReturnedTicketResponse(
+                new SeatInfo(seat.getRow(),
+                        seat.getColumn(),
+                        seat.getSellPrice())
+        );
+        SeatCoordinates seatCoordinates = new SeatCoordinates(seat);
+        seatRepository.setAsAvailable(seatCoordinates);
+        return ret;
     }
 
     private int calculatePrice(SeatCoordinates seat) {
