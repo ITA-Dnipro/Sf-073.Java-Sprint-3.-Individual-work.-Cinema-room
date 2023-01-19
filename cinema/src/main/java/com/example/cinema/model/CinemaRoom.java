@@ -8,6 +8,5 @@ import java.util.List;
 public class CinemaRoom {
     int totalRows ;
     int totalColumns;
-    List<Seat> availableSeats;
-
+    List<SeatInfo> availableSeats;
 }

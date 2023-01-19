@@ -9,4 +9,5 @@ import lombok.*;
 public class Seat {
     int row;
     int column;
+    boolean isSold;
 }
