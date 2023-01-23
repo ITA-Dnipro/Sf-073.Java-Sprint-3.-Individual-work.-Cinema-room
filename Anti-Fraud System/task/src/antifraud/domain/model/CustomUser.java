@@ -23,16 +23,10 @@ public class CustomUser implements User {
     private String userName;
     private String password;
 
-    public CustomUser(String name, String userName, String password) {
+    CustomUser(String name, String userName, String password) {
         this.name = name;
         this.userName = userName;
         this.password = password;
-    }
-
-    public CustomUser(Long id, String name, String userName) {
-        this.id = id;
-        this.name = name;
-        this.userName = userName;
     }
 
 }

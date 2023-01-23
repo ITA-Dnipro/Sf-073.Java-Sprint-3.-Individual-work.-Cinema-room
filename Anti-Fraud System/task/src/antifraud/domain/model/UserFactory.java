@@ -9,7 +9,4 @@ public class UserFactory {
         return new CustomUser(name, userName, password);
     }
 
-    public static User createWithId(Long id, String name, String userName) {
-        return new CustomUser(id, name, userName);
-    }
 }
