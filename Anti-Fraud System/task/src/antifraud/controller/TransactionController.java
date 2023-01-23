@@ -18,4 +18,5 @@ public class TransactionController {
         TransactionResultResponse foo(@RequestBody @Valid Transaction req){
             return new TransactionResultResponse(ts.transactionResult(req.getAmount()));
         }
+
 }
