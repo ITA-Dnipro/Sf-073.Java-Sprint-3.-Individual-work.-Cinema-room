@@ -31,10 +31,10 @@ public class CinemaServiceImpl implements CinemaService {
     public SoldTicket purchase(SeatCoordinates seat) {
         if (seat.getRow() < 1 || seat.getRow() > props.getTotalRows() ||
                 seat.getColumn() < 1 || seat.getColumn() > props.getTotalColumns()) {
-            throw new OutOfBoundsException();
+            throw new OutOfBoundsException("The number of a row or a column is out of bounds!");
         }
         if (!seatRepository.isAvailable(seat)) {
-            throw new AlreadySoldException();
+            throw new AlreadySoldException("The ticket has been already purchased!");
         }
         int price = calculatePrice(seat);
         SeatEntity soldTicket = seatRepository.sell(seat, price);
@@ -44,7 +44,7 @@ public class CinemaServiceImpl implements CinemaService {
     @Override
     public ReturnedTicketResponse returnTicket(String token) {
         SeatEntity seat = seatRepository.getSeatByToken(token)
-                .orElseThrow(WrongTokenException::new);
+                .orElseThrow(()-> new WrongTokenException("Wrong token!"));
         ReturnedTicketResponse ret = new ReturnedTicketResponse(
                 new SeatInfo(seat.getRow(),
                         seat.getColumn(),

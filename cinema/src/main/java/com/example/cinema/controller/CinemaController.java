@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@Slf4j(topic="CINEMA_TOPIC")
+@Slf4j(topic = "CINEMA_TOPIC")
 @RequiredArgsConstructor
 @RestController
 public class CinemaController {
@@ -37,6 +37,6 @@ public class CinemaController {
     Stats stats(@RequestParam Optional<String> password) {
         return password.filter("super_secret"::equals)
                 .map(s -> cinemaService.calcStats())
-                .orElseThrow(NotAuthorizedException::new);
+                .orElseThrow(() -> new NotAuthorizedException("The password is wrong!"));
     }
 }

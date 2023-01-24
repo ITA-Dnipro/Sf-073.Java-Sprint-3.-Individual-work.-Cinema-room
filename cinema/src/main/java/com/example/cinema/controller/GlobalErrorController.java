@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class ErrorController {
+public class GlobalErrorController {
 
     @ExceptionHandler
     ResponseEntity<ErrorDTO> errorHandler(BusinessException ex) {
