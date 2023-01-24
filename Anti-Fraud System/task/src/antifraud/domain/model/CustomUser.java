@@ -20,12 +20,12 @@ public class CustomUser implements User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String userName;
+    private String username;
     private String password;
 
-    CustomUser(String name, String userName, String password) {
+    CustomUser(String name, String username, String password) {
         this.name = name;
-        this.userName = userName;
+        this.username = username;
         this.password = password;
     }
 

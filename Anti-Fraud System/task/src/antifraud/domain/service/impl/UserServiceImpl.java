@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final CustomUserRepository userRepository;
+    private final CustomUserRepository customUserRepository;
 
     @Override
     public User registerUser(User userCredentials) {
-        return userRepository.save((CustomUser) userCredentials);
+        return customUserRepository.save((CustomUser) userCredentials);
     }
 }

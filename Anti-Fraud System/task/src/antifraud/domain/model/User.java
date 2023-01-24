@@ -5,5 +5,5 @@ public interface User {
 
     String getName();
 
-    String getUserName();
+    String getUsername();
 }
