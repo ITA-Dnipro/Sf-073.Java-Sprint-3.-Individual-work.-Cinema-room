@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CustomUserRepository extends JpaRepository<CustomUser, Long> {
-
+    boolean existsCustomUserByUsername(String username);
 }
