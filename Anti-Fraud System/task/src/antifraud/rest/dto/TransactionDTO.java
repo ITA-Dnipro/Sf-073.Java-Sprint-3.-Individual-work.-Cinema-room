@@ -1,7 +1,7 @@
 package antifraud.rest.dto;
 
 import antifraud.domain.model.Transaction;
-import antifraud.domain.model.TransactionResult;
+import antifraud.domain.model.constants.TransactionResult;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 

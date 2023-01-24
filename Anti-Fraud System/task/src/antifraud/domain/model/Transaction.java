@@ -1,5 +1,6 @@
 package antifraud.domain.model;
 
+import antifraud.domain.model.constants.TransactionResult;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

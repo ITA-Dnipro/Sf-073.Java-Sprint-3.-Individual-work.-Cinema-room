@@ -2,7 +2,7 @@ package antifraud.domain.service.impl;
 
 import antifraud.config.TransactionProperty;
 import antifraud.domain.model.Transaction;
-import antifraud.domain.model.TransactionResult;
+import antifraud.domain.model.constants.TransactionResult;
 import antifraud.domain.service.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
