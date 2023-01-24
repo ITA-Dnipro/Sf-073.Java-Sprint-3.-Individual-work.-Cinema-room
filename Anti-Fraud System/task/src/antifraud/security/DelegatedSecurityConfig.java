@@ -7,6 +7,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -22,15 +24,15 @@ public class DelegatedSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.requestMatchers()
-                .antMatchers("/api/auth/user")
-                .and()
+        http
                 .csrf().disable().headers().frameOptions().disable()
                 .and()
-                .authorizeRequests() // manage access
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/api/antifraud/transaction").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/auth/list").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/auth/user/{username}").authenticated()
                 .antMatchers("/actuator/shutdown").permitAll()
-                // other matchers
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -40,5 +42,10 @@ public class DelegatedSecurityConfig {
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint);
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder getEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
