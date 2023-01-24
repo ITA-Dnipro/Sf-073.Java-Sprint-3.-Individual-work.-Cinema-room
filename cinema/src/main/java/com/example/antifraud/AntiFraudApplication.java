@@ -1,4 +1,4 @@
-package com.example.cinema;
+package com.example.antifraud;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @SpringBootApplication
-public class CinemaApplication {
+public class AntiFraudApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CinemaApplication.class, args);
+		SpringApplication.run(AntiFraudApplication.class, args);
 	}
 
 }
