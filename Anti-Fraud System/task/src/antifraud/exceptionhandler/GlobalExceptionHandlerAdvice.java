@@ -27,7 +27,7 @@ public class GlobalExceptionHandlerAdvice {
 
     @ExceptionHandler(ExistingUsernameException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<CustomMessageDTO> handleUsernameException(ExistingUsernameException ex) {
+    public ResponseEntity<CustomMessageDTO> handleExistingUsernameException(ExistingUsernameException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.status(409)
                 .body(new CustomMessageDTO(ExceptionConstants.EXISTING_USERNAME));
