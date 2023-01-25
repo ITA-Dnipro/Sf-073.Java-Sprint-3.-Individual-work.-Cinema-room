@@ -2,7 +2,6 @@ package antifraud.domain.service.impl;
 
 import antifraud.domain.model.CustomUser;
 import antifraud.domain.model.User;
-import antifraud.domain.service.MyUserPrincipal;
 import antifraud.domain.service.UserService;
 import antifraud.persistence.repository.CustomUserRepository;
 import lombok.AllArgsConstructor;
@@ -34,17 +33,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User deleteUser(String username) {
-        UserDetails userDetails = loadUserByUsername(username);
-        return customUserRepository.deleteByUsername(userDetails.getUsername());
+    public void deleteUser(String username) {
+        User foundUser = customUserRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        customUserRepository.deleteById(foundUser.getId());
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = customUserRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException(username);
-        }
-        return new MyUserPrincipal(user);
+        User foundUser = customUserRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        return new UserDetailsImpl(foundUser);
     }
 }

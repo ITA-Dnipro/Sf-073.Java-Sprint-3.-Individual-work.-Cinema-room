@@ -1,4 +1,4 @@
-package antifraud.domain.service;
+package antifraud.domain.service.impl;
 
 import antifraud.domain.model.User;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 @AllArgsConstructor
-public class MyUserPrincipal implements UserDetails {
+public class UserDetailsImpl implements UserDetails {
     private User user;
 
     @Override

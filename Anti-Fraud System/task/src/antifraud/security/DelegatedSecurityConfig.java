@@ -24,7 +24,9 @@ public class DelegatedSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        http.httpBasic()
+                .authenticationEntryPoint(authEntryPoint)
+                .and()
                 .csrf().disable().headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
@@ -35,12 +37,7 @@ public class DelegatedSecurityConfig {
                 .antMatchers("/actuator/shutdown").permitAll()
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .httpBasic()
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(authEntryPoint);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
     }
 

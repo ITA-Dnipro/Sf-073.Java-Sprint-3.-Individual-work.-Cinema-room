@@ -28,7 +28,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/user")
-    public UserDTO createUser(@RequestBody @Valid UserDTO userDTO) {
+    public UserDTO createUser(@Valid @RequestBody UserDTO userDTO) {
         User registeredUser = userService.registerUser(userDTO.toModel())
                 .orElseThrow(() -> new ExistingUsernameException(HttpStatus.CONFLICT));
         return UserDTO.fromModel(registeredUser);
@@ -44,7 +44,10 @@ public class UserController {
 
     @DeleteMapping("/user/{username}")
     public DeletedUserDTO deleteUser(@PathVariable String username) {
-        User deletedUser = userService.deleteUser(username);
-        return DeletedUserDTO.fromModel(deletedUser);
+        userService.deleteUser(username);
+        return DeletedUserDTO.builder()
+                .username(username)
+                .status("Deleted successfully!")
+                .build();
     }
 }
