@@ -28,5 +28,4 @@ public class CustomUser implements User {
         this.username = username;
         this.password = password;
     }
-
 }

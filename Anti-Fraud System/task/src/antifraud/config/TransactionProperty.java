@@ -11,8 +11,10 @@ import javax.validation.constraints.Positive;
 @Slf4j
 @ConfigurationProperties(prefix = "transaction.values")
 @Validated
-public record TransactionProperty(@Positive int allowed,
-                                  @Positive int manualProcessing) {
+public record TransactionProperty(@Positive
+                                  int allowed,
+                                  @Positive
+                                  int manualProcessing) {
 
     @Bean
     CommandLineRunner runner(TransactionProperty transactionProperty) {
