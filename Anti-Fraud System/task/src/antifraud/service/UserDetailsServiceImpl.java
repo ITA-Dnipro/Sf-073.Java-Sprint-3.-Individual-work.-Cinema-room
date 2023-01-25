@@ -1,0 +1,26 @@
+package antifraud.service;
+
+import antifraud.model.UnauthorisedUser;
+import antifraud.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+    @Autowired
+    UserRepository userRepository;
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        if (userRepository.findByUsername(username).isPresent()) {
+            UnauthorisedUser user = userRepository.findByUsername(username).get();
+            return new UserDetailsImpl(user);
+        }
+        throw new UsernameNotFoundException("User with " + username + " not found");
+    }
+}
