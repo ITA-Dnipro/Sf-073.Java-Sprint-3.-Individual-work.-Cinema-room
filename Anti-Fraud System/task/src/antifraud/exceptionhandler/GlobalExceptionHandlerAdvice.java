@@ -49,7 +49,6 @@ public class GlobalExceptionHandlerAdvice {
                 .body(new CustomMessageDTO(ExceptionConstants.VALIDATION_FAIL));
     }
 
-
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<CustomMessageDTO> handleErrors(Exception ex) {

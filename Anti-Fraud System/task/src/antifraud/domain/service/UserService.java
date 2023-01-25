@@ -13,4 +13,8 @@ public interface UserService extends UserDetailsService {
     List<User> getUsers();
 
     void deleteUser(String username);
+
+    User changeUserRole(User userWithRole);
+
+    User grantAccess(User accessLevel);
 }

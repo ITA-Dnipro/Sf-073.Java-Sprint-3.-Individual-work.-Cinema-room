@@ -46,6 +46,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User changeUserRole(User userWithRole) {
+        CustomUser foundUser = customUserRepository.findByUsernameIgnoreCase(userWithRole.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(userWithRole.getUsername()));
+        foundUser.setRole(userWithRole.getRole());
+        return customUserRepository.save(foundUser);
+    }
+
+    @Override
+    public User grantAccess(User accessLevel) {
+        return null;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User foundUser = customUserRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));

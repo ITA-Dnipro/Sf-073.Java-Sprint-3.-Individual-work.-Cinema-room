@@ -1,5 +1,8 @@
 package antifraud.domain.model;
 
+import antifraud.domain.model.constants.UserAccess;
+import antifraud.domain.model.constants.UserRole;
+
 public interface User {
     Long getId();
 
@@ -14,4 +17,12 @@ public interface User {
     String getPassword();
 
     void setPassword(String password);
+
+    UserRole getRole();
+
+    void setRole(UserRole role);
+
+    UserAccess getAccess();
+
+    void setAccess(UserAccess role);
 }
