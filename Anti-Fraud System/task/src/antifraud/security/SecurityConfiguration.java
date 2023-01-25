@@ -14,8 +14,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     RestAuthenticationEntryPoint restAuthenticationEntryPoint = new RestAuthenticationEntryPoint();
-    @Autowired
+    final
     UserDetailsService userDetailsService;
+
+    public SecurityConfiguration(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -28,7 +32,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
                 .antMatchers("/actuator/shutdown").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAnyRole("USER")// needs to run test
-                .antMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole("USER")
+                .antMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole("USER","MERCHANT","ADMINISTRATOR")
                 .antMatchers(HttpMethod.DELETE, "/api/auth/user/{username}").hasAnyRole("USER")
                 // other matchers
                 .and()

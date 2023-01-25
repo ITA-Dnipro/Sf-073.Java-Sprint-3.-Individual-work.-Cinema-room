@@ -1,10 +1,9 @@
 package antifraud.service;
 
-import antifraud.model.DeleteResponse;
 import antifraud.model.UnauthorisedUser;
 import antifraud.model.User;
 import antifraud.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,24 +14,36 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class UserService {
-    @Autowired
-    UserRepository userRepo;
-    @Autowired
+    final UserRepository userRepo;
+    final
     PasswordEncoder encoder;
+
+    public UserService(UserRepository userRepo, PasswordEncoder encoder) {
+        this.userRepo = userRepo;
+        this.encoder = encoder;
+    }
     public User saveUser(UnauthorisedUser unauthorisedUser){
         Optional<UnauthorisedUser> userNameEntry = userRepo.findByUsername(unauthorisedUser.getUsername());
         if(userNameEntry.isPresent()){
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
-        unauthorisedUser.setRole("ROLE_USER");
         unauthorisedUser.setPassword(encoder.encode(unauthorisedUser.getPassword()));
+        unauthorisedUser.setRole("ROLE_MERCHANT");
+        unauthorisedUser.setAccountNonLocked(false);
         userRepo.save(unauthorisedUser);
+        if(unauthorisedUser.getId()==1){
+            unauthorisedUser.setRole("ROLE_ADMINISTRATOR");
+            unauthorisedUser.setAccountNonLocked(true);
+            userRepo.save(unauthorisedUser);
+        }
 
         User authorisedUser = new User();
         authorisedUser.setId(unauthorisedUser.getId());
         authorisedUser.setName(unauthorisedUser.getName());
         authorisedUser.setUsername(unauthorisedUser.getUsername());
+        authorisedUser.setRole(unauthorisedUser.getRole());
         return authorisedUser;
     }
     public List<User> findAll(){
@@ -42,6 +53,7 @@ public class UserService {
            user1.setId(user.getId());
            user1.setName(user.getName());
            user1.setUsername(user.getUsername());
+           user1.setRole(user.getRole());
            users.add(user1);
        }
        return users;

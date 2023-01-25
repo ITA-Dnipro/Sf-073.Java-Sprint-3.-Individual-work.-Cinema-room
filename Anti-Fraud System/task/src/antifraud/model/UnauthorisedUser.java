@@ -1,14 +1,12 @@
 package antifraud.model;
 
-import lombok.*;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
 
 @Entity
 @Table(name = "users")
-public class UnauthorisedUser {
+public class UnauthorisedUser{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -19,14 +17,29 @@ public class UnauthorisedUser {
     @NotEmpty
     String password;
     String role;
+    boolean accountNonLocked = false;
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
     public UnauthorisedUser(){}
 
-    public UnauthorisedUser(Long id, String name, String username, String password, String role) {
+    public UnauthorisedUser(Long id, String name, String username, String password, String role, boolean accountNonLocked) {
         this.id = id;
         this.name = name;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.accountNonLocked = accountNonLocked;
     }
 
     public Long getId() {
@@ -47,10 +60,6 @@ public class UnauthorisedUser {
 
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {

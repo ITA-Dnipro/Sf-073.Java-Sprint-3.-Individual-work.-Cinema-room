@@ -12,18 +12,12 @@ import java.util.Collection;
 import java.util.List;
 public class UserDetailsImpl implements UserDetails {
 
-    private final String username;
-    private final String password;
+    private final UnauthorisedUser user;
     private final List<GrantedAuthority> rolesAndAuthorities;
 
     public UserDetailsImpl(UnauthorisedUser user){
-        username = user.getUsername();
-        password = user.getPassword();
+        this.user = user;
         rolesAndAuthorities = List.of(new SimpleGrantedAuthority(user.getRole()));
-    }
-    @Override
-    public String getPassword() {
-        return password;
     }
 
     @Override
@@ -32,9 +26,15 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return username;
+    public String getPassword() {
+        return user.getPassword();
     }
+
+    @Override
+    public String getUsername() {
+        return user.getUsername();
+    }
+
     @Override
     public boolean isEnabled() {
         return true;
@@ -47,7 +47,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return user.isAccountNonLocked();
     }
 
     @Override

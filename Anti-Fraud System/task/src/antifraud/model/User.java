@@ -1,22 +1,25 @@
 package antifraud.model;
 
-import lombok.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-
-
 public class User {
     public User(){}
     private Long id;
     private String name;
     private String username;
+    private String role;
 
-    public User(Long id, String name, String username) {
+    public User(Long id, String name, String username, String role) {
         this.id = id;
         this.name = name;
         this.username = username;
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Long getId() {

@@ -19,14 +19,12 @@ import java.util.Optional;
 
 @RestController
 public class UserController {
-    @Autowired
+    final
     UserService userService;
-    @Autowired
-    private UserRepository userRepository;
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-void errorHandler(RuntimeException ex){
-    log.info("Exception has accured", ex);
-}
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
     @PostMapping("/api/auth/user")
     @ResponseStatus(code = HttpStatus.CREATED)
     User save(@RequestBody  UnauthorisedUser user){
@@ -35,7 +33,6 @@ void errorHandler(RuntimeException ex){
     @GetMapping("/api/auth/list")
     List<User> findAll(){
         return userService.findAll();
-
     }
     @DeleteMapping("/api/auth/user/{username}")
     DeleteResponse foo(@PathVariable String username){
