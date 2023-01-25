@@ -1,6 +1,5 @@
 package antifraud.rest.controller;
 
-import antifraud.domain.model.CustomUser;
 import antifraud.domain.model.User;
 import antifraud.domain.service.UserService;
 import antifraud.exceptions.ExistingUsernameException;
@@ -36,8 +35,8 @@ public class UserController {
 
     @GetMapping("/list")
     public List<UserDTO> getUsers() {
-        List<CustomUser> customUsers = userService.getCustomUsers();
-        return customUsers.stream()
+        List<User> allUsers = userService.getUsers();
+        return allUsers.stream()
                 .map(UserDTO::fromModel)
                 .toList();
     }

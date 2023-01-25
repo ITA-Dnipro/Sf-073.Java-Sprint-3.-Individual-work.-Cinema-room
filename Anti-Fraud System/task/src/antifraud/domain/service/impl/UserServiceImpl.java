@@ -28,13 +28,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<CustomUser> getCustomUsers() {
-        return customUserRepository.findAll();
+    public List<User> getUsers() {
+        return customUserRepository.findAll().stream()
+                .map(User.class::cast)
+                .toList();
     }
 
     @Override
     public void deleteUser(String username) {
-        User foundUser = customUserRepository.findByUsernameIgnoreCase(username)
+        CustomUser foundUser = customUserRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         customUserRepository.deleteById(foundUser.getId());
     }

@@ -16,7 +16,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping("/api/antifraud/transaction")
-    TransactionDTO makeTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
+    TransactionDTO makeTransaction(@Valid @RequestBody TransactionDTO transactionDTO) {
         Transaction deposit = transactionService.deposit(transactionDTO.toModel());
         return TransactionDTO.fromModel(deposit);
     }
