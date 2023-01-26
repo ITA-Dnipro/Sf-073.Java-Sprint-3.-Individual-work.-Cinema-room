@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
     public User changeUserRole(User userWithRole) {
         User foundUser = foundByUsername(userWithRole.getUsername());
         roleCheckForCollision(userWithRole, foundUser);
-        if (userWithRole.getRole().equals(UserRole.ADMINISTRATOR)) {
+        if (UserRole.ADMINISTRATOR.equals(userWithRole.getRole())) {
             throw new ExistingAdministratorException();
         }
         foundUser.setRole(userWithRole.getRole());
@@ -91,11 +91,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public User grantAccess(User userWithAccessLevel) {
         User foundUser = foundByUsername(userWithAccessLevel.getUsername());
-        if (foundUser.getRole().equals(UserRole.ADMINISTRATOR)) {
-            throw new AccessViolationException();
-        }
+        roleAndAccessCheckForAdmin(foundUser, userWithAccessLevel);
         foundUser.setAccess(userWithAccessLevel.getAccess());
         return customUserRepository.save((CustomUser) foundUser);
+    }
+
+    private void roleAndAccessCheckForAdmin(User currentRole, User accessToBeChanged) {
+        if (UserRole.ADMINISTRATOR.equals(currentRole.getRole()) &&
+                UserAccess.LOCK.equals(accessToBeChanged.getAccess())) {
+            throw new AccessViolationException();
+        }
     }
 
     @Override

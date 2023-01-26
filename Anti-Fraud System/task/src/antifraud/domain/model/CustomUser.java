@@ -37,7 +37,6 @@ public class CustomUser implements User {
     @Enumerated(EnumType.STRING)
     private UserAccess access;
 
-
     @Override
     public boolean isAccountNonLocked() {
         return UserAccess.UNLOCK.equals(getAccess());

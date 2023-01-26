@@ -45,7 +45,7 @@ public class DelegatedSecurityConfig {
                                 .hasAnyRole(UserRole.ADMINISTRATOR.name(), UserRole.SUPPORT.name())
                                 .mvcMatchers(HttpMethod.PUT, "/api/auth/**").hasRole(UserRole.ADMINISTRATOR.name())
                                 .mvcMatchers("/actuator/shutdown").permitAll()
-//                        .anyRequest().denyAll()
+                        .anyRequest().denyAll()
                 )
                 .sessionManagement(s -> s
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
