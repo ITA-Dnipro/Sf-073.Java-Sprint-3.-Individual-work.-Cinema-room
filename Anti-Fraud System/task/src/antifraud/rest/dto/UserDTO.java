@@ -32,8 +32,6 @@ public record UserDTO(@JsonProperty(access = JsonProperty.Access.READ_ONLY)
     }
 
     public User toModel() {
-
-
         return UserFactory.create(name, username, password);
     }
 }

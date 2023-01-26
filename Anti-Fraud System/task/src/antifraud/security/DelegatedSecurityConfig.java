@@ -1,5 +1,6 @@
 package antifraud.security;
 
+import antifraud.domain.model.constants.UserRole;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,11 @@ public class DelegatedSecurityConfig {
                 .headers(h -> h.frameOptions().disable())
                 .authorizeRequests(a -> a
                         .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
-                        .mvcMatchers("/api/**").authenticated()
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasRole(UserRole.MERCHANT.name())
+                        .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/**").hasRole(UserRole.ADMINISTRATOR.name())
+                        .mvcMatchers(HttpMethod.GET, "/api/auth/list")
+                        .hasAnyRole(UserRole.ADMINISTRATOR.name(), UserRole.SUPPORT.name())
+                        .mvcMatchers(HttpMethod.PUT, "/api/auth/**").hasRole(UserRole.ADMINISTRATOR.name())
                         .mvcMatchers("/actuator/shutdown").permitAll()
                         .anyRequest().denyAll())
                 .sessionManagement(s -> s

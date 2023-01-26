@@ -25,4 +25,6 @@ public interface User {
     UserAccess getAccess();
 
     void setAccess(UserAccess role);
+
+    boolean isAccountNonLocked();
 }

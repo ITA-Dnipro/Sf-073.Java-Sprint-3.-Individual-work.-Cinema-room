@@ -16,5 +16,5 @@ public interface UserService extends UserDetailsService {
 
     User changeUserRole(User userWithRole);
 
-    User grantAccess(User accessLevel);
+    User grantAccess(User userWithAccessLevel);
 }
