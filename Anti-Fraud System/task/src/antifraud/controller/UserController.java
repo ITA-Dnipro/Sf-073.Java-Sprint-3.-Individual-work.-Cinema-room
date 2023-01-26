@@ -1,8 +1,6 @@
 package antifraud.controller;
 
-import antifraud.model.DeleteResponse;
-import antifraud.model.UnauthorisedUser;
-import antifraud.model.User;
+import antifraud.model.*;
 import antifraud.repository.UserRepository;
 import antifraud.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +23,14 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+    @PutMapping("api/auth/access")
+    AccessResponse lockOrUnlockUser(@RequestBody AccessOperation accessOperation){
+        return userService.lockOrUnlockUser(accessOperation);
+    }
+    @PutMapping("/api/auth/role")
+    User changeRole(@RequestBody RoleOperation roleOperation){
+        return userService.changeRole(roleOperation);
     }
     @PostMapping("/api/auth/user")
     @ResponseStatus(code = HttpStatus.CREATED)

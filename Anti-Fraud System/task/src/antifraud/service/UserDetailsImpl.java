@@ -17,7 +17,7 @@ public class UserDetailsImpl implements UserDetails {
 
     public UserDetailsImpl(UnauthorisedUser user){
         this.user = user;
-        rolesAndAuthorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+        rolesAndAuthorities = List.of(new SimpleGrantedAuthority("ROLE_"+user.getRole()));
     }
 
     @Override

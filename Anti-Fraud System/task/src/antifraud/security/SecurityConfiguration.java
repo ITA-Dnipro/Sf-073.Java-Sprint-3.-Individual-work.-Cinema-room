@@ -31,9 +31,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests() // manage access
                 .antMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
                 .antMatchers("/actuator/shutdown").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAnyRole("USER")// needs to run test
-                .antMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole("USER","MERCHANT","ADMINISTRATOR")
-                .antMatchers(HttpMethod.DELETE, "/api/auth/user/{username}").hasAnyRole("USER")
+                .antMatchers(HttpMethod.POST, "/**/api/antifraud/transaction").hasRole("MERCHANT")// needs to run test
+                .antMatchers(HttpMethod.GET, "/**/api/auth/list").hasAnyRole("ADMINISTRATOR", "SUPPORT")
+                .antMatchers(HttpMethod.PUT,"/**/api/auth/access").hasRole("ADMINISTRATOR")
+                .antMatchers( "/**/api/auth/user/**").hasRole("ADMINISTRATOR")
+                .antMatchers("/**/api/auth/role/**").hasRole("ADMINISTRATOR")
                 // other matchers
                 .and()
                 .sessionManagement()
