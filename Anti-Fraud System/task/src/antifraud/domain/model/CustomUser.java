@@ -40,6 +40,6 @@ public class CustomUser implements User {
 
     @Override
     public boolean isAccountNonLocked() {
-        return access.equals(UserAccess.UNLOCK);
+        return UserAccess.UNLOCK.equals(getAccess());
     }
 }

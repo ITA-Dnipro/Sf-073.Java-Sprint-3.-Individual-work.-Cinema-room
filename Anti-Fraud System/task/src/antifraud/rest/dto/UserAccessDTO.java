@@ -20,6 +20,7 @@ public record UserAccessDTO(@NotEmpty
     public static UserAccessDTO fromModel(User userPermission) {
         String customMessage = String.format("User %s %sed!",
                 userPermission.getUsername(), userPermission.getAccess());
+
         return UserAccessDTO.builder()
                 .status(customMessage)
                 .build();

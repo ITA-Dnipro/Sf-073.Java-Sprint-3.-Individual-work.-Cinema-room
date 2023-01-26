@@ -39,12 +39,12 @@ public class DelegatedSecurityConfig {
                 .headers(h -> h.frameOptions().disable())
                 .authorizeRequests(a -> a
                         .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
+                        .mvcMatchers("/actuator/shutdown").permitAll()
                         .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasRole(UserRole.MERCHANT.name())
                         .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/**").hasRole(UserRole.ADMINISTRATOR.name())
                         .mvcMatchers(HttpMethod.GET, "/api/auth/list")
                         .hasAnyRole(UserRole.ADMINISTRATOR.name(), UserRole.SUPPORT.name())
                         .mvcMatchers(HttpMethod.PUT, "/api/auth/**").hasRole(UserRole.ADMINISTRATOR.name())
-                        .mvcMatchers("/actuator/shutdown").permitAll()
                         .anyRequest().denyAll())
                 .sessionManagement(s -> s
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

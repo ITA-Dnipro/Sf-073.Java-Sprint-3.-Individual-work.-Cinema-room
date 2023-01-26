@@ -54,9 +54,9 @@ public class UserController {
     }
 
     @PutMapping("/role")
-    UserRoleDTO changeUserRole(@Valid @RequestBody UserRoleDTO userRoleDTO) {
+    UserDTO changeUserRole(@Valid @RequestBody UserRoleDTO userRoleDTO) {
         User changedUserRole = userService.changeUserRole(userRoleDTO.toModel());
-        return UserRoleDTO.fromModel(changedUserRole);
+        return UserDTO.fromModel(changedUserRole);
     }
 
     @PutMapping("/access")
