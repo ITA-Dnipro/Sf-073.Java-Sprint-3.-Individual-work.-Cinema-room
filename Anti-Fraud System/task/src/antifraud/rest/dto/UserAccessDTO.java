@@ -7,12 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Builder
 public record UserAccessDTO(@NotEmpty
                             @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
                             String username,
-                            @NotEmpty
+                            @NotNull
                             @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
                             UserAccess operation,
                             @JsonProperty(access = JsonProperty.Access.READ_ONLY)

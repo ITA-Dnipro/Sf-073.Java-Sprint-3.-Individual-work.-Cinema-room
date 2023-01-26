@@ -11,9 +11,9 @@ import javax.validation.constraints.NotEmpty;
 public record UserRoleDTO(@NotEmpty
                           String username,
                           @NotEmpty
-                          UserRole role) {
+                          String role) {
 
     public User toModel() {
-        return UserFactory.createWithRole(username, role);
+        return UserFactory.createWithRole(username, UserRole.valueOf(role));
     }
 }

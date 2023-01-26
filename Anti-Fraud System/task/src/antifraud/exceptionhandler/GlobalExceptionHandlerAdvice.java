@@ -1,9 +1,10 @@
 package antifraud.exceptionhandler;
 
 import antifraud.exceptions.AccessViolationException;
-import antifraud.exceptions.AdministratorException;
+import antifraud.exceptions.ExistingAdministratorException;
 import antifraud.exceptions.AlreadyProvidedException;
 import antifraud.exceptions.ExistingUsernameException;
+import antifraud.exceptions.NonExistentRoleException;
 import antifraud.rest.dto.CustomMessageDTO;
 import antifraud.rest.dto.ErrorDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -52,9 +53,9 @@ public class GlobalExceptionHandlerAdvice {
                 .body(new CustomMessageDTO(ExceptionConstants.VALIDATION_FAIL));
     }
 
-    @ExceptionHandler(AdministratorException.class)
+    @ExceptionHandler(ExistingAdministratorException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<CustomMessageDTO> handleAdministratorException(AdministratorException ex) {
+    public ResponseEntity<CustomMessageDTO> handleAdministratorException(ExistingAdministratorException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(new CustomMessageDTO(ExceptionConstants.ADMIN));
@@ -74,6 +75,14 @@ public class GlobalExceptionHandlerAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(new CustomMessageDTO(ExceptionConstants.CANNOT_BE_BLOCKED));
+    }
+
+    @ExceptionHandler(NonExistentRoleException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<CustomMessageDTO> handleNonExistentRoleException(NonExistentRoleException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.badRequest()
+                .body(new CustomMessageDTO(ExceptionConstants.ROLE_NON_EXIST));
     }
 
     @ExceptionHandler(Exception.class)

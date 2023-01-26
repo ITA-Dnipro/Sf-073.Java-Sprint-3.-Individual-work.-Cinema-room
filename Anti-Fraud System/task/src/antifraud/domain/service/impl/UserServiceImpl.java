@@ -7,8 +7,9 @@ import antifraud.domain.model.constants.UserAccess;
 import antifraud.domain.model.constants.UserRole;
 import antifraud.domain.service.UserService;
 import antifraud.exceptions.AccessViolationException;
-import antifraud.exceptions.AdministratorException;
 import antifraud.exceptions.AlreadyProvidedException;
+import antifraud.exceptions.ExistingAdministratorException;
+import antifraud.exceptions.NonExistentRoleException;
 import antifraud.persistence.repository.CustomUserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +35,6 @@ public class UserServiceImpl implements UserService {
     public Optional<User> registerUser(User userCredentials) {
         userCredentials.setPassword(encoder.encode(userCredentials.getPassword()));
         authorize(userCredentials);
-
         return customUserRepository.existsCustomUserByUsername(userCredentials.getUsername()) ?
                 Optional.empty() :
                 Optional.of(customUserRepository.save((CustomUser) userCredentials));
@@ -59,34 +60,37 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void deleteUser(String username) {
-        User foundUser = checkUsernameExistence(username);
+        User foundUser = foundByUsername(username);
         customUserRepository.deleteById(foundUser.getId());
     }
 
-    private User checkUsernameExistence(String username) {
+    private User foundByUsername(String username) {
         return customUserRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
+    @Transactional
     @Override
     public User changeUserRole(User userWithRole) {
-        User foundUser = checkUsernameExistence(userWithRole.getUsername());
-        roleCheck(userWithRole, foundUser);
+        User foundUser = foundByUsername(userWithRole.getUsername());
+        roleCheckForCollision(userWithRole, foundUser);
+        if (userWithRole.getRole().equals(UserRole.ADMINISTRATOR)) {
+            throw new ExistingAdministratorException();
+        }
         foundUser.setRole(userWithRole.getRole());
         return customUserRepository.save((CustomUser) foundUser);
     }
 
-    private void roleCheck(User userWithRole, User foundUser) {
-        if (userWithRole.getRole().equals(UserRole.ADMINISTRATOR)) {
-            throw new AdministratorException();
-        } else if (userWithRole.getRole().equals(foundUser.getRole())) {
+    private void roleCheckForCollision(User providedRole, User currentRole) {
+        if (providedRole.getRole().equals(currentRole.getRole())) {
             throw new AlreadyProvidedException();
         }
     }
 
+    @Transactional
     @Override
     public User grantAccess(User userWithAccessLevel) {
-        User foundUser = checkUsernameExistence(userWithAccessLevel.getUsername());
+        User foundUser = foundByUsername(userWithAccessLevel.getUsername());
         if (foundUser.getRole().equals(UserRole.ADMINISTRATOR)) {
             throw new AccessViolationException();
         }
@@ -95,7 +99,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void checkIfRoleExists(String role) {
+        boolean doesExist = Arrays.stream(UserRole.values())
+                .anyMatch(r -> r.name().equals(role));
+        if (!doesExist) {
+            throw new NonExistentRoleException();
+        }
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return new UserPrincipal(checkUsernameExistence(username));
+        return new UserPrincipal(foundByUsername(username));
     }
 }
