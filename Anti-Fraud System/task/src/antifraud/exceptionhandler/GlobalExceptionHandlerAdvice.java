@@ -5,18 +5,22 @@ import antifraud.exceptions.ExistingAdministratorException;
 import antifraud.exceptions.AlreadyProvidedException;
 import antifraud.exceptions.ExistingIpException;
 import antifraud.exceptions.ExistingUsernameException;
+import antifraud.exceptions.IpNotFoundException;
 import antifraud.exceptions.NonExistentRoleException;
 import antifraud.rest.dto.CustomMessageDTO;
 import antifraud.rest.dto.ErrorDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.validation.ConstraintViolationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -62,17 +66,33 @@ public class GlobalExceptionHandlerAdvice {
                 .body(new CustomMessageDTO(ex.getMessage() + ExceptionConstants.USERNAME_NOT_FOUND));
     }
 
+    @ExceptionHandler(IpNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<CustomMessageDTO> handleIpNotFoundException(IpNotFoundException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(404)
+                .body(new CustomMessageDTO(ex.getMessage() + ExceptionConstants.IP_NOT_FOUND));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<CustomMessageDTO> handleNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<CustomMessageDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(new CustomMessageDTO(ExceptionConstants.VALIDATION_FAIL));
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<CustomMessageDTO> handleConstraintViolationException(ConstraintViolationException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.badRequest()
+                .body(new CustomMessageDTO(ex.getMessage()));
+    }
+
     @ExceptionHandler(ExistingAdministratorException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<CustomMessageDTO> handleAdministratorException(ExistingAdministratorException ex) {
+    public ResponseEntity<CustomMessageDTO> handleExistingAdministratorException(ExistingAdministratorException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(new CustomMessageDTO(ExceptionConstants.ADMIN));
@@ -92,6 +112,14 @@ public class GlobalExceptionHandlerAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(new CustomMessageDTO(ExceptionConstants.ROLE_NON_EXIST));
+    }
+
+    @ExceptionHandler(LockedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<CustomMessageDTO> handleLockedException(LockedException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(403)
+                .body(new CustomMessageDTO(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

@@ -47,9 +47,10 @@ public class UserController {
     @DeleteMapping("/user/{username}")
     public DeletedUserDTO deleteUser(@PathVariable String username) {
         userService.deleteUser(username);
+        String returnMessage = "Deleted successfully!";
         return DeletedUserDTO.builder()
                 .username(username)
-                .status("Deleted successfully!")
+                .status(returnMessage)
                 .build();
     }
 
