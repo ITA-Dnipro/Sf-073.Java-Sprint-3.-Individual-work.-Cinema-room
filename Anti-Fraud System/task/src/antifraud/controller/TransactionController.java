@@ -4,6 +4,7 @@ import antifraud.model.Transaction;
 import antifraud.model.TransactionResult;
 import antifraud.model.TransactionResultResponse;
 import antifraud.service.TransactionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,10 +14,11 @@ import javax.validation.Valid;
 
 @RestController
 public class TransactionController {
-    TransactionService ts = new TransactionService();
+    @Autowired
+    TransactionService ts;
         @PostMapping("/api/antifraud/transaction")
         TransactionResultResponse foo(@RequestBody @Valid Transaction req){
-            return new TransactionResultResponse(ts.transactionResult(req.getAmount()));
+           return ts.transactionResult(req.getAmount(), req.getIp(), req.getNumber());
         }
 
 }

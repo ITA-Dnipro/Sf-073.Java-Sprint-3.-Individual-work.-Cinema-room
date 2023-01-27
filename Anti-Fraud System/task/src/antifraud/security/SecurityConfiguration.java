@@ -36,6 +36,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT,"/**/api/auth/access").hasRole("ADMINISTRATOR")
                 .antMatchers( "/**/api/auth/user/**").hasRole("ADMINISTRATOR")
                 .antMatchers("/**/api/auth/role/**").hasRole("ADMINISTRATOR")
+                .antMatchers("/**/api/antifraud/suspicious-ip/**").hasRole("SUPPORT")
+                .antMatchers("/**/api/antifraud/stolencard/**").hasRole("SUPPORT")
                 // other matchers
                 .and()
                 .sessionManagement()
