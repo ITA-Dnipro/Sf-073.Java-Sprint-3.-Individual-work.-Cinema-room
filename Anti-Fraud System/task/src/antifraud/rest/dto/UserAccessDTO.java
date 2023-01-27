@@ -19,7 +19,7 @@ public record UserAccessDTO(@NotEmpty
                             @JsonProperty(access = JsonProperty.Access.READ_ONLY)
                             String status) {
     public static UserAccessDTO fromModel(User userPermission) {
-        String customMessage = String.format("User %s %sed!",
+        String customMessage = String.format("User %s %sED!",
                 userPermission.getUsername(), userPermission.getAccess());
 
         return UserAccessDTO.builder()

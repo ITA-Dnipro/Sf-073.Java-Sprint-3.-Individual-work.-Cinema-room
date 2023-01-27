@@ -3,6 +3,7 @@ package antifraud.exceptionhandler;
 import antifraud.exceptions.AccessViolationException;
 import antifraud.exceptions.ExistingAdministratorException;
 import antifraud.exceptions.AlreadyProvidedException;
+import antifraud.exceptions.ExistingIpException;
 import antifraud.exceptions.ExistingUsernameException;
 import antifraud.exceptions.NonExistentRoleException;
 import antifraud.rest.dto.CustomMessageDTO;
@@ -37,6 +38,22 @@ public class GlobalExceptionHandlerAdvice {
                 .body(new CustomMessageDTO(ExceptionConstants.EXISTING_USERNAME));
     }
 
+    @ExceptionHandler(ExistingIpException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<CustomMessageDTO> handleExistingIpException(ExistingIpException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(409)
+                .body(new CustomMessageDTO(ExceptionConstants.EXISTING_IP));
+    }
+
+    @ExceptionHandler(AlreadyProvidedException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<CustomMessageDTO> handleAlreadyProvidedException(AlreadyProvidedException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(409)
+                .body(new CustomMessageDTO(ExceptionConstants.SAME_ROLE));
+    }
+
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<CustomMessageDTO> handleUsernameNotFoundException(UsernameNotFoundException ex) {
@@ -59,14 +76,6 @@ public class GlobalExceptionHandlerAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(new CustomMessageDTO(ExceptionConstants.ADMIN));
-    }
-
-    @ExceptionHandler(AlreadyProvidedException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<CustomMessageDTO> handleAlreadyProvidedException(AlreadyProvidedException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.status(409)
-                .body(new CustomMessageDTO(ExceptionConstants.SAME_ROLE));
     }
 
     @ExceptionHandler(AccessViolationException.class)
