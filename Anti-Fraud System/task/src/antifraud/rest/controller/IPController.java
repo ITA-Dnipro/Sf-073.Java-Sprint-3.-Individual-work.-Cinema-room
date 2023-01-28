@@ -36,7 +36,7 @@ public class IPController {
 
     @DeleteMapping("/{ip}")
     public CustomMessageDTO deleteAddress(@IpAddress @PathVariable String ip) {
-        ipService.deleteAddress(ip);
+        ipService.removeIpAddress(ip);
         String returnMessage = String.format("IP %s successfully removed!", ip);
         return new CustomMessageDTO(returnMessage);
     }
@@ -48,5 +48,4 @@ public class IPController {
                 .map(IpDTO::fromModel)
                 .toList();
     }
-
 }

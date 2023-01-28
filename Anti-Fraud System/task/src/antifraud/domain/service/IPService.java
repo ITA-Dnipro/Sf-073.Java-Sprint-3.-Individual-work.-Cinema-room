@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface IPService {
     Optional<IP> saveSuspiciousAddress(IP address);
 
-    void deleteAddress(String ipAddress);
+    void removeIpAddress(String ipAddress);
 
     List<IP> showIpAddresses();
 }

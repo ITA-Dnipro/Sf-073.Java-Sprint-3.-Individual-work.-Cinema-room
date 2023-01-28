@@ -1,4 +1,7 @@
 package antifraud.rest.dto;
 
-public record CustomMessageDTO(String message) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record CustomMessageDTO(@JsonProperty("status")
+                               String message) {
 }

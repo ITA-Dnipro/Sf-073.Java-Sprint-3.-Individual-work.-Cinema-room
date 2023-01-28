@@ -1,8 +1,9 @@
 package antifraud.exceptionhandler;
 
 import antifraud.exceptions.AccessViolationException;
-import antifraud.exceptions.ExistingAdministratorException;
 import antifraud.exceptions.AlreadyProvidedException;
+import antifraud.exceptions.CardNotFoundException;
+import antifraud.exceptions.ExistingAdministratorException;
 import antifraud.exceptions.ExistingCardException;
 import antifraud.exceptions.ExistingIpException;
 import antifraud.exceptions.ExistingUsernameException;
@@ -67,6 +68,22 @@ public class GlobalExceptionHandlerAdvice {
                 .body(new CustomMessageDTO(ExceptionConstants.SAME_ROLE));
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<CustomMessageDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.badRequest()
+                .body(new CustomMessageDTO(ExceptionConstants.VALIDATION_FAIL));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<CustomMessageDTO> handleConstraintViolationException(ConstraintViolationException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.badRequest()
+                .body(new CustomMessageDTO(ex.getMessage()));
+    }
+
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<CustomMessageDTO> handleUsernameNotFoundException(UsernameNotFoundException ex) {
@@ -83,20 +100,12 @@ public class GlobalExceptionHandlerAdvice {
                 .body(new CustomMessageDTO(ex.getMessage() + ExceptionConstants.IP_NOT_FOUND));
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<CustomMessageDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    @ExceptionHandler(CardNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<CustomMessageDTO> handleCardNotFoundException(CardNotFoundException ex) {
         log.error(ex.getMessage(), ex);
-        return ResponseEntity.badRequest()
-                .body(new CustomMessageDTO(ExceptionConstants.VALIDATION_FAIL));
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<CustomMessageDTO> handleConstraintViolationException(ConstraintViolationException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.badRequest()
-                .body(new CustomMessageDTO(ex.getMessage()));
+        return ResponseEntity.status(404)
+                .body(new CustomMessageDTO(ex.getMessage() + ExceptionConstants.CARD_NOT_FOUND));
     }
 
     @ExceptionHandler(ExistingAdministratorException.class)

@@ -26,7 +26,7 @@ public class IPServiceImpl implements IPService {
 
     @Transactional
     @Override
-    public void deleteAddress(String ipAddress) {
+    public void removeIpAddress(String ipAddress) {
         IP foundIpAddress = ipRepository.findByIpAddress(ipAddress)
                 .orElseThrow(() -> new IpNotFoundException(ipAddress));
         ipRepository.deleteById(foundIpAddress.getId());
