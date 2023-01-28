@@ -23,7 +23,7 @@ public record TransactionDTO(@Min(1)
                              @NotNull
                              @JsonProperty(value = "amount", access = JsonProperty.Access.WRITE_ONLY)
                              Long amountMoney,
-                             @NotNull
+                             @NotEmpty
                              @IpAddress
                              @JsonProperty(value = "ip", access = JsonProperty.Access.WRITE_ONLY)
                              String ipAddress,

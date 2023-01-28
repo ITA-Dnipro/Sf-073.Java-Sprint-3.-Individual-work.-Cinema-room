@@ -9,13 +9,10 @@ public class IpAddressValidator implements ConstraintValidator<IpAddress, String
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null) {
-            return false;
-        }
-        Pattern pattern =
-                Pattern.compile("^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$");
-        Matcher matcher = pattern.matcher(value);
         try {
+            Pattern pattern =
+                    Pattern.compile("^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$");
+            Matcher matcher = pattern.matcher(value);
             if (!matcher.matches()) {
                 return false;
             } else {

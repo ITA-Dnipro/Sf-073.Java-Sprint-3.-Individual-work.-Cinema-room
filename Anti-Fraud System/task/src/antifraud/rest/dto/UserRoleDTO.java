@@ -15,15 +15,15 @@ public record UserRoleDTO(@NotEmpty
                           @NotEmpty
                           String role) {
 
-    public User toModel() {
-        return UserFactory.createWithRole(username, UserRole.valueOf(role));
-    }
-
     public static void checkIfRoleExists(String role) {
         boolean doesExist = Arrays.stream(UserRole.values())
                 .anyMatch(r -> r.name().equals(role));
         if (!doesExist) {
             throw new NonExistentRoleException();
         }
+    }
+
+    public User toModel() {
+        return UserFactory.createWithRole(username, UserRole.valueOf(role));
     }
 }

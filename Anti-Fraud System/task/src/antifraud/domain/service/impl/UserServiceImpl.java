@@ -9,7 +9,6 @@ import antifraud.domain.service.UserService;
 import antifraud.exceptions.AccessViolationException;
 import antifraud.exceptions.AlreadyProvidedException;
 import antifraud.exceptions.ExistingAdministratorException;
-import antifraud.exceptions.NonExistentRoleException;
 import antifraud.persistence.repository.CustomUserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,14 +89,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public User grantAccess(User userWithAccessLevel) {
         User foundUser = foundByUsername(userWithAccessLevel.getUsername());
-        roleAndAccessCheckForAdmin(foundUser, userWithAccessLevel);
+        roleCheckForAdmin(foundUser);
         foundUser.setAccess(userWithAccessLevel.getAccess());
         return customUserRepository.save((CustomUser) foundUser);
     }
 
-    private void roleAndAccessCheckForAdmin(User currentRole, User accessToBeChanged) {
-        if (UserRole.ADMINISTRATOR.equals(currentRole.getRole()) &&
-                UserAccess.LOCK.equals(accessToBeChanged.getAccess())) {
+    @Override
+    public String retrieveRealUsername(String username) {
+        User foundUser = foundByUsername(username);
+        return foundUser.getUsername();
+    }
+
+    private void roleCheckForAdmin(User currentRole) {
+        if (UserRole.ADMINISTRATOR.equals(currentRole.getRole())) {
             throw new AccessViolationException();
         }
     }

@@ -17,4 +17,6 @@ public interface UserService extends UserDetailsService {
     User changeUserRole(User userWithRole);
 
     User grantAccess(User userWithAccessLevel);
+
+    String retrieveRealUsername(String username);
 }
