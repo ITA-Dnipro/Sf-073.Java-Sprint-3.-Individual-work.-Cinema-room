@@ -1,6 +1,6 @@
 package antifraud.security;
 
-import antifraud.domain.model.constants.UserRole;
+import antifraud.domain.model.enums.UserRole;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;

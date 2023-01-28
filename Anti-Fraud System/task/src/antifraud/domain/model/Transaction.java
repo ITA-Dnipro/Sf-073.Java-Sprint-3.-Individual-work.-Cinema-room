@@ -1,18 +1,19 @@
 package antifraud.domain.model;
 
-import antifraud.domain.model.constants.TransactionResult;
+import antifraud.domain.model.enums.TransactionResult;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder(access = AccessLevel.PACKAGE)
 public class Transaction {
     private Long money;
     private TransactionResult transactionResult;
-
-    public Transaction(Long money) {
-        this.money = money;
-    }
 }

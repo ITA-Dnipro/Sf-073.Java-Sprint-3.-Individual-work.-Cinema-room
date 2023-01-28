@@ -1,4 +1,4 @@
-package antifraud.domain.model.constants;
+package antifraud.domain.model.enums;
 
 public enum TransactionResult {
     ALLOWED,

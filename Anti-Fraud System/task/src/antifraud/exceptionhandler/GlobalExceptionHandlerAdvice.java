@@ -3,6 +3,7 @@ package antifraud.exceptionhandler;
 import antifraud.exceptions.AccessViolationException;
 import antifraud.exceptions.ExistingAdministratorException;
 import antifraud.exceptions.AlreadyProvidedException;
+import antifraud.exceptions.ExistingCardException;
 import antifraud.exceptions.ExistingIpException;
 import antifraud.exceptions.ExistingUsernameException;
 import antifraud.exceptions.IpNotFoundException;
@@ -48,6 +49,14 @@ public class GlobalExceptionHandlerAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.status(409)
                 .body(new CustomMessageDTO(ExceptionConstants.EXISTING_IP));
+    }
+
+    @ExceptionHandler(ExistingCardException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<CustomMessageDTO> handleExistingCardException(ExistingCardException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(409)
+                .body(new CustomMessageDTO(ExceptionConstants.EXISTING_CARD));
     }
 
     @ExceptionHandler(AlreadyProvidedException.class)

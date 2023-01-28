@@ -1,7 +1,8 @@
 package antifraud.rest.dto;
 
 import antifraud.domain.model.Transaction;
-import antifraud.domain.model.constants.TransactionResult;
+import antifraud.domain.model.TransactionFactory;
+import antifraud.domain.model.enums.TransactionResult;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
@@ -22,7 +23,8 @@ public record TransactionDTO(@Min(1)
     }
 
     public Transaction toModel() {
-        return new Transaction(amountMoney);
+
+        return TransactionFactory.create(amountMoney);
     }
 
 }

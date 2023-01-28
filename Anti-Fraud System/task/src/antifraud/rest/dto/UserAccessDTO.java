@@ -2,7 +2,7 @@ package antifraud.rest.dto;
 
 import antifraud.domain.model.User;
 import antifraud.domain.model.UserFactory;
-import antifraud.domain.model.constants.UserAccess;
+import antifraud.domain.model.enums.UserAccess;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 

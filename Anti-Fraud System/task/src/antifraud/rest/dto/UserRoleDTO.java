@@ -2,7 +2,7 @@ package antifraud.rest.dto;
 
 import antifraud.domain.model.User;
 import antifraud.domain.model.UserFactory;
-import antifraud.domain.model.constants.UserRole;
+import antifraud.domain.model.enums.UserRole;
 import lombok.Builder;
 
 import javax.validation.constraints.NotEmpty;

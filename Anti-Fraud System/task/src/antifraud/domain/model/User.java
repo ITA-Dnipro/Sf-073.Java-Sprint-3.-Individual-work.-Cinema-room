@@ -1,7 +1,7 @@
 package antifraud.domain.model;
 
-import antifraud.domain.model.constants.UserAccess;
-import antifraud.domain.model.constants.UserRole;
+import antifraud.domain.model.enums.UserAccess;
+import antifraud.domain.model.enums.UserRole;
 
 public interface User {
     Long getId();
