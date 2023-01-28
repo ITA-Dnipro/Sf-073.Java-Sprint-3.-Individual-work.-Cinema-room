@@ -36,6 +36,14 @@ public class GlobalExceptionHandlerAdvice {
                 .body(new ErrorDTO(HttpStatus.UNAUTHORIZED.toString(), ExceptionConstants.FAILED_AUTH));
     }
 
+    @ExceptionHandler(LockedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<CustomMessageDTO> handleLockedException(LockedException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(401)
+                .body(new CustomMessageDTO(ex.getMessage()));
+    }
+
     @ExceptionHandler(ExistingUsernameException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<CustomMessageDTO> handleExistingUsernameException(ExistingUsernameException ex) {
@@ -130,14 +138,6 @@ public class GlobalExceptionHandlerAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(new CustomMessageDTO(ExceptionConstants.ROLE_NON_EXIST));
-    }
-
-    @ExceptionHandler(LockedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseEntity<CustomMessageDTO> handleLockedException(LockedException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.status(403)
-                .body(new CustomMessageDTO(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

@@ -29,10 +29,12 @@ public class TransactionServiceImpl implements TransactionService {
         if (!infoFromCards.isEmpty()) {
             transaction.setTransactionResult(TransactionResult.PROHIBITED);
         }
-        String infoFromResult = infoFromTransactionResult(transaction.getTransactionResult());
+        String infoFromResult = infoFromResultAndInputMoney(transaction.getTransactionResult(),
+                transaction.getMoney());
         infoFromCards.add(infoFromResult);
         Collections.sort(infoFromCards);
         String calculatedInfo = infoFromCards.stream()
+                .filter(s -> s.length() != 0)
                 .map(String::valueOf)
                 .collect(Collectors.joining(", "));
         transaction.setTransactionInfo(calculatedInfo);
@@ -56,17 +58,21 @@ public class TransactionServiceImpl implements TransactionService {
         boolean cardBlacklisted = checkCardNumberBlacklist(transaction.getCardNumber());
         if (ipBlacklisted) {
             infoFromBlacklists.add("ip");
-        } else if (cardBlacklisted) {
+        }
+        if (cardBlacklisted) {
             infoFromBlacklists.add("card-number");
         }
         return infoFromBlacklists;
     }
 
-    private String infoFromTransactionResult(TransactionResult transactionResult) {
+    private String infoFromResultAndInputMoney(TransactionResult transactionResult, Long money) {
         String infoResult = "";
         if (TransactionResult.ALLOWED.equals(transactionResult)) {
             infoResult = "none";
-        } else {
+        } else if (TransactionResult.MANUAL_PROCESSING.equals(transactionResult)) {
+            infoResult = "amount";
+        } else if (TransactionResult.PROHIBITED.equals(transactionResult) &&
+                money > 1500) {
             infoResult = "amount";
         }
         return infoResult;
