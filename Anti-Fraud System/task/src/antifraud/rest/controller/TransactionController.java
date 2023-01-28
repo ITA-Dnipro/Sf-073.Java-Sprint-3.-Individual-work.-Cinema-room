@@ -1,7 +1,6 @@
 package antifraud.rest.controller;
 
 import antifraud.domain.model.Transaction;
-import antifraud.domain.service.SuspiciousIPService;
 import antifraud.domain.service.TransactionService;
 import antifraud.rest.dto.TransactionDTO;
 import lombok.AllArgsConstructor;

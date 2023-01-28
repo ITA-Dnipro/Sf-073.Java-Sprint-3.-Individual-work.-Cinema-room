@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,25 +22,19 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction processTransaction(Transaction transaction) {
-        TransactionResult transactionResult = transactionTypeByAmountMoney(transaction);
-        transaction.setTransactionResult(transactionResult);
+        TransactionResult result = transactionResultByAmountMoney(transaction);
+        String infoFromResult = infoFromTransactionResult(result);
         List<String> infoFromCards = infoFromCardAndIpBlacklists(transaction);
+        String info = calculatedInfo(infoFromResult, infoFromCards);
         if (!infoFromCards.isEmpty()) {
-            transaction.setTransactionResult(TransactionResult.PROHIBITED);
+            result = TransactionResult.PROHIBITED;
         }
-        String infoFromResult = infoFromResultAndInputMoney(transaction.getTransactionResult(),
-                transaction.getMoney());
-        infoFromCards.add(infoFromResult);
-        Collections.sort(infoFromCards);
-        String calculatedInfo = infoFromCards.stream()
-                .filter(s -> s.length() != 0)
-                .map(String::valueOf)
-                .collect(Collectors.joining(", "));
-        transaction.setTransactionInfo(calculatedInfo);
+        transaction.setTransactionResult(result);
+        transaction.setTransactionInfo(info);
         return transaction;
     }
 
-    private TransactionResult transactionTypeByAmountMoney(Transaction transaction) {
+    private TransactionResult transactionResultByAmountMoney(Transaction transaction) {
         Long money = transaction.getMoney();
         if (money <= transactionProperty.allowed()) {
             return TransactionResult.ALLOWED;
@@ -52,10 +45,15 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
+    private String infoFromTransactionResult(TransactionResult transactionResult) {
+        return TransactionResult.ALLOWED.equals(transactionResult) ?
+                "none" : "amount";
+    }
+
     private List<String> infoFromCardAndIpBlacklists(Transaction transaction) {
         List<String> infoFromBlacklists = new ArrayList<>();
-        boolean ipBlacklisted = checkIpAddressBlacklist(transaction.getIpAddress());
-        boolean cardBlacklisted = checkCardNumberBlacklist(transaction.getCardNumber());
+        boolean ipBlacklisted = suspiciousIPRepository.existsByIpAddress(transaction.getIpAddress());
+        boolean cardBlacklisted = stolenCardRepository.existsByNumber(transaction.getCardNumber());
         if (ipBlacklisted) {
             infoFromBlacklists.add("ip");
         }
@@ -65,24 +63,15 @@ public class TransactionServiceImpl implements TransactionService {
         return infoFromBlacklists;
     }
 
-    private String infoFromResultAndInputMoney(TransactionResult transactionResult, Long money) {
-        String infoResult = "";
-        if (TransactionResult.ALLOWED.equals(transactionResult)) {
-            infoResult = "none";
-        } else if (TransactionResult.MANUAL_PROCESSING.equals(transactionResult)) {
-            infoResult = "amount";
-        } else if (TransactionResult.PROHIBITED.equals(transactionResult) &&
-                money > 1500) {
-            infoResult = "amount";
+    private String calculatedInfo(String infoFromResult, List<String> infoFromCards) {
+        if (!infoFromCards.isEmpty() && infoFromResult.equals("none")) {
+            infoFromResult = "";
         }
-        return infoResult;
-    }
-
-    private boolean checkIpAddressBlacklist(String ipAddress) {
-        return suspiciousIPRepository.existsByIpAddress(ipAddress);
-    }
-
-    private boolean checkCardNumberBlacklist(String cardNumber) {
-        return stolenCardRepository.existsByNumber(cardNumber);
+        infoFromCards.add(infoFromResult);
+        return infoFromCards.stream()
+                .filter(s -> s.length() != 0)
+                .sorted()
+                .map(String::valueOf)
+                .collect(Collectors.joining(", "));
     }
 }
