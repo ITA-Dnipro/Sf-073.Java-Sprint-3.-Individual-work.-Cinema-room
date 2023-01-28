@@ -14,6 +14,7 @@ public class ExceptionConstants {
     public static final String SAME_ROLE = "This role has already been provided!";
     public static final String CANNOT_BE_BLOCKED = "This role cannot be blocked!";
     public static final String ROLE_NON_EXIST = "The role doesn't exists!";
+    public static final String REGION_NON_EXIST = "The region doesn't exists!";
 
     private ExceptionConstants() {
     }

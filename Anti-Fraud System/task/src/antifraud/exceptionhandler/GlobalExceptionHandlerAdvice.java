@@ -8,6 +8,7 @@ import antifraud.exceptions.ExistingCardException;
 import antifraud.exceptions.ExistingIpException;
 import antifraud.exceptions.ExistingUsernameException;
 import antifraud.exceptions.IpNotFoundException;
+import antifraud.exceptions.NonExistentRegionException;
 import antifraud.exceptions.NonExistentRoleException;
 import antifraud.rest.dto.CustomMessageDTO;
 import antifraud.rest.dto.ErrorDTO;
@@ -138,6 +139,14 @@ public class GlobalExceptionHandlerAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(new CustomMessageDTO(ExceptionConstants.ROLE_NON_EXIST));
+    }
+
+    @ExceptionHandler(NonExistentRegionException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<CustomMessageDTO> handleNonExistentRegionException(NonExistentRegionException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.badRequest()
+                .body(new CustomMessageDTO(ExceptionConstants.REGION_NON_EXIST));
     }
 
     @ExceptionHandler(Exception.class)
