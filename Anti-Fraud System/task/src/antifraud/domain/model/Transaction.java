@@ -15,5 +15,8 @@ import lombok.Setter;
 @Builder(access = AccessLevel.PACKAGE)
 public class Transaction {
     private Long money;
+    private String ipAddress;
+    private String cardNumber;
     private TransactionResult transactionResult;
+    private String transactionInfo;
 }

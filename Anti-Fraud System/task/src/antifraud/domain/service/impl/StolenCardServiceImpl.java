@@ -1,9 +1,9 @@
 package antifraud.domain.service.impl;
 
 import antifraud.domain.model.Card;
-import antifraud.domain.service.CardService;
+import antifraud.domain.service.StolenCardService;
 import antifraud.exceptions.CardNotFoundException;
-import antifraud.persistence.repository.CardRepository;
+import antifraud.persistence.repository.StolenCardRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,25 +12,25 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class CardServiceImpl implements CardService {
-    private final CardRepository cardRepository;
+public class StolenCardServiceImpl implements StolenCardService {
+    private final StolenCardRepository stolenCardRepository;
 
     @Override
     public Optional<Card> storeStolenCardNumber(Card stolenCard) {
-        return cardRepository.existsByNumber(stolenCard.getNumber()) ?
+        return stolenCardRepository.existsByNumber(stolenCard.getNumber()) ?
                 Optional.empty() :
-                Optional.of(cardRepository.save(stolenCard));
+                Optional.of(stolenCardRepository.save(stolenCard));
     }
 
     @Override
     public void removeCardNumber(String number) {
-        Card foundCard = cardRepository.findByNumber(number)
+        Card foundCard = stolenCardRepository.findByNumber(number)
                 .orElseThrow(() -> new CardNotFoundException(number));
-        cardRepository.deleteById(foundCard.getId());
+        stolenCardRepository.deleteById(foundCard.getId());
     }
 
     @Override
     public List<Card> showCardNumbers() {
-        return cardRepository.findAll();
+        return stolenCardRepository.findAll();
     }
 }

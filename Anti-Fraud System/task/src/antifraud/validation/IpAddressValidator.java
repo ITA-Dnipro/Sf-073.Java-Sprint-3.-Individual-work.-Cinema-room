@@ -5,10 +5,13 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class IpAddressValidator  implements ConstraintValidator<IpAddress, String> {
+public class IpAddressValidator implements ConstraintValidator<IpAddress, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return false;
+        }
         Pattern pattern =
                 Pattern.compile("^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$");
         Matcher matcher = pattern.matcher(value);

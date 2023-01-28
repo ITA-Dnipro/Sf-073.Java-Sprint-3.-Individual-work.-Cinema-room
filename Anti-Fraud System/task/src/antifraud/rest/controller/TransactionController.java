@@ -1,7 +1,7 @@
 package antifraud.rest.controller;
 
 import antifraud.domain.model.Transaction;
-import antifraud.domain.service.IPService;
+import antifraud.domain.service.SuspiciousIPService;
 import antifraud.domain.service.TransactionService;
 import antifraud.rest.dto.TransactionDTO;
 import lombok.AllArgsConstructor;
@@ -17,11 +17,10 @@ import javax.validation.Valid;
 @RequestMapping("/api/antifraud")
 public class TransactionController {
     private final TransactionService transactionService;
-    private final IPService ipService;
 
     @PostMapping("/transaction")
     public TransactionDTO makeTransaction(@Valid @RequestBody TransactionDTO transactionDTO) {
-        Transaction deposit = transactionService.deposit(transactionDTO.toModel());
+        Transaction deposit = transactionService.processTransaction(transactionDTO.toModel());
         return TransactionDTO.fromModel(deposit);
     }
 }

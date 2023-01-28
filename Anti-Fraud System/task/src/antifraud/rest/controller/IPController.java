@@ -1,7 +1,7 @@
 package antifraud.rest.controller;
 
 import antifraud.domain.model.IP;
-import antifraud.domain.service.IPService;
+import antifraud.domain.service.SuspiciousIPService;
 import antifraud.validation.IpAddress;
 import antifraud.exceptions.ExistingIpException;
 import antifraud.rest.dto.CustomMessageDTO;
@@ -25,25 +25,25 @@ import java.util.List;
 @Validated
 @RequestMapping("/api/antifraud/suspicious-ip")
 public class IPController {
-    private final IPService ipService;
+    private final SuspiciousIPService suspiciousIPService;
 
     @PostMapping()
     public IpDTO saveSuspiciousIp(@Valid @RequestBody IpDTO ipDTO) {
-        IP savedIP = ipService.saveSuspiciousAddress(ipDTO.toModel())
+        IP savedIP = suspiciousIPService.saveSuspiciousAddress(ipDTO.toModel())
                 .orElseThrow(() -> new ExistingIpException(HttpStatus.CONFLICT));
         return IpDTO.fromModel(savedIP);
     }
 
     @DeleteMapping("/{ip}")
     public CustomMessageDTO deleteAddress(@IpAddress @PathVariable String ip) {
-        ipService.removeIpAddress(ip);
+        suspiciousIPService.removeIpAddress(ip);
         String returnMessage = String.format("IP %s successfully removed!", ip);
         return new CustomMessageDTO(returnMessage);
     }
 
     @GetMapping()
     public List<IpDTO> getIpAddresses() {
-        List<IP> allIpAddresses = ipService.showIpAddresses();
+        List<IP> allIpAddresses = suspiciousIPService.showIpAddresses();
         return allIpAddresses.stream()
                 .map(IpDTO::fromModel)
                 .toList();

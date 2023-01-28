@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface IPRepository extends JpaRepository<IP, Long> {
+public interface SuspiciousIPRepository extends JpaRepository<IP, Long> {
 
     boolean existsByIpAddress(String ipAddress);
 

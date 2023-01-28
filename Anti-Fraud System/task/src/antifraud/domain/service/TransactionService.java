@@ -4,5 +4,5 @@ import antifraud.domain.model.Transaction;
 
 public interface TransactionService {
 
-    Transaction deposit(Transaction transaction);
+    Transaction processTransaction(Transaction transaction);
 }

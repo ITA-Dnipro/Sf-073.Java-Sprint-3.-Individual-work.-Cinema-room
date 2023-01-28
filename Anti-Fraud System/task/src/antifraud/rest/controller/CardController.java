@@ -1,7 +1,7 @@
 package antifraud.rest.controller;
 
 import antifraud.domain.model.Card;
-import antifraud.domain.service.CardService;
+import antifraud.domain.service.StolenCardService;
 import antifraud.exceptions.ExistingCardException;
 import antifraud.rest.dto.CardDTO;
 import antifraud.rest.dto.CustomMessageDTO;
@@ -25,25 +25,25 @@ import java.util.List;
 @Validated
 @RequestMapping("/api/antifraud/stolencard")
 public class CardController {
-    private final CardService cardService;
+    private final StolenCardService stolenCardService;
 
     @PostMapping()
     public CardDTO saveStolenCard(@Valid @RequestBody CardDTO cardDTO) {
-        Card storedCard = cardService.storeStolenCardNumber(cardDTO.toModel())
+        Card storedCard = stolenCardService.storeStolenCardNumber(cardDTO.toModel())
                 .orElseThrow(() -> new ExistingCardException(HttpStatus.CONFLICT));
         return CardDTO.fromModel(storedCard);
     }
 
     @DeleteMapping("/{number}")
     public CustomMessageDTO deleteCardNumber(@CreditCardNumber @PathVariable String number) {
-        cardService.removeCardNumber(number);
+        stolenCardService.removeCardNumber(number);
         String returnMessage = String.format("Card %s successfully removed!", number);
         return new CustomMessageDTO(returnMessage);
     }
 
     @GetMapping()
     public List<CardDTO> getCardNumbers() {
-        List<Card> allCardNumbers = cardService.showCardNumbers();
+        List<Card> allCardNumbers = stolenCardService.showCardNumbers();
         return allCardNumbers.stream()
                 .map(CardDTO::fromModel)
                 .toList();

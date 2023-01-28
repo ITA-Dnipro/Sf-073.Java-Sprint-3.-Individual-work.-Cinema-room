@@ -1,9 +1,9 @@
 package antifraud.domain.service.impl;
 
 import antifraud.domain.model.IP;
-import antifraud.domain.service.IPService;
+import antifraud.domain.service.SuspiciousIPService;
 import antifraud.exceptions.IpNotFoundException;
-import antifraud.persistence.repository.IPRepository;
+import antifraud.persistence.repository.SuspiciousIPRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,27 +13,27 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class IPServiceImpl implements IPService {
-    private final IPRepository ipRepository;
+public class SuspiciousIPServiceImpl implements SuspiciousIPService {
+    private final SuspiciousIPRepository suspiciousIPRepository;
 
     @Transactional
     @Override
     public Optional<IP> saveSuspiciousAddress(IP address) {
-       return ipRepository.existsByIpAddress(address.getIpAddress()) ?
-               Optional.empty() :
-               Optional.of(ipRepository.save(address));
+        return suspiciousIPRepository.existsByIpAddress(address.getIpAddress()) ?
+                Optional.empty() :
+                Optional.of(suspiciousIPRepository.save(address));
     }
 
     @Transactional
     @Override
     public void removeIpAddress(String ipAddress) {
-        IP foundIpAddress = ipRepository.findByIpAddress(ipAddress)
+        IP foundIpAddress = suspiciousIPRepository.findByIpAddress(ipAddress)
                 .orElseThrow(() -> new IpNotFoundException(ipAddress));
-        ipRepository.deleteById(foundIpAddress.getId());
+        suspiciousIPRepository.deleteById(foundIpAddress.getId());
     }
 
     @Override
     public List<IP> showIpAddresses() {
-        return ipRepository.findAll();
+        return suspiciousIPRepository.findAll();
     }
 }
