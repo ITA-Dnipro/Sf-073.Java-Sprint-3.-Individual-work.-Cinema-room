@@ -104,15 +104,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void checkIfRoleExists(String role) {
-        boolean doesExist = Arrays.stream(UserRole.values())
-                .anyMatch(r -> r.name().equals(role));
-        if (!doesExist) {
-            throw new NonExistentRoleException();
-        }
-    }
-
-    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return new UserPrincipal(foundByUsername(username));
     }

@@ -3,17 +3,15 @@ package antifraud.domain.service.impl;
 import antifraud.config.TransactionProperty;
 import antifraud.domain.model.Transaction;
 import antifraud.domain.model.enums.TransactionResult;
-import antifraud.domain.model.enums.WorldRegion;
 import antifraud.domain.service.TransactionService;
-import antifraud.exceptions.NonExistentRegionException;
 import antifraud.persistence.repository.StolenCardRepository;
 import antifraud.persistence.repository.SuspiciousIPRepository;
 import antifraud.persistence.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +23,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final SuspiciousIPRepository suspiciousIPRepository;
     private final StolenCardRepository stolenCardRepository;
 
+    @Transactional
     @Override
     public Transaction processTransaction(Transaction transaction) {
         TransactionResult result = transactionResultByAmountMoney(transaction);
@@ -78,14 +77,5 @@ public class TransactionServiceImpl implements TransactionService {
                 .sorted()
                 .map(String::valueOf)
                 .collect(Collectors.joining(", "));
-    }
-
-    @Override
-    public void checkIfRegionExists(String region) {
-        boolean doesExist = Arrays.stream(WorldRegion.values())
-                .anyMatch(r -> r.name().equals(region));
-        if (!doesExist) {
-            throw new NonExistentRegionException();
-        }
     }
 }

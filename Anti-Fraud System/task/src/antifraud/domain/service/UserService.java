@@ -17,6 +17,4 @@ public interface UserService extends UserDetailsService {
     User changeUserRole(User userWithRole);
 
     User grantAccess(User userWithAccessLevel);
-
-    void checkIfRoleExists(String role);
 }

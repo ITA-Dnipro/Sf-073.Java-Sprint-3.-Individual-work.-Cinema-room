@@ -9,7 +9,6 @@ public class ExceptionConstants {
     public static final String USERNAME_NOT_FOUND = " - this user is not found!";
     public static final String IP_NOT_FOUND = " - this IP is not found!";
     public static final String CARD_NOT_FOUND = " - this card number is not found in the database!";
-    public static final String VALIDATION_FAIL = "Incorrect input, wrong format or missing field";
     public static final String ADMIN = "There is already existent admin!";
     public static final String SAME_ROLE = "This role has already been provided!";
     public static final String CANNOT_BE_BLOCKED = "This role cannot be blocked!";

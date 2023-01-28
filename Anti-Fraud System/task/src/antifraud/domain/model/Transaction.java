@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,6 +34,7 @@ public class Transaction {
     private String ipAddress;
     private String cardNumber;
     private TransactionResult transactionResult;
+    @Enumerated(EnumType.STRING)
     private WorldRegion worldRegion;
     private LocalDateTime localDateTime;
     private String transactionInfo;

@@ -7,6 +7,7 @@ import antifraud.persistence.repository.StolenCardRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class StolenCardServiceImpl implements StolenCardService {
     private final StolenCardRepository stolenCardRepository;
 
+    @Transactional
     @Override
     public Optional<Card> storeStolenCardNumber(Card stolenCard) {
         return stolenCardRepository.existsByNumber(stolenCard.getNumber()) ?
@@ -22,6 +24,7 @@ public class StolenCardServiceImpl implements StolenCardService {
                 Optional.of(stolenCardRepository.save(stolenCard));
     }
 
+    @Transactional
     @Override
     public void removeCardNumber(String number) {
         Card foundCard = stolenCardRepository.findByNumber(number)

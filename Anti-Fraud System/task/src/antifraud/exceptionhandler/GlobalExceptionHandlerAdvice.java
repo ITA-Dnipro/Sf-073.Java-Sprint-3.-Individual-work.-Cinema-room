@@ -12,18 +12,23 @@ import antifraud.exceptions.NonExistentRegionException;
 import antifraud.exceptions.NonExistentRoleException;
 import antifraud.rest.dto.CustomMessageDTO;
 import antifraud.rest.dto.ErrorDTO;
+import antifraud.rest.dto.ViolationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
@@ -35,6 +40,36 @@ public class GlobalExceptionHandlerAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorDTO(HttpStatus.UNAUTHORIZED.toString(), ExceptionConstants.FAILED_AUTH));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<List<ViolationDTO>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        log.error(ex.getMessage(), ex);
+        List<ViolationDTO> errors = new ArrayList<>();
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            errors.add(ViolationDTO.builder()
+                    .fieldName(fieldError.getField())
+                    .message(fieldError.getDefaultMessage())
+                    .build());
+        }
+        return ResponseEntity.badRequest()
+                .body(errors);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<List<ViolationDTO>> handleConstraintViolationException(ConstraintViolationException ex) {
+        log.error(ex.getMessage(), ex);
+        List<ViolationDTO> violations = new ArrayList<>();
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            violations.add(ViolationDTO.builder()
+                    .fieldName(violation.getPropertyPath().toString())
+                    .message(violation.getMessage())
+                    .build());
+        }
+        return ResponseEntity.badRequest()
+                .body(violations);
     }
 
     @ExceptionHandler(LockedException.class)
@@ -75,22 +110,6 @@ public class GlobalExceptionHandlerAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.status(409)
                 .body(new CustomMessageDTO(ExceptionConstants.SAME_ROLE));
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<CustomMessageDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.badRequest()
-                .body(new CustomMessageDTO(ExceptionConstants.VALIDATION_FAIL));
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<CustomMessageDTO> handleConstraintViolationException(ConstraintViolationException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.badRequest()
-                .body(new CustomMessageDTO(ex.getMessage()));
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
