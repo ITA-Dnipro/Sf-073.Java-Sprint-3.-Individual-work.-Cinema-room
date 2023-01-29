@@ -79,6 +79,13 @@ public class UserServiceImpl implements UserService {
         return customUserRepository.save((CustomUser) foundUser);
     }
 
+    /**
+     * Checks if the provided to be changed role is the same as the current role of the user.
+     * If it is, method throws an exception.
+     *
+     * @param providedRole the Role to be changed.
+     * @param currentRole  current user Role.
+     */
     private void roleCheckForCollision(User providedRole, User currentRole) {
         if (providedRole.getRole().equals(currentRole.getRole())) {
             throw new AlreadyProvidedException();
@@ -94,16 +101,27 @@ public class UserServiceImpl implements UserService {
         return customUserRepository.save((CustomUser) foundUser);
     }
 
-    @Override
-    public String retrieveRealUsername(String username) {
-        User foundUser = foundByUsername(username);
-        return foundUser.getUsername();
-    }
-
+    /**
+     * Checks if the role of the user's access to be changed is Administrator.
+     * If it is, the method throws exception, because Administrator access cannot be blocked
+     * or manipulated at all.
+     *
+     * @param currentRole of the user which lock/unlock access will be changed.
+     */
     private void roleCheckForAdmin(User currentRole) {
         if (UserRole.ADMINISTRATOR.equals(currentRole.getRole())) {
             throw new AccessViolationException();
         }
+    }
+
+    /**
+     * @param username URI template variable.
+     * @return real case-sensitive username based on the URI template variable.
+     */
+    @Override
+    public String retrieveRealUsername(String username) {
+        User foundUser = foundByUsername(username);
+        return foundUser.getUsername();
     }
 
     @Override

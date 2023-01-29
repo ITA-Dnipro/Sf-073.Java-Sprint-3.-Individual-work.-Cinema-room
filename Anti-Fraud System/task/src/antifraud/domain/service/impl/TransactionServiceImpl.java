@@ -28,9 +28,9 @@ public class TransactionServiceImpl implements TransactionService {
     public Transaction processTransaction(Transaction transaction) {
         TransactionResult result = transactionResultByAmountMoney(transaction);
         String infoFromResult = infoFromTransactionResult(result);
-        List<String> infoFromCards = infoFromCardAndIpBlacklists(transaction);
-        String info = calculatedInfo(infoFromResult, infoFromCards);
-        if (!infoFromCards.isEmpty()) {
+        List<String> infoFromBlacklists = infoFromCardAndIpBlacklists(transaction);
+        String info = gatheredInfo(infoFromResult, infoFromBlacklists);
+        if (!infoFromBlacklists.isEmpty()) {
             result = TransactionResult.PROHIBITED;
         }
         transaction.setTransactionResult(result);
@@ -67,12 +67,19 @@ public class TransactionServiceImpl implements TransactionService {
         return infoFromBlacklists;
     }
 
-    private String calculatedInfo(String infoFromResult, List<String> infoFromCards) {
-        if (!infoFromCards.isEmpty() && infoFromResult.equals("none")) {
+    /**
+     * @param infoFromResult     information based on the result (type) of the transaction,
+     *                           based on the deposit amount of money.
+     * @param infoFromBlacklists information based on the result from checking
+     *                           the Suspicious IP and Stolen Card blacklists.
+     * @return all the information gathered from the blacklists and the type of transaction.
+     */
+    private String gatheredInfo(String infoFromResult, List<String> infoFromBlacklists) {
+        if (!infoFromBlacklists.isEmpty() && infoFromResult.equals("none")) {
             infoFromResult = "";
         }
-        infoFromCards.add(infoFromResult);
-        return infoFromCards.stream()
+        infoFromBlacklists.add(infoFromResult);
+        return infoFromBlacklists.stream()
                 .filter(s -> s.length() != 0)
                 .sorted()
                 .map(String::valueOf)
