@@ -30,8 +30,8 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction processTransaction(Transaction transaction) {
         transactionRepository.save(transaction);
-        TransactionResult result = transactionResultByAmountMoney(transaction);
-        String infoFromResult = infoFromTransactionResult(result);
+        TransactionResult resultByAmountMoney = transactionResultByAmountMoney(transaction);
+        String infoFromResult = infoFromTransactionResult(resultByAmountMoney);
         List<Transaction> transactionsInLastHourOfTransactionHistory =
                 transactionRepository.findByCardNumberAndDateTimeBetween(transaction.getCardNumber(),
                         transaction.getDateTime().minusHours(1),
@@ -50,7 +50,10 @@ public class TransactionServiceImpl implements TransactionService {
                 resultBasedOnInfoNumbers(ipUniqueCount,
                         regionUniqueCount,
                         infoFromBlacklists.size(),
-                        result);
+                        resultByAmountMoney);
+        if (!resultBasedOnInfo.equals(resultByAmountMoney)) {
+            infoFromResult = "";
+        }
         transaction.setTransactionResult(resultBasedOnInfo);
         String allInfo = gatheredInfo(infoFromResult, infoFromBlacklists, infoFromCorrelation);
         transaction.setTransactionInfo(allInfo);
