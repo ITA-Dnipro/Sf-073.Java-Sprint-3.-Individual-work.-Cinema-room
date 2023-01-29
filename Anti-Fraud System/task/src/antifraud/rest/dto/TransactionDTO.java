@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Builder;
 import org.hibernate.validator.constraints.CreditCardNumber;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -34,6 +35,7 @@ public record TransactionDTO(@Min(1)
                              @AvailableRegion
                              @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
                              String region,
+                             @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
                              @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
                              LocalDateTime date,
                              @JsonProperty(value = "result", access = JsonProperty.Access.READ_ONLY)
@@ -55,5 +57,4 @@ public record TransactionDTO(@Min(1)
                 WorldRegion.valueOf(region),
                 date);
     }
-
 }

@@ -14,13 +14,16 @@ import javax.validation.constraints.Positive;
 public record TransactionProperty(@Positive
                                   int allowed,
                                   @Positive
-                                  int manualProcessing) {
+                                  int manualProcessing,
+                                  @Positive
+                                  int correlation) {
 
     @Bean
     CommandLineRunner runner(TransactionProperty transactionProperty) {
         return args -> {
             log.info("ALLOWED value is {}", transactionProperty.allowed());
             log.info("MANUAL_PROCESSING value is {}", transactionProperty.manualProcessing());
+            log.info("correlation value based on unique regions is {}", transactionProperty.correlation());
         };
     }
 }

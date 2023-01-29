@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 @Getter
@@ -19,7 +20,9 @@ import javax.persistence.Table;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PACKAGE)
 @Entity
-@Table(name = "ips")
+@Table(name = "ips", indexes = {
+        @Index(name = "ip_idx", columnList = "ipAddress")
+})
 public class IP {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -15,16 +15,19 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder(access = AccessLevel.PACKAGE)
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-@Table(name = "transactions")
+@Table(name = "transactions", indexes = {
+        @Index(name = "card_date_idx", columnList = "cardNumber, dateTime"),
+})
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +39,6 @@ public class Transaction {
     private TransactionResult transactionResult;
     @Enumerated(EnumType.STRING)
     private WorldRegion worldRegion;
-    private LocalDateTime localDateTime;
+    private LocalDateTime dateTime;
     private String transactionInfo;
 }

@@ -15,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 @Getter
@@ -23,7 +24,9 @@ import javax.persistence.Table;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PACKAGE)
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+        @Index(name = "username_idx", columnList = "username")
+})
 public class CustomUser implements User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
