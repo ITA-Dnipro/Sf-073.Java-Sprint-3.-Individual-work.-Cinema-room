@@ -1,6 +1,5 @@
 package antifraud.domain.model;
 
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,13 +7,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@AllArgsConstructor
 public class UserPrincipal implements UserDetails {
-    private transient User user;
+    private final transient User user;
+    private final List<GrantedAuthority> roles;
+
+    public UserPrincipal(User user) {
+        this.user = user;
+        this.roles = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        return roles;
     }
 
     @Override

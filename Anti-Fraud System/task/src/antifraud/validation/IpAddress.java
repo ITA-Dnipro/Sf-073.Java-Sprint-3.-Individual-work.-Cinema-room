@@ -10,13 +10,16 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * Checks the annotated element if it's a valid ip address.
+ */
 @Target({ FIELD, PARAMETER })
 @Retention(RUNTIME)
 @Constraint(validatedBy = IpAddressValidator.class)
 @Documented
 public @interface IpAddress {
 
-    String message() default "{IpAddress.invalid}";
+    String message() default "{antifraud.validation.IpAddress.invalid}";
 
     Class<?>[] groups() default { };
 

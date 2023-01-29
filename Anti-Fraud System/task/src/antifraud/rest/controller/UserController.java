@@ -57,7 +57,6 @@ public class UserController {
 
     @PutMapping("/role")
     UserDTO changeUserRole(@Valid @RequestBody UserRoleDTO userRoleDTO) {
-        UserRoleDTO.checkIfRoleExists(userRoleDTO.role());
         User changedUserRole = userService.changeUserRole(userRoleDTO.toModel());
         return UserDTO.fromModel(changedUserRole);
     }

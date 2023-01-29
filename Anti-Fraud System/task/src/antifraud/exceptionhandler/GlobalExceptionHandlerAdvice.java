@@ -8,14 +8,13 @@ import antifraud.exceptions.ExistingCardException;
 import antifraud.exceptions.ExistingIpException;
 import antifraud.exceptions.ExistingUsernameException;
 import antifraud.exceptions.IpNotFoundException;
-import antifraud.exceptions.NonExistentRegionException;
-import antifraud.exceptions.NonExistentRoleException;
 import antifraud.rest.dto.CustomMessageDTO;
 import antifraud.rest.dto.ErrorDTO;
 import antifraud.rest.dto.ViolationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -70,6 +69,14 @@ public class GlobalExceptionHandlerAdvice {
         }
         return ResponseEntity.badRequest()
                 .body(violations);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<CustomMessageDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.badRequest()
+                .body(new CustomMessageDTO(ExceptionConstants.JSON_PARSE_ERROR));
     }
 
     @ExceptionHandler(LockedException.class)
@@ -150,22 +157,6 @@ public class GlobalExceptionHandlerAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(new CustomMessageDTO(ExceptionConstants.CANNOT_BE_BLOCKED));
-    }
-
-    @ExceptionHandler(NonExistentRoleException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<CustomMessageDTO> handleNonExistentRoleException(NonExistentRoleException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.badRequest()
-                .body(new CustomMessageDTO(ExceptionConstants.ROLE_NON_EXIST));
-    }
-
-    @ExceptionHandler(NonExistentRegionException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<CustomMessageDTO> handleNonExistentRegionException(NonExistentRegionException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.badRequest()
-                .body(new CustomMessageDTO(ExceptionConstants.REGION_NON_EXIST));
     }
 
     @ExceptionHandler(Exception.class)

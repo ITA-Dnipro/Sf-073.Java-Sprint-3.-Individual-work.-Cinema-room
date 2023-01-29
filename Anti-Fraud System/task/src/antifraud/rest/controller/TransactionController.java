@@ -19,7 +19,6 @@ public class TransactionController {
 
     @PostMapping("/transaction")
     public TransactionDTO makeTransaction(@Valid @RequestBody TransactionDTO transactionDTO) {
-        TransactionDTO.checkIfRegionExists(transactionDTO.region());
         Transaction deposit = transactionService.processTransaction(transactionDTO.toModel());
         return TransactionDTO.fromModel(deposit);
     }

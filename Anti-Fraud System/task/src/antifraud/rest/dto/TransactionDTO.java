@@ -4,7 +4,7 @@ import antifraud.domain.model.Transaction;
 import antifraud.domain.model.TransactionFactory;
 import antifraud.domain.model.enums.TransactionResult;
 import antifraud.domain.model.enums.WorldRegion;
-import antifraud.exceptions.NonExistentRegionException;
+import antifraud.validation.AvailableRegion;
 import antifraud.validation.IpAddress;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -15,7 +15,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @JsonPropertyOrder({"amountMoney", "ipAddress", "cardNumber", "region", "date"})
 @Builder
@@ -32,6 +31,7 @@ public record TransactionDTO(@Min(1)
                              @JsonProperty(value = "number", access = JsonProperty.Access.WRITE_ONLY)
                              String cardNumber,
                              @NotEmpty
+                             @AvailableRegion
                              @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
                              String region,
                              @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -56,11 +56,4 @@ public record TransactionDTO(@Min(1)
                 date);
     }
 
-    public static void checkIfRegionExists(String region) {
-        boolean doesExist = Arrays.stream(WorldRegion.values())
-                .anyMatch(r -> r.name().equals(region));
-        if (!doesExist) {
-            throw new NonExistentRegionException();
-        }
-    }
 }
