@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString
 @Table(name = "transactions", indexes = {
         @Index(name = "card_date_idx", columnList = "cardNumber, dateTime"),
 })
@@ -36,6 +38,7 @@ public class Transaction {
     private Long money;
     private String ipAddress;
     private String cardNumber;
+    @Enumerated(EnumType.STRING)
     private TransactionResult transactionResult;
     @Enumerated(EnumType.STRING)
     private WorldRegion worldRegion;

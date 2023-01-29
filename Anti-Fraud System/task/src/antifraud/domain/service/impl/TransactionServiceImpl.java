@@ -8,13 +8,16 @@ import antifraud.persistence.repository.StolenCardRepository;
 import antifraud.persistence.repository.SuspiciousIPRepository;
 import antifraud.persistence.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -29,10 +32,28 @@ public class TransactionServiceImpl implements TransactionService {
         transactionRepository.save(transaction);
         TransactionResult result = transactionResultByAmountMoney(transaction);
         String infoFromResult = infoFromTransactionResult(result);
-        List<String> infoFromCorrelation = infoFromTransactionCorrelation(transaction);
+        List<Transaction> transactionsInLastHourOfTransactionHistory =
+                transactionRepository.findByCardNumberAndDateTimeBetween(transaction.getCardNumber(),
+                        transaction.getDateTime().minusHours(1),
+                        transaction.getDateTime());
+        long ipUniqueCount =
+                correlationCount(transactionsInLastHourOfTransactionHistory,
+                        Transaction::getIpAddress);
+        long regionUniqueCount =
+                correlationCount(transactionsInLastHourOfTransactionHistory,
+                        r -> r.getWorldRegion().name());
+        List<String> infoFromCorrelation =
+                infoFromTransactionCorrelationCount(ipUniqueCount, regionUniqueCount);
         List<String> infoFromBlacklists = infoFromCardAndIpBlacklists(transaction);
-        String info = gatheredInfo(infoFromResult, infoFromBlacklists, infoFromCorrelation);
-        transaction.setTransactionInfo(info);
+
+        TransactionResult resultBasedOnInfo =
+                resultBasedOnInfoNumbers(ipUniqueCount,
+                        regionUniqueCount,
+                        infoFromBlacklists.size(),
+                        result);
+        transaction.setTransactionResult(resultBasedOnInfo);
+        String allInfo = gatheredInfo(infoFromResult, infoFromBlacklists, infoFromCorrelation);
+        transaction.setTransactionInfo(allInfo);
         return transactionRepository.save(transaction);
     }
 
@@ -52,26 +73,22 @@ public class TransactionServiceImpl implements TransactionService {
                 "none" : "amount";
     }
 
-    private List<String> infoFromTransactionCorrelation(Transaction transaction) {
+    private long correlationCount(List<Transaction> transactions,
+                                  Function<Transaction, String> modelField) {
+        return transactions.stream()
+                .map(modelField)
+                .distinct()
+                .count();
+    }
+
+    private List<String> infoFromTransactionCorrelationCount(Long ipUniqueCount, Long regionUniqueCount) {
         List<String> infoFromCorrelation = new ArrayList<>();
-        List<Transaction> transactionsInLastHourOfTransactionHistory = transactionRepository.findByCardNumberAndDateTimeBetween(transaction.getCardNumber(),
-                transaction.getDateTime().minusHours(1),
-                transaction.getDateTime());
-        long ipUniqueCount = transactionsInLastHourOfTransactionHistory.stream()
-                .map(Transaction::getIpAddress)
-                .distinct()
-                .count();
-        long regionUniqueCount = transactionsInLastHourOfTransactionHistory.stream()
-                .map(Transaction::getWorldRegion)
-                .distinct()
-                .count();
         if (ipUniqueCount >= transactionProperty.correlation()) {
             infoFromCorrelation.add("ip-correlation");
         }
         if (regionUniqueCount >= transactionProperty.correlation()) {
             infoFromCorrelation.add("region-correlation");
         }
-        changeResultBasedOnCorrelationInfo(ipUniqueCount, regionUniqueCount, transaction);
         return infoFromCorrelation;
     }
 
@@ -85,8 +102,25 @@ public class TransactionServiceImpl implements TransactionService {
         if (cardBlacklisted) {
             infoFromBlacklists.add("card-number");
         }
-        changeResultBasedOnBlacklistInfo(infoFromBlacklists.size(), transaction);
         return infoFromBlacklists;
+    }
+
+    private TransactionResult resultBasedOnInfoNumbers(long ipUniqueCount,
+                                                       long regionUniqueCount,
+                                                       int blacklistSize,
+                                                       TransactionResult result) {
+        if (ipUniqueCount == transactionProperty.correlation() ||
+                regionUniqueCount == transactionProperty.correlation()) {
+            result = TransactionResult.MANUAL_PROCESSING;
+        }
+        if (ipUniqueCount > transactionProperty.correlation() ||
+                regionUniqueCount > transactionProperty.correlation()) {
+            result = TransactionResult.PROHIBITED;
+        }
+        if (blacklistSize > 0) {
+            result = TransactionResult.PROHIBITED;
+        }
+        return result;
     }
 
     /**
@@ -111,24 +145,5 @@ public class TransactionServiceImpl implements TransactionService {
                 .sorted()
                 .map(String::valueOf)
                 .collect(Collectors.joining(", "));
-    }
-
-    private void changeResultBasedOnCorrelationInfo(long ipUniqueCount,
-                                                    long regionUniqueCount,
-                                                    Transaction transaction) {
-        if (ipUniqueCount == transactionProperty.correlation() ||
-                regionUniqueCount == transactionProperty.correlation()) {
-            transaction.setTransactionResult(TransactionResult.MANUAL_PROCESSING);
-        }
-        if (ipUniqueCount > transactionProperty.correlation() ||
-                regionUniqueCount > transactionProperty.correlation()) {
-            transaction.setTransactionResult(TransactionResult.PROHIBITED);
-        }
-    }
-
-    private void changeResultBasedOnBlacklistInfo(int blacklistSize, Transaction transaction) {
-        if (blacklistSize > 0) {
-            transaction.setTransactionResult(TransactionResult.PROHIBITED);
-        }
     }
 }

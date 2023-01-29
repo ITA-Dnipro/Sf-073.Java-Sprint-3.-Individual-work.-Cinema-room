@@ -50,7 +50,6 @@ public record TransactionDTO(@Min(1)
     }
 
     public Transaction toModel() {
-
         return TransactionFactory.create(amountMoney,
                 ipAddress,
                 cardNumber,

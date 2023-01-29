@@ -12,7 +12,6 @@ public class ExceptionConstants {
     public static final String ADMIN = "There is already existent admin!";
     public static final String SAME_ROLE = "This role has already been provided!";
     public static final String CANNOT_BE_BLOCKED = "This role cannot be manipulated!";
-    public static final String JSON_PARSE_ERROR = "Cannot deserialize role/access/region value because isn't available in the current Enum class.";
 
     private ExceptionConstants() {
     }

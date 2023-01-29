@@ -23,7 +23,7 @@ public record TransactionProperty(@Positive
         return args -> {
             log.info("ALLOWED value is {}", transactionProperty.allowed());
             log.info("MANUAL_PROCESSING value is {}", transactionProperty.manualProcessing());
-            log.info("correlation value based on unique regions is {}", transactionProperty.correlation());
+            log.info("Correlation value based on unique regions is {}", transactionProperty.correlation());
         };
     }
 }

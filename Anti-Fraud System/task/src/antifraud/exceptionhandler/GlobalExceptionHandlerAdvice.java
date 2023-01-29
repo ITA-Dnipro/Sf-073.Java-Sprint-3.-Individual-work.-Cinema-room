@@ -76,7 +76,7 @@ public class GlobalExceptionHandlerAdvice {
     public ResponseEntity<CustomMessageDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
-                .body(new CustomMessageDTO(ExceptionConstants.JSON_PARSE_ERROR));
+                .body(new CustomMessageDTO(ex.getMostSpecificCause().toString()));
     }
 
     @ExceptionHandler(LockedException.class)

@@ -19,7 +19,7 @@ public class TransactionFactory {
                 .ipAddress(ipAddress)
                 .cardNumber(cardNumber)
                 .worldRegion(region)
-                .localDateTime(date)
+                .dateTime(date)
                 .build();
     }
 }
