@@ -8,6 +8,7 @@ import antifraud.rest.dto.CustomMessageDTO;
 import antifraud.rest.dto.IpDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @Validated
+@PreAuthorize("hasRole('SUPPORT')")
 @RequestMapping("/api/antifraud/suspicious-ip")
 public class IPController {
     private final SuspiciousIPService suspiciousIPService;

@@ -6,12 +6,12 @@ import antifraud.validation.IpAddress;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 @Builder
 public record IpDTO(@JsonProperty(access = JsonProperty.Access.READ_ONLY)
                     Long id,
-                    @NotEmpty
+                    @NotBlank
                     @IpAddress
                     String ip) {
 

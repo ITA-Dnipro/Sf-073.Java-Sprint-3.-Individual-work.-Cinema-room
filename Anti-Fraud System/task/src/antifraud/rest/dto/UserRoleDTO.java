@@ -7,10 +7,9 @@ import antifraud.validation.AvailableRole;
 import lombok.Builder;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 @Builder
-public record UserRoleDTO(@NotEmpty
+public record UserRoleDTO(@NotBlank
                           String username,
                           @NotBlank
                           @AvailableRole

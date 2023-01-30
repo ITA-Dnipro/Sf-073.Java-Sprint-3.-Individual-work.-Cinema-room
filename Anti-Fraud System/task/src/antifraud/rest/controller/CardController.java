@@ -8,6 +8,7 @@ import antifraud.rest.dto.CustomMessageDTO;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @Validated
+@PreAuthorize("hasRole('SUPPORT')")
 @RequestMapping("/api/antifraud/stolencard")
 public class CardController {
     private final StolenCardService stolenCardService;

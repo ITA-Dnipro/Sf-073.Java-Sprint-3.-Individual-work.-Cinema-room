@@ -6,12 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 @Builder
 public record CardDTO(@JsonProperty(access = JsonProperty.Access.READ_ONLY)
                       Long id,
-                      @NotEmpty
+                      @NotBlank
                       @CreditCardNumber
                       String number) {
     public static CardDTO fromModel(Card storedCard) {

@@ -12,6 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Checks the input value if it's available as WorldRegion Enum.
+ * Accepts String.
  */
 @Target({ FIELD, PARAMETER })
 @Retention(RUNTIME)

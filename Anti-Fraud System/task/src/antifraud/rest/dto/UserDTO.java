@@ -7,16 +7,16 @@ import antifraud.domain.model.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 @Builder
 public record UserDTO(@JsonProperty(access = JsonProperty.Access.READ_ONLY)
                       Long id,
-                      @NotEmpty
+                      @NotBlank
                       String name,
-                      @NotEmpty
+                      @NotBlank
                       String username,
-                      @NotEmpty
+                      @NotBlank
                       @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
                       String password,
                       @JsonProperty(access = JsonProperty.Access.READ_ONLY)

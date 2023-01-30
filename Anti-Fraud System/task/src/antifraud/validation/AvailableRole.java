@@ -13,6 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Checks the input value if it's available as UserRole Enum.
+ * Accepts String.
  */
 @Target({ FIELD, PARAMETER })
 @Retention(RUNTIME)

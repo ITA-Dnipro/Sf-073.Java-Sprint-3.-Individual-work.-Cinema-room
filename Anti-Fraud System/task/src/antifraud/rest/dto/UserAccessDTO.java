@@ -6,11 +6,11 @@ import antifraud.domain.model.enums.UserAccess;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Builder
-public record UserAccessDTO(@NotEmpty
+public record UserAccessDTO(@NotBlank
                             @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
                             String username,
                             @NotNull

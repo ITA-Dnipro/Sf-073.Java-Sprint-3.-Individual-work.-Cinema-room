@@ -9,6 +9,7 @@ import antifraud.rest.dto.UserDTO;
 import antifraud.rest.dto.UserRoleDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ public class UserController {
         return UserDTO.fromModel(registeredUser);
     }
 
+    @PreAuthorize("hasAnyRole('SUPPORT', 'ADMINISTRATOR')")
     @GetMapping("/list")
     public List<UserDTO> getUsers() {
         List<User> allUsers = userService.getUsers();
@@ -44,6 +46,7 @@ public class UserController {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @DeleteMapping("/user/{username}")
     public DeletedUserDTO deleteUser(@PathVariable String username) {
         String realUsername = userService.retrieveRealUsername(username);
@@ -55,12 +58,15 @@ public class UserController {
                 .build();
     }
 
+
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @PutMapping("/role")
     UserDTO changeUserRole(@Valid @RequestBody UserRoleDTO userRoleDTO) {
         User changedUserRole = userService.changeUserRole(userRoleDTO.toModel());
         return UserDTO.fromModel(changedUserRole);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @PutMapping("/access")
     UserAccessDTO grantAccess(@Valid @RequestBody UserAccessDTO userAccessDTO) {
         User userPermission = userService.grantAccess(userAccessDTO.toModel());

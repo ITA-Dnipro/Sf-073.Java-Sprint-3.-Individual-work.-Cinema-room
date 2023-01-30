@@ -13,25 +13,24 @@ import org.hibernate.validator.constraints.CreditCardNumber;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @JsonPropertyOrder({"amountMoney", "ipAddress", "cardNumber", "region", "date"})
 @Builder
 public record TransactionDTO(@Min(1)
-                             @NotNull
+                             @NotBlank
                              @JsonProperty(value = "amount", access = JsonProperty.Access.WRITE_ONLY)
                              Long amountMoney,
-                             @NotEmpty
+                             @NotBlank
                              @IpAddress
                              @JsonProperty(value = "ip", access = JsonProperty.Access.WRITE_ONLY)
                              String ipAddress,
-                             @NotEmpty
+                             @NotBlank
                              @CreditCardNumber
                              @JsonProperty(value = "number", access = JsonProperty.Access.WRITE_ONLY)
                              String cardNumber,
-                             @NotEmpty
+                             @NotBlank
                              @AvailableRegion
                              @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
                              String region,
