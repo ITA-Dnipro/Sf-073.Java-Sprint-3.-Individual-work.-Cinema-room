@@ -1,4 +1,4 @@
-package antifraud.security;
+package antifraud.config.security;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.AuthenticationException;

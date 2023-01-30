@@ -1,6 +1,6 @@
 package antifraud.domain.service.impl;
 
-import antifraud.config.TransactionProperty;
+import antifraud.config.transaction.TransactionProperty;
 import antifraud.domain.model.Transaction;
 import antifraud.domain.model.enums.TransactionResult;
 import antifraud.domain.service.TransactionService;
@@ -31,7 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
     public Transaction processTransaction(Transaction transaction) {
         transactionRepository.save(transaction);
         TransactionResult resultByAmountMoney = transactionResultByAmountMoney(transaction);
-        String infoFromResult = infoFromTransactionResult(resultByAmountMoney);
+        String infoFromInitialResult = infoFromInitialTransactionResult(resultByAmountMoney);
         List<Transaction> transactionsInLastHourOfTransactionHistory =
                 transactionRepository.findByCardNumberAndDateTimeBetween(transaction.getCardNumber(),
                         transaction.getDateTime().minusHours(1),
@@ -52,10 +52,10 @@ public class TransactionServiceImpl implements TransactionService {
                         infoFromBlacklists.size(),
                         resultByAmountMoney);
         if (!resultBasedOnInfo.equals(resultByAmountMoney)) {
-            infoFromResult = "";
+            infoFromInitialResult = "";
         }
         transaction.setTransactionResult(resultBasedOnInfo);
-        String allInfo = gatheredInfo(infoFromResult, infoFromBlacklists, infoFromCorrelation);
+        String allInfo = gatheredInfo(infoFromInitialResult, infoFromBlacklists, infoFromCorrelation);
         transaction.setTransactionInfo(allInfo);
         return transactionRepository.save(transaction);
     }
@@ -71,15 +71,15 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    private String infoFromTransactionResult(TransactionResult transactionResult) {
+    private String infoFromInitialTransactionResult(TransactionResult transactionResult) {
         return TransactionResult.ALLOWED.equals(transactionResult) ?
                 "none" : "amount";
     }
 
     private long correlationCount(List<Transaction> transactions,
-                                  Function<Transaction, String> modelField) {
+                                  Function<Transaction, String> transactionField) {
         return transactions.stream()
-                .map(modelField)
+                .map(transactionField)
                 .distinct()
                 .count();
     }
@@ -108,12 +108,23 @@ public class TransactionServiceImpl implements TransactionService {
         return infoFromBlacklists;
     }
 
+    /**
+     * @param ipUniqueCount     number of unique IPs from transactions happened in the last hour
+     *                          in the transaction history.
+     * @param regionUniqueCount number of unique regions from transactions happened in the last hour
+     *                          in the transaction history.
+     * @param blacklistSize     sum of Suspicious IP and Stolen Card blacklists' size.
+     * @param result            initial transaction's result based on the deposit money.
+     * @return transaction result based on the information numbers. if nothing is changed based on numbers,
+     * method returns initial transaction result.
+     */
     private TransactionResult resultBasedOnInfoNumbers(long ipUniqueCount,
                                                        long regionUniqueCount,
                                                        int blacklistSize,
                                                        TransactionResult result) {
-        if (ipUniqueCount == transactionProperty.correlation() ||
-                regionUniqueCount == transactionProperty.correlation()) {
+        if ((ipUniqueCount == transactionProperty.correlation() ||
+                regionUniqueCount == transactionProperty.correlation()) &&
+                !TransactionResult.PROHIBITED.equals(result)) {
             result = TransactionResult.MANUAL_PROCESSING;
         }
         if (ipUniqueCount > transactionProperty.correlation() ||

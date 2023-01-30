@@ -11,6 +11,7 @@ import antifraud.exceptions.IpNotFoundException;
 import antifraud.rest.dto.CustomMessageDTO;
 import antifraud.rest.dto.ErrorDTO;
 import antifraud.rest.dto.ViolationDTO;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.UnexpectedTypeException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +78,23 @@ public class GlobalExceptionHandlerAdvice {
     public ResponseEntity<CustomMessageDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
-                .body(new CustomMessageDTO(ex.getMostSpecificCause().toString()));
+                .body(new CustomMessageDTO(ex.getMostSpecificCause().getMessage()));
+    }
+
+    @ExceptionHandler(UnexpectedTypeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<CustomMessageDTO> handleUnexpectedTypeException(UnexpectedTypeException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.badRequest()
+                .body(new CustomMessageDTO(ex.getLocalizedMessage()));
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<CustomMessageDTO> handleInvalidFormatException(InvalidFormatException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.badRequest()
+                .body(new CustomMessageDTO(ex.getMessage()));
     }
 
     @ExceptionHandler(LockedException.class)

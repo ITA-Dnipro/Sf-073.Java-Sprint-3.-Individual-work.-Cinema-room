@@ -6,12 +6,13 @@ import antifraud.domain.model.enums.UserRole;
 import antifraud.validation.AvailableRole;
 import lombok.Builder;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 @Builder
 public record UserRoleDTO(@NotEmpty
                           String username,
-                          @NotEmpty
+                          @NotBlank
                           @AvailableRole
                           String role) {
 

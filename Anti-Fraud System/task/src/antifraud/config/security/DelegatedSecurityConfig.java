@@ -1,4 +1,4 @@
-package antifraud.security;
+package antifraud.config.security;
 
 import antifraud.domain.model.enums.UserRole;
 import org.springframework.beans.factory.annotation.Qualifier;
