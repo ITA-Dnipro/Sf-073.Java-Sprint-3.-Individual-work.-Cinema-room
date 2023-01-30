@@ -1,9 +1,13 @@
 package com.example.antifraud.controller;
 
-import com.example.antifraud.model.DeleteUserResponse;
-import com.example.antifraud.model.UserEntity;
+import com.example.antifraud.model.dto.DeleteUserResponse;
+import com.example.antifraud.model.entities.UserEntity;
 
-import com.example.antifraud.model.UserResponse;
+import com.example.antifraud.model.dto.UserResponse;
+
+import com.example.antifraud.model.dto.LockStatusRequest;
+import com.example.antifraud.model.dto.LockStatusResponse;
+import com.example.antifraud.model.dto.RoleRequest;
 import com.example.antifraud.service.UserService;
 import lombok.AllArgsConstructor;
 
@@ -45,5 +49,21 @@ public class UserController {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PutMapping("/role")
+    public UserResponse updateUserRole(@Valid @RequestBody RoleRequest request) {
+        return userService.update(
+                request.getRole(),
+                request.getUsername()
+        );
+    }
+
+    @PutMapping("/access")
+    public LockStatusResponse updateLock(@Valid @RequestBody LockStatusRequest request) {
+        userService.changeLock(request.getUsername(), request.getOperation());
+
+        String res = "User " + request.getUsername() + " " + request.getOperation().name().toLowerCase() + "ed!";
+        return new LockStatusResponse(res);
     }
 }

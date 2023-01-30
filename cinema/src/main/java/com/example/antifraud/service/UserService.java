@@ -1,7 +1,10 @@
 package com.example.antifraud.service;
 
-import com.example.antifraud.model.UserEntity;
-import com.example.antifraud.model.UserResponse;
+
+import com.example.antifraud.model.entities.UserEntity;
+import com.example.antifraud.model.dto.UserResponse;
+import com.example.antifraud.model.enums.LockStatus;
+import com.example.antifraud.model.enums.Role;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
@@ -14,4 +17,9 @@ public interface UserService extends UserDetailsService {
     List<UserResponse> getListOfUsers();
 
     boolean delete(String username);
+
+
+    void changeLock(String username, LockStatus operation);
+
+    UserResponse update(Role role, String username);
 }

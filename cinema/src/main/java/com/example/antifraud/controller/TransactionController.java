@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.antifraud.model.Transaction;
-import com.example.antifraud.model.TransactionResponse;
+import com.example.antifraud.model.dto.Transaction;
+import com.example.antifraud.model.dto.TransactionResponse;
 
 import javax.validation.Valid;
 

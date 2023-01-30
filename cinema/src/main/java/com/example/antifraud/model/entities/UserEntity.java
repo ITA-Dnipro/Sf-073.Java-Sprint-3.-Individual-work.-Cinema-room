@@ -1,12 +1,13 @@
-package com.example.antifraud.model;
+package com.example.antifraud.model.entities;
 
 
+import com.example.antifraud.model.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -17,7 +18,8 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name = "t_user")
+@Table(name = "a_user")
+@NoArgsConstructor
 public class UserEntity implements UserDetails {
     @JsonIgnore
     @Id
@@ -33,10 +35,24 @@ public class UserEntity implements UserDetails {
     @JsonProperty(access =  JsonProperty.Access.WRITE_ONLY)
     String password;
 
+    @Enumerated(EnumType.STRING)
+    Role role;
+
+    @JsonIgnore
+    boolean locked;
+
+    public UserEntity(String name, String username, String password, Role role, boolean locked) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.locked = locked;
+    }
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(role);
     }
     @JsonIgnore
     @Override
@@ -46,7 +62,7 @@ public class UserEntity implements UserDetails {
     @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !locked;
     }
     @JsonIgnore
     @Override

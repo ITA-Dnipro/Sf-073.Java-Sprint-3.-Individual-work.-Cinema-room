@@ -1,4 +1,4 @@
-package com.example.antifraud.model;
+package com.example.antifraud.model.dto;
 
 import lombok.*;
 
