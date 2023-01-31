@@ -40,9 +40,7 @@ public class Transaction {
     private Long id;
     private Long money;
     private String ipAddress;
-    @ManyToOne
-    @JoinColumn(name = "card_number_id")
-    private Card cardNumber;
+    private String cardNumber;
     @Enumerated(EnumType.STRING)
     private TransactionResult transactionResult;
     @Enumerated(EnumType.STRING)
