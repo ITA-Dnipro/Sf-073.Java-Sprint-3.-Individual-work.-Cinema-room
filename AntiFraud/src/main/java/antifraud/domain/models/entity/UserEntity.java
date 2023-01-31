@@ -27,6 +27,13 @@ public class UserEntity {
     @Column(name="u_is_active")
     private boolean isActive;
     @Column(name="u_roles")
-    private String roles;
+    private String role;
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 }
