@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     public Optional<User> registerUser(User userCredentials) {
         userCredentials.setPassword(encoder.encode(userCredentials.getPassword()));
         authorize(userCredentials);
-        return customUserRepository.existsCustomUserByUsername(userCredentials.getUsername()) ?
+        return customUserRepository.existsByUsername(userCredentials.getUsername()) ?
                 Optional.empty() :
                 Optional.of(customUserRepository.save((CustomUser) userCredentials));
     }

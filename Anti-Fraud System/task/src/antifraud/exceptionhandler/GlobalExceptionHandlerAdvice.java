@@ -5,9 +5,12 @@ import antifraud.exceptions.AlreadyProvidedException;
 import antifraud.exceptions.CardNotFoundException;
 import antifraud.exceptions.ExistingAdministratorException;
 import antifraud.exceptions.ExistingCardException;
+import antifraud.exceptions.ExistingFeedbackException;
 import antifraud.exceptions.ExistingIpException;
 import antifraud.exceptions.ExistingUsernameException;
 import antifraud.exceptions.IpNotFoundException;
+import antifraud.exceptions.SameResulException;
+import antifraud.exceptions.TransactionsNotFoundException;
 import antifraud.rest.dto.CustomMessageDTO;
 import antifraud.rest.dto.ErrorDTO;
 import antifraud.rest.dto.ViolationDTO;
@@ -129,6 +132,14 @@ public class GlobalExceptionHandlerAdvice {
                 .body(new CustomMessageDTO(ExceptionConstants.EXISTING_CARD));
     }
 
+    @ExceptionHandler(ExistingFeedbackException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<CustomMessageDTO> handleExistingFeedbackException(ExistingFeedbackException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(409)
+                .body(new CustomMessageDTO(ExceptionConstants.EXISTING_FEEDBACK));
+    }
+
     @ExceptionHandler(AlreadyProvidedException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<CustomMessageDTO> handleAlreadyProvidedException(AlreadyProvidedException ex) {
@@ -161,6 +172,14 @@ public class GlobalExceptionHandlerAdvice {
                 .body(new CustomMessageDTO(ex.getMessage() + ExceptionConstants.CARD_NOT_FOUND));
     }
 
+    @ExceptionHandler(TransactionsNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<CustomMessageDTO> handleTransactionsNotFoundException(TransactionsNotFoundException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(404)
+                .body(new CustomMessageDTO(ExceptionConstants.TRANSACTIONS_NOT_FOUND));
+    }
+
     @ExceptionHandler(ExistingAdministratorException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<CustomMessageDTO> handleExistingAdministratorException(ExistingAdministratorException ex) {
@@ -175,6 +194,14 @@ public class GlobalExceptionHandlerAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(new CustomMessageDTO(ExceptionConstants.CANNOT_BE_BLOCKED));
+    }
+
+    @ExceptionHandler(SameResulException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ResponseEntity<CustomMessageDTO> handleSameResulException(SameResulException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(422)
+                .body(new CustomMessageDTO(ExceptionConstants.FEEDBACK_COLLISION));
     }
 
     @ExceptionHandler(Exception.class)

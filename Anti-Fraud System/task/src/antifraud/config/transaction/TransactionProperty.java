@@ -16,14 +16,20 @@ public record TransactionProperty(@Positive
                                   @Positive
                                   int manualProcessing,
                                   @Positive
-                                  int correlation) {
+                                  int correlation,
+                                  @Positive
+                                  double currentLimitFactor,
+                                  @Positive
+                                  double currentDepositFactor) {
 
     @Bean
     CommandLineRunner runner(TransactionProperty transactionProperty) {
         return args -> {
-            log.info("ALLOWED value is {}", transactionProperty.allowed());
-            log.info("MANUAL_PROCESSING value is {}", transactionProperty.manualProcessing());
-            log.info("Correlation value based on unique regions is {}", transactionProperty.correlation());
+            log.info("ALLOWED value limit is {}", transactionProperty.allowed());
+            log.info("MANUAL_PROCESSING value limit is {}", transactionProperty.manualProcessing());
+            log.info("Correlation value based on unique IPs or regions is {}", transactionProperty.correlation());
+            log.info("Coefficient for current transaction limit is {}", transactionProperty.currentLimitFactor());
+            log.info("Coefficient for deposit is {}", transactionProperty.currentDepositFactor());
         };
     }
 }

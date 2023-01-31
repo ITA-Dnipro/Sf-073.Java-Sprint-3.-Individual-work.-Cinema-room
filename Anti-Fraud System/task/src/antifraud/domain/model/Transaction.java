@@ -44,4 +44,6 @@ public class Transaction {
     private WorldRegion worldRegion;
     private LocalDateTime dateTime;
     private String transactionInfo;
+    @Enumerated(EnumType.STRING)
+    private TransactionResult feedback;
 }

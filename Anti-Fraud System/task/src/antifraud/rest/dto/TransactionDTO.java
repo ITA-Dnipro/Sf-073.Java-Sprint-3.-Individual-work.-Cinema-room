@@ -14,12 +14,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @JsonPropertyOrder({"amountMoney", "ipAddress", "cardNumber", "region", "date"})
 @Builder
 public record TransactionDTO(@Min(1)
-                             @NotBlank
+                             @NotNull
                              @JsonProperty(value = "amount", access = JsonProperty.Access.WRITE_ONLY)
                              Long amountMoney,
                              @NotBlank

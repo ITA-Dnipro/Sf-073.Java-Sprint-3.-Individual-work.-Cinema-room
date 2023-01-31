@@ -4,6 +4,8 @@ import antifraud.config.transaction.TransactionProperty;
 import antifraud.domain.model.Transaction;
 import antifraud.domain.model.enums.TransactionResult;
 import antifraud.domain.service.TransactionService;
+import antifraud.exceptions.SameResulException;
+import antifraud.exceptions.TransactionsNotFoundException;
 import antifraud.persistence.repository.StolenCardRepository;
 import antifraud.persistence.repository.SuspiciousIPRepository;
 import antifraud.persistence.repository.TransactionRepository;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -160,4 +163,41 @@ public class TransactionServiceImpl implements TransactionService {
                 .map(String::valueOf)
                 .collect(Collectors.joining(", "));
     }
+
+    @Override
+    public Optional<Transaction> giveFeedback(Transaction feedback) {
+        Transaction foundTransaction = transactionRepository.findById(feedback.getId())
+                .orElseThrow(TransactionsNotFoundException::new);
+        feedbackCheckForCollision(feedback, foundTransaction);
+
+
+        return transactionRepository.existsByFeedbackAndFeedbackNotNull(foundTransaction.getFeedback()) ?
+                Optional.empty() :
+                Optional.of(transactionRepository.save(foundTransaction));
+    }
+
+    /**
+     * Checks if the provided feedback is the same as the current transaction result.
+     * If it is, method throws an exception.
+     *
+     * @param feedback      transaction feedback.
+     * @param currentResult current transaction result.
+     */
+    private void feedbackCheckForCollision(Transaction feedback, Transaction currentResult) {
+        if (feedback.getFeedback().equals(currentResult.getTransactionResult())) {
+            throw new SameResulException();
+        }
+    }
+
+    @Override
+    public List<Transaction> showTransactionHistory() {
+        return transactionRepository.findAll();
+    }
+
+    @Override
+    public List<Transaction> showTransactionHistoryForSpecificCardNumber(String cardNumber) {
+        return transactionRepository.findTransactionByCardNumber(cardNumber)
+                .orElseThrow(TransactionsNotFoundException::new);
+    }
+
 }

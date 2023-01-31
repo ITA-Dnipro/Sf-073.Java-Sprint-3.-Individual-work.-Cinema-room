@@ -1,5 +1,6 @@
 package antifraud.domain.model;
 
+import antifraud.domain.model.enums.TransactionResult;
 import antifraud.domain.model.enums.WorldRegion;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,14 @@ public class TransactionFactory {
                 .cardNumber(cardNumber)
                 .worldRegion(region)
                 .dateTime(date)
+                .build();
+    }
+
+    public static Transaction createWithFeedback(Long id,
+                                                 TransactionResult feedback) {
+        return Transaction.builder()
+                .id(id)
+                .feedback(feedback)
                 .build();
     }
 }

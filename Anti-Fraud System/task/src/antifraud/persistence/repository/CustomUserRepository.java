@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface CustomUserRepository extends JpaRepository<CustomUser, Long> {
 
-    boolean existsCustomUserByUsername(String username);
+    boolean existsByUsername(String username);
 
     Optional<CustomUser> findByUsernameIgnoreCase(String username);
 }
