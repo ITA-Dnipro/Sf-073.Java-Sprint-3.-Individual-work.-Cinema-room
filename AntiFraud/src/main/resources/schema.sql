@@ -4,6 +4,6 @@ CREATE TABLE users_tbl(
   u_username VARCHAR(50) NOT NULL,
   u_password VARCHAR(100) NOT NULL,
   u_is_active BOOLEAN DEFAULT FALSE,
-  u_roles ENUM('USER', 'ADMIN') ,
+  u_roles ENUM('MERCHANT', 'ADMINISTRATOR', 'SUPPORT') ,
   PRIMARY KEY (u_id)
 );
