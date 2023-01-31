@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CardService {
@@ -48,5 +49,8 @@ public class CardService {
             cards.add(cardResponse);
         }
         return cards;
+    }
+    public Optional<CardDTO> findCardByNumber(String number){
+       return cardRepository.findByNumber(number);
     }
 }

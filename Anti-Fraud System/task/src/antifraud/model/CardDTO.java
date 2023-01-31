@@ -17,15 +17,11 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "cards")
+@Table(name = "sus_cards")
 public class CardDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @NotEmpty
     String number;
-    @Column(name = "MAX_ALLOWED")
-    Integer maxAllowed;
-    @Column(name = "MAX_MANUAL")
-    Integer maxManual;
 }
