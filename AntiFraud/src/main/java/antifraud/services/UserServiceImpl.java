@@ -52,8 +52,11 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserSignUpResponse getUserSignUpResponse(UpdateUserRoleRequest updateUserRoleRequest) {
-        return null;
+    public UserSignUpResponse getUserSignUpResponse(UserEntity userEntity, UpdateUserRoleRequest updateUserRoleRequest) {
+        userEntity.setRole(updateUserRoleRequest.getRole());
+        UserEntity userEntityUpdatedRecord = userRepository.save(userEntity);
+        UserDto userDtoWithNewRole = mapUserEntityToUserDto(userEntityUpdatedRecord);
+        return mapUserDtoToUserSignUpResponse(userDtoWithNewRole);
     }
 
     @Override

@@ -8,7 +8,6 @@ import antifraud.domain.models.request.UserSignUpRequest;
 import antifraud.domain.models.response.UserSignUpResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 
 public interface UserService {
@@ -18,7 +17,7 @@ public interface UserService {
     List<Object> getAllRegisteredUsers();
 
     void deleteUser(UserEntity userEntity);
-    UserSignUpResponse getUserSignUpResponse(UpdateUserRoleRequest updateUserRoleRequest);
+    UserSignUpResponse getUserSignUpResponse(UserEntity userEntity, UpdateUserRoleRequest updateUserRoleRequest);
 
     UserDto updateUserRole(UserDto userDto);
 

@@ -53,7 +53,7 @@ public class    UserController {
         if(userRecord.isPresent() && userRecord.get().getRole().equals(updateUserRoleRequest.getRole())){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(userService.getUserSignUpResponse(updateUserRoleRequest), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUserSignUpResponse(userRecord.get(), updateUserRoleRequest), HttpStatus.OK);
     }
     @PutMapping(path="/access")
     public ResponseEntity<String> updateUserIsActiveStatus(@Valid @RequestBody UpdateUserIsActiveStatusRequest updateUserIsActiveStatusRequest){
