@@ -17,10 +17,16 @@ public class UserSignUpRequest implements Serializable {
 
     private static final long serialVersionUID = -8046865786614086074L;
     @NotEmpty
+    @JsonProperty(required = true)
     private String name;
     @NotEmpty
-    @JsonProperty(value="username")
+    @JsonProperty(value="username", required = true)
     private String userName;
     @NotEmpty
+    @JsonProperty(required = true)
     private String password;
+
+    @NotEmpty
+    @JsonProperty(required = true)
+    private String role;
 }
