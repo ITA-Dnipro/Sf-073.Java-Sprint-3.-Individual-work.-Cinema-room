@@ -39,8 +39,7 @@ public class TransactionController {
     @PreAuthorize("hasRole('SUPPORT')")
     @PutMapping("/transaction")
     public TransactionFeedbackDTO addFeedback(@Valid @RequestBody TransactionFeedbackDTO transactionFeedbackDTO) {
-        Transaction transactionWithFeedback = transactionService.giveFeedback(transactionFeedbackDTO.toModel())
-                .orElseThrow(() -> new ExistingFeedbackException(HttpStatus.CONFLICT));
+        Transaction transactionWithFeedback = transactionService.giveFeedback(transactionFeedbackDTO.toModel());
         return TransactionFeedbackDTO.fromModel(transactionWithFeedback);
     }
 

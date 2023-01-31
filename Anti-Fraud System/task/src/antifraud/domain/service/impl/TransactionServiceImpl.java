@@ -4,6 +4,7 @@ import antifraud.config.transaction.TransactionProperty;
 import antifraud.domain.model.Transaction;
 import antifraud.domain.model.enums.TransactionResult;
 import antifraud.domain.service.TransactionService;
+import antifraud.exceptions.ExistingFeedbackException;
 import antifraud.exceptions.SameResulException;
 import antifraud.exceptions.TransactionsNotFoundException;
 import antifraud.persistence.repository.StolenCardRepository;
@@ -11,12 +12,12 @@ import antifraud.persistence.repository.SuspiciousIPRepository;
 import antifraud.persistence.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -65,9 +66,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     private TransactionResult transactionResultByAmountMoney(Transaction transaction) {
         Long money = transaction.getMoney();
-        if (money <= transactionProperty.allowed()) {
+        if (money <= transactionProperty.getAllowed()) {
             return TransactionResult.ALLOWED;
-        } else if (money <= transactionProperty.manualProcessing()) {
+        } else if (money <= transactionProperty.getManualProcessing()) {
             return TransactionResult.MANUAL_PROCESSING;
         } else {
             return TransactionResult.PROHIBITED;
@@ -89,10 +90,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     private List<String> infoFromTransactionCorrelationCount(Long ipUniqueCount, Long regionUniqueCount) {
         List<String> infoFromCorrelation = new ArrayList<>();
-        if (ipUniqueCount >= transactionProperty.correlation()) {
+        if (ipUniqueCount >= transactionProperty.getCorrelation()) {
             infoFromCorrelation.add("ip-correlation");
         }
-        if (regionUniqueCount >= transactionProperty.correlation()) {
+        if (regionUniqueCount >= transactionProperty.getCorrelation()) {
             infoFromCorrelation.add("region-correlation");
         }
         return infoFromCorrelation;
@@ -117,7 +118,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @param regionUniqueCount number of unique regions from transactions happened in the last hour
      *                          in the transaction history.
      * @param blacklistSize     sum of Suspicious IP and Stolen Card blacklists' size.
-     * @param result            initial transaction's result based on the deposit money.
+     * @param result            Transaction with initial transaction's result based on the deposit money.
      * @return transaction result based on the information numbers. if nothing is changed based on numbers,
      * method returns initial transaction result.
      */
@@ -125,13 +126,13 @@ public class TransactionServiceImpl implements TransactionService {
                                                        long regionUniqueCount,
                                                        int blacklistSize,
                                                        TransactionResult result) {
-        if ((ipUniqueCount == transactionProperty.correlation() ||
-                regionUniqueCount == transactionProperty.correlation()) &&
+        if ((ipUniqueCount == transactionProperty.getCorrelation() ||
+                regionUniqueCount == transactionProperty.getCorrelation()) &&
                 !TransactionResult.PROHIBITED.equals(result)) {
             result = TransactionResult.MANUAL_PROCESSING;
         }
-        if (ipUniqueCount > transactionProperty.correlation() ||
-                regionUniqueCount > transactionProperty.correlation()) {
+        if (ipUniqueCount > transactionProperty.getCorrelation() ||
+                regionUniqueCount > transactionProperty.getCorrelation()) {
             result = TransactionResult.PROHIBITED;
         }
         if (blacklistSize > 0) {
@@ -165,27 +166,104 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Optional<Transaction> giveFeedback(Transaction feedback) {
+    public Transaction giveFeedback(Transaction feedback) {
         Transaction foundTransaction = transactionRepository.findById(feedback.getId())
                 .orElseThrow(TransactionsNotFoundException::new);
+        if (transactionRepository.existsByFeedbackAndFeedbackNotNull(foundTransaction.getFeedback())) {
+            throw new ExistingFeedbackException(HttpStatus.CONFLICT);
+        }
         feedbackCheckForCollision(feedback, foundTransaction);
-
-
-        return transactionRepository.existsByFeedbackAndFeedbackNotNull(foundTransaction.getFeedback()) ?
-                Optional.empty() :
-                Optional.of(transactionRepository.save(foundTransaction));
+        foundTransaction.setFeedback(feedback.getFeedback());
+        changeLimitsOfFraudDetectionAlgorithm(feedback, foundTransaction);
+        return transactionRepository.save(foundTransaction);
     }
 
     /**
      * Checks if the provided feedback is the same as the current transaction result.
      * If it is, method throws an exception.
      *
-     * @param feedback      transaction feedback.
-     * @param currentResult current transaction result.
+     * @param feedback      Transaction with given feedback.
+     * @param currentResult Transaction with current transaction result.
      */
     private void feedbackCheckForCollision(Transaction feedback, Transaction currentResult) {
         if (feedback.getFeedback().equals(currentResult.getTransactionResult())) {
             throw new SameResulException();
+        }
+    }
+
+    /**
+     * Change the limits of ALLOWED and MANUAL_PROCESSING values.
+     *
+     * @param feedback      Transaction with given feedback.
+     * @param currentResult Transaction with current transaction result.
+     */
+    private void changeLimitsOfFraudDetectionAlgorithm(Transaction feedback,
+                                                       Transaction currentResult) {
+
+        if (TransactionResult.ALLOWED.equals(feedback.getFeedback())) {
+            if (TransactionResult.MANUAL_PROCESSING.equals(currentResult.getTransactionResult())) {
+                increaseLimit(transactionProperty.getAllowed(), currentResult.getMoney(),
+                        TransactionResult.ALLOWED);
+            } else {
+                decreaseLimit(transactionProperty.getAllowed(), currentResult.getMoney(),
+                        TransactionResult.ALLOWED);
+                decreaseLimit(transactionProperty.getManualProcessing(), currentResult.getMoney(),
+                        TransactionResult.MANUAL_PROCESSING);
+            }
+        }
+        if (TransactionResult.MANUAL_PROCESSING.equals((feedback.getFeedback()))) {
+            if (TransactionResult.ALLOWED.equals(currentResult.getTransactionResult())) {
+                decreaseLimit(transactionProperty.getAllowed(), currentResult.getMoney(),
+                        TransactionResult.ALLOWED);
+            } else {
+                increaseLimit(transactionProperty.getManualProcessing(), currentResult.getMoney(),
+                        TransactionResult.MANUAL_PROCESSING);
+            }
+        }
+        if (TransactionResult.PROHIBITED.equals(feedback.getFeedback())) {
+            if (TransactionResult.ALLOWED.equals(currentResult.getTransactionResult())) {
+                decreaseLimit(transactionProperty.getAllowed(), currentResult.getMoney(),
+                        TransactionResult.ALLOWED);
+                decreaseLimit(transactionProperty.getManualProcessing(), currentResult.getMoney(),
+                        TransactionResult.MANUAL_PROCESSING);
+            } else {
+                decreaseLimit(transactionProperty.getManualProcessing(), currentResult.getMoney(),
+                        TransactionResult.MANUAL_PROCESSING);
+            }
+        }
+    }
+
+    /**
+     * Increase the limit values of ALLOWED or MANUAL_PROCESSING.
+     *
+     * @param currentLimit of fraud-detection algorithm 'allowed' or 'manual_processing' value.
+     * @param money        amount of current deposit.
+     * @param result       transaction result(type) which limit will be increased.
+     */
+    private void increaseLimit(int currentLimit, Long money, TransactionResult result) {
+        int newLimit = (int) Math.ceil(transactionProperty.getCurrentLimitFactor() * currentLimit +
+                transactionProperty.getCurrentDepositFactor() * money);
+        if (TransactionResult.ALLOWED.equals(result)) {
+            transactionProperty.setAllowed(newLimit);
+        } else {
+            transactionProperty.setManualProcessing(newLimit);
+        }
+    }
+
+    /**
+     * Decrease the limit values of ALLOWED or MANUAL_PROCESSING.
+     *
+     * @param currentLimit of fraud-detection algorithm 'allowed' or 'manual_processing' value.
+     * @param money        amount of current deposit.
+     * @param result       transaction result(type) which limit will be decreased.
+     */
+    private void decreaseLimit(int currentLimit, Long money, TransactionResult result) {
+        int newLimit = (int) Math.ceil(transactionProperty.getCurrentLimitFactor() * currentLimit -
+                transactionProperty.getCurrentDepositFactor() * money);
+        if (TransactionResult.ALLOWED.equals(result)) {
+            transactionProperty.setAllowed(newLimit);
+        } else {
+            transactionProperty.setManualProcessing(newLimit);
         }
     }
 
@@ -199,5 +277,4 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findTransactionByCardNumber(cardNumber)
                 .orElseThrow(TransactionsNotFoundException::new);
     }
-
 }

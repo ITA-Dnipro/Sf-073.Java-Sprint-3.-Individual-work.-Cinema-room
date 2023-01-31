@@ -9,7 +9,7 @@ public interface TransactionService {
 
     Transaction processTransaction(Transaction transaction);
 
-    Optional<Transaction> giveFeedback(Transaction feedback);
+    Transaction giveFeedback(Transaction feedback);
 
     List<Transaction> showTransactionHistory();
 

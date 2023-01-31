@@ -83,8 +83,8 @@ public class UserServiceImpl implements UserService {
      * Checks if the provided to be changed role is the same as the current role of the user.
      * If it is, method throws an exception.
      *
-     * @param providedRole the Role to be changed.
-     * @param currentRole  current user Role.
+     * @param providedRole User with the Role to be changed.
+     * @param currentRole  User with current user's Role.
      */
     private void roleCheckForCollision(User providedRole, User currentRole) {
         if (providedRole.getRole().equals(currentRole.getRole())) {
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
      * If it is, the method throws exception, because Administrator access cannot be blocked
      * or manipulated at all.
      *
-     * @param currentRole of the user which lock/unlock access will be changed.
+     * @param currentRole User with current role.
      */
     private void roleCheckForAdmin(User currentRole) {
         if (UserRole.ADMINISTRATOR.equals(currentRole.getRole())) {

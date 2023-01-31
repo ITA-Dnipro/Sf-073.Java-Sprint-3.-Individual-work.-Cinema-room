@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 @ToString
 @Table(name = "transactions", indexes = {
         @Index(name = "card_date_idx", columnList = "cardNumber, dateTime"),
+        @Index(name = "feedback_idx", columnList = "feedback")
 })
 public class Transaction {
     @Id
