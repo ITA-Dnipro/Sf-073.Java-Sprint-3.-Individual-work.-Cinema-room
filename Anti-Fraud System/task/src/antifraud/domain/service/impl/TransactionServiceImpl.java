@@ -2,12 +2,15 @@ package antifraud.domain.service.impl;
 
 import antifraud.config.transaction.TransactionProperty;
 import antifraud.domain.model.Card;
+import antifraud.domain.model.RegularCard;
+import antifraud.domain.model.RegularCardFactory;
 import antifraud.domain.model.Transaction;
 import antifraud.domain.model.enums.TransactionResult;
 import antifraud.domain.service.TransactionService;
 import antifraud.exceptions.ExistingFeedbackException;
 import antifraud.exceptions.SameResulException;
 import antifraud.exceptions.TransactionsNotFoundException;
+import antifraud.persistence.repository.RegularCardRepository;
 import antifraud.persistence.repository.StolenCardRepository;
 import antifraud.persistence.repository.SuspiciousIPRepository;
 import antifraud.persistence.repository.TransactionRepository;
@@ -30,15 +33,19 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final SuspiciousIPRepository suspiciousIPRepository;
     private final StolenCardRepository stolenCardRepository;
+    private final RegularCardRepository regularCardRepository;
 
     @Transactional
     @Override
     public Transaction processTransaction(Transaction transaction) {
-        if (!stolenCardRepository.existsByNumber(transaction.getCardNumber())) {
+        log.info("========== card1: {}", regularCardRepository.findByNumber(transaction.getCardNumber()));
+        if (!regularCardRepository.existsByNumber(transaction.getCardNumber())) {
             setDefaultTransactionResultLimits(transaction);
         }
+        log.info("========== card2: {}", regularCardRepository.findByNumber(transaction.getCardNumber()));
         transactionRepository.save(transaction);
         TransactionResult resultByAmountMoney = transactionResultByAmountMoney(transaction);
+        log.info("========= result1: {}", resultByAmountMoney);
         String infoFromInitialResult = infoFromInitialTransactionResult(resultByAmountMoney);
         List<Transaction> transactionsInLastHourOfTransactionHistory =
                 transactionRepository.findByCardNumberAndDateTimeBetween(transaction.getCardNumber(),
@@ -47,9 +54,11 @@ public class TransactionServiceImpl implements TransactionService {
         long ipUniqueCount =
                 correlationCount(transactionsInLastHourOfTransactionHistory,
                         Transaction::getIpAddress);
+        log.info("========= ipUniqueCount size {}", ipUniqueCount);
         long regionUniqueCount =
                 correlationCount(transactionsInLastHourOfTransactionHistory,
                         r -> r.getWorldRegion().name());
+        log.info("========= regionUniqueCount size {}", regionUniqueCount);
         List<String> infoFromCorrelation =
                 infoFromTransactionCorrelationCount(ipUniqueCount, regionUniqueCount);
         List<String> infoFromBlacklists = infoFromCardAndIpBlacklists(transaction);
@@ -59,6 +68,7 @@ public class TransactionServiceImpl implements TransactionService {
                         regionUniqueCount,
                         infoFromBlacklists.size(),
                         resultByAmountMoney);
+        log.info("========= result2: {}", resultBasedOnInfo);
         if (!resultBasedOnInfo.equals(resultByAmountMoney)) {
             infoFromInitialResult = "";
         }
@@ -69,18 +79,19 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private void setDefaultTransactionResultLimits(Transaction transaction) {
-        Card card = stolenCardRepository.findByNumber(transaction.getCardNumber()).get();
-        card.setAllowedLimit(transactionProperty.allowed());
-        card.setManualProcessingLimit(transactionProperty.manualProcessing());
-        stolenCardRepository.save(card);
+        RegularCard regularCard = RegularCardFactory.create(transaction.getCardNumber());
+        regularCard.setAllowedLimit(transactionProperty.allowed());
+        regularCard.setManualProcessingLimit(transactionProperty.manualProcessing());
+        regularCardRepository.save(regularCard);
     }
 
     private TransactionResult transactionResultByAmountMoney(Transaction transaction) {
-        Card card = stolenCardRepository.findByNumber(transaction.getCardNumber()).get();
+        RegularCard regularCard = regularCardRepository.findByNumber(transaction.getCardNumber());
+        log.info("============= card3: {}", regularCard);
         Long money = transaction.getMoney();
-        if (money <= card.getAllowedLimit()) {
+        if (money <= regularCard.getAllowedLimit()) {
             return TransactionResult.ALLOWED;
-        } else if (money <= card.getManualProcessingLimit()) {
+        } else if (money <= regularCard.getManualProcessingLimit()) {
             return TransactionResult.MANUAL_PROCESSING;
         } else {
             return TransactionResult.PROHIBITED;
@@ -211,42 +222,42 @@ public class TransactionServiceImpl implements TransactionService {
      */
     private void changeLimitsOfFraudDetectionAlgorithm(Transaction feedback,
                                                        Transaction currentTransaction) {
-        Card card = stolenCardRepository.findByNumber(currentTransaction.getCardNumber()).get();
+        RegularCard regularCard = regularCardRepository.findByNumber(currentTransaction.getCardNumber());
         if (TransactionResult.ALLOWED.equals(feedback.getFeedback())) {
             if (TransactionResult.MANUAL_PROCESSING.equals(currentTransaction.getTransactionResult())) {
-                increaseLimit(card.getAllowedLimit(),
+                increaseLimit(regularCard.getAllowedLimit(),
                         currentTransaction.getMoney(),
                         currentTransaction);
             } else {
-                decreaseLimit(card.getAllowedLimit(),
+                decreaseLimit(regularCard.getAllowedLimit(),
                         currentTransaction.getMoney(),
                         currentTransaction);
-                decreaseLimit(card.getManualProcessingLimit(),
+                decreaseLimit(regularCard.getManualProcessingLimit(),
                         currentTransaction.getMoney(),
                         currentTransaction);
             }
         }
         if (TransactionResult.MANUAL_PROCESSING.equals((feedback.getFeedback()))) {
             if (TransactionResult.ALLOWED.equals(currentTransaction.getTransactionResult())) {
-                decreaseLimit(card.getAllowedLimit(),
+                decreaseLimit(regularCard.getAllowedLimit(),
                         currentTransaction.getMoney(),
                         currentTransaction);
             } else {
-                increaseLimit(card.getManualProcessingLimit(),
+                increaseLimit(regularCard.getManualProcessingLimit(),
                         currentTransaction.getMoney(),
                         currentTransaction);
             }
         }
         if (TransactionResult.PROHIBITED.equals(feedback.getFeedback())) {
             if (TransactionResult.ALLOWED.equals(currentTransaction.getTransactionResult())) {
-                decreaseLimit(card.getAllowedLimit(),
+                decreaseLimit(regularCard.getAllowedLimit(),
                         currentTransaction.getMoney(),
                         currentTransaction);
-                decreaseLimit(card.getManualProcessingLimit(),
+                decreaseLimit(regularCard.getManualProcessingLimit(),
                         currentTransaction.getMoney(),
                         currentTransaction);
             } else {
-                decreaseLimit(card.getManualProcessingLimit(),
+                decreaseLimit(regularCard.getManualProcessingLimit(),
                         currentTransaction.getMoney(),
                         currentTransaction);
             }
@@ -264,13 +275,13 @@ public class TransactionServiceImpl implements TransactionService {
     private void increaseLimit(Long currentLimit, Long money, Transaction currentTransaction) {
         long newLimit = (long) Math.ceil(transactionProperty.currentLimitFactor() * currentLimit +
                 transactionProperty.currentDepositFactor() * money);
-        Card card = stolenCardRepository.findByNumber(currentTransaction.getCardNumber()).get();
+        RegularCard regularCard = regularCardRepository.findByNumber(currentTransaction.getCardNumber());
         if (TransactionResult.ALLOWED.equals(currentTransaction.getTransactionResult())) {
-            card.setAllowedLimit(newLimit);
+            regularCard.setAllowedLimit(newLimit);
         } else {
-            card.setManualProcessingLimit(newLimit);
+            regularCard.setManualProcessingLimit(newLimit);
         }
-        stolenCardRepository.save(card);
+        regularCardRepository.save(regularCard);
     }
 
     /**
@@ -284,13 +295,13 @@ public class TransactionServiceImpl implements TransactionService {
     private void decreaseLimit(Long currentLimit, Long money, Transaction currentTransaction) {
         long newLimit = (long) Math.ceil(transactionProperty.currentLimitFactor() * currentLimit -
                 transactionProperty.currentDepositFactor() * money);
-        Card card = stolenCardRepository.findByNumber(currentTransaction.getCardNumber()).get();
+        RegularCard regularCard = regularCardRepository.findByNumber(currentTransaction.getCardNumber());
         if (TransactionResult.ALLOWED.equals(currentTransaction.getTransactionResult())) {
-            card.setAllowedLimit(newLimit);
+            regularCard.setAllowedLimit(newLimit);
         } else {
-            card.setManualProcessingLimit(newLimit);
+            regularCard.setManualProcessingLimit(newLimit);
         }
-        stolenCardRepository.save(card);
+        regularCardRepository.save(regularCard);
     }
 
     @Override

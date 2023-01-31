@@ -22,13 +22,15 @@ import javax.persistence.Table;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PACKAGE)
 @Entity
-@Table(name = "ips", indexes = {
-        @Index(name = "ip_idx", columnList = "ipAddress")
+@Table(name = "regular_cards", indexes = {
+        @Index(name = "number_idx", columnList = "number")
 })
-public class IP {
+public class RegularCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(value = AccessLevel.PRIVATE)
     private Long id;
-    private String ipAddress;
+    private String number;
+    private Long allowedLimit;
+    private Long manualProcessingLimit;
 }
