@@ -1,7 +1,6 @@
 package antifraud.domain.service.impl;
 
 import antifraud.config.transaction.TransactionProperty;
-import antifraud.domain.model.Card;
 import antifraud.domain.model.RegularCard;
 import antifraud.domain.model.RegularCardFactory;
 import antifraud.domain.model.Transaction;
@@ -38,14 +37,11 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public Transaction processTransaction(Transaction transaction) {
-        log.info("========== card1: {}", regularCardRepository.findByNumber(transaction.getCardNumber()));
         if (!regularCardRepository.existsByNumber(transaction.getCardNumber())) {
             setDefaultTransactionResultLimits(transaction);
         }
-        log.info("========== card2: {}", regularCardRepository.findByNumber(transaction.getCardNumber()));
         transactionRepository.save(transaction);
         TransactionResult resultByAmountMoney = transactionResultByAmountMoney(transaction);
-        log.info("========= result1: {}", resultByAmountMoney);
         String infoFromInitialResult = infoFromInitialTransactionResult(resultByAmountMoney);
         List<Transaction> transactionsInLastHourOfTransactionHistory =
                 transactionRepository.findByCardNumberAndDateTimeBetween(transaction.getCardNumber(),
@@ -54,11 +50,9 @@ public class TransactionServiceImpl implements TransactionService {
         long ipUniqueCount =
                 correlationCount(transactionsInLastHourOfTransactionHistory,
                         Transaction::getIpAddress);
-        log.info("========= ipUniqueCount size {}", ipUniqueCount);
         long regionUniqueCount =
                 correlationCount(transactionsInLastHourOfTransactionHistory,
                         r -> r.getWorldRegion().name());
-        log.info("========= regionUniqueCount size {}", regionUniqueCount);
         List<String> infoFromCorrelation =
                 infoFromTransactionCorrelationCount(ipUniqueCount, regionUniqueCount);
         List<String> infoFromBlacklists = infoFromCardAndIpBlacklists(transaction);
@@ -68,7 +62,6 @@ public class TransactionServiceImpl implements TransactionService {
                         regionUniqueCount,
                         infoFromBlacklists.size(),
                         resultByAmountMoney);
-        log.info("========= result2: {}", resultBasedOnInfo);
         if (!resultBasedOnInfo.equals(resultByAmountMoney)) {
             infoFromInitialResult = "";
         }
@@ -87,7 +80,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     private TransactionResult transactionResultByAmountMoney(Transaction transaction) {
         RegularCard regularCard = regularCardRepository.findByNumber(transaction.getCardNumber());
-        log.info("============= card3: {}", regularCard);
         Long money = transaction.getMoney();
         if (money <= regularCard.getAllowedLimit()) {
             return TransactionResult.ALLOWED;
@@ -190,26 +182,26 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction giveFeedback(Transaction feedback) {
-        Transaction foundTransaction = transactionRepository.findById(feedback.getId())
+        Transaction transactionFromDB = transactionRepository.findById(feedback.getId())
                 .orElseThrow(TransactionsNotFoundException::new);
-        if (transactionRepository.existsByFeedbackAndFeedbackNotNull(foundTransaction.getFeedback())) {
+        if (transactionRepository.existsByFeedbackAndFeedbackNotNull(transactionFromDB.getFeedback())) {
             throw new ExistingFeedbackException(HttpStatus.CONFLICT);
         }
-        feedbackCheckForCollision(feedback, foundTransaction);
-        foundTransaction.setFeedback(feedback.getFeedback());
-        changeLimitsOfFraudDetectionAlgorithm(feedback, foundTransaction);
-        return transactionRepository.save(foundTransaction);
+        feedbackCheckForCollision(feedback, transactionFromDB);
+        changeLimitsOfFraudDetectionAlgorithm(feedback, transactionFromDB);
+        transactionFromDB.setFeedback(feedback.getFeedback());
+        return transactionRepository.save(transactionFromDB);
     }
 
     /**
      * Checks if the provided feedback is the same as the current transaction result.
      * If it is, method throws an exception.
      *
-     * @param feedback      Transaction with given feedback.
-     * @param currentResult Transaction with current transaction result.
+     * @param feedback          Transaction with given feedback.
+     * @param transactionFromDB Transaction with current transaction result.
      */
-    private void feedbackCheckForCollision(Transaction feedback, Transaction currentResult) {
-        if (feedback.getFeedback().equals(currentResult.getTransactionResult())) {
+    private void feedbackCheckForCollision(Transaction feedback, Transaction transactionFromDB) {
+        if (feedback.getFeedback().equals(transactionFromDB.getTransactionResult())) {
             throw new SameResulException();
         }
     }
@@ -217,90 +209,58 @@ public class TransactionServiceImpl implements TransactionService {
     /**
      * Change the limits of ALLOWED and MANUAL_PROCESSING values.
      *
-     * @param feedback           Transaction with given feedback.
-     * @param currentTransaction Transaction with current transaction result.
+     * @param feedback          Transaction with given feedback.
+     * @param transactionFromDB Transaction from DB with current transaction result.
      */
     private void changeLimitsOfFraudDetectionAlgorithm(Transaction feedback,
-                                                       Transaction currentTransaction) {
-        RegularCard regularCard = regularCardRepository.findByNumber(currentTransaction.getCardNumber());
+                                                       Transaction transactionFromDB) {
+        RegularCard regularCard = regularCardRepository.findByNumber(transactionFromDB.getCardNumber());
         if (TransactionResult.ALLOWED.equals(feedback.getFeedback())) {
-            if (TransactionResult.MANUAL_PROCESSING.equals(currentTransaction.getTransactionResult())) {
-                increaseLimit(regularCard.getAllowedLimit(),
-                        currentTransaction.getMoney(),
-                        currentTransaction);
-            } else {
-                decreaseLimit(regularCard.getAllowedLimit(),
-                        currentTransaction.getMoney(),
-                        currentTransaction);
-                decreaseLimit(regularCard.getManualProcessingLimit(),
-                        currentTransaction.getMoney(),
-                        currentTransaction);
+            increaseAllowedLimit(regularCard, transactionFromDB.getMoney());
+            if (TransactionResult.PROHIBITED.equals(transactionFromDB.getTransactionResult())) {
+                increaseManualLimit(regularCard, transactionFromDB.getMoney());
             }
         }
-        if (TransactionResult.MANUAL_PROCESSING.equals((feedback.getFeedback()))) {
-            if (TransactionResult.ALLOWED.equals(currentTransaction.getTransactionResult())) {
-                decreaseLimit(regularCard.getAllowedLimit(),
-                        currentTransaction.getMoney(),
-                        currentTransaction);
-            } else {
-                increaseLimit(regularCard.getManualProcessingLimit(),
-                        currentTransaction.getMoney(),
-                        currentTransaction);
+        if (TransactionResult.MANUAL_PROCESSING.equals(feedback.getFeedback())) {
+            if (TransactionResult.ALLOWED.equals(transactionFromDB.getTransactionResult())) {
+                decreaseAllowedLimit(regularCard, transactionFromDB.getMoney());
+            } else if (TransactionResult.PROHIBITED.equals(transactionFromDB.getTransactionResult())) {
+                increaseManualLimit(regularCard, transactionFromDB.getMoney());
             }
         }
         if (TransactionResult.PROHIBITED.equals(feedback.getFeedback())) {
-            if (TransactionResult.ALLOWED.equals(currentTransaction.getTransactionResult())) {
-                decreaseLimit(regularCard.getAllowedLimit(),
-                        currentTransaction.getMoney(),
-                        currentTransaction);
-                decreaseLimit(regularCard.getManualProcessingLimit(),
-                        currentTransaction.getMoney(),
-                        currentTransaction);
-            } else {
-                decreaseLimit(regularCard.getManualProcessingLimit(),
-                        currentTransaction.getMoney(),
-                        currentTransaction);
+            decreaseManualLimit(regularCard, transactionFromDB.getMoney());
+            if (TransactionResult.ALLOWED.equals(transactionFromDB.getTransactionResult())) {
+                decreaseAllowedLimit(regularCard, transactionFromDB.getMoney());
             }
         }
     }
 
-    /**
-     * Increase the limit values of ALLOWED or MANUAL_PROCESSING.
-     *
-     * @param currentLimit       Card's current limit of fraud-detection algorithm 'allowed' or 'manual_processing' values.
-     * @param money              amount of current deposit.
-     * @param currentTransaction Transaction with current result(type) which limit will be increased.
-     * @return Transaction with changed transaction result's limit values for card number.
-     */
-    private void increaseLimit(Long currentLimit, Long money, Transaction currentTransaction) {
-        long newLimit = (long) Math.ceil(transactionProperty.currentLimitFactor() * currentLimit +
+    private void increaseAllowedLimit(RegularCard regularCard, Long money) {
+        long newLimit = (long) Math.ceil(transactionProperty.currentLimitFactor() * regularCard.getAllowedLimit() +
                 transactionProperty.currentDepositFactor() * money);
-        RegularCard regularCard = regularCardRepository.findByNumber(currentTransaction.getCardNumber());
-        if (TransactionResult.ALLOWED.equals(currentTransaction.getTransactionResult())) {
-            regularCard.setAllowedLimit(newLimit);
-        } else {
-            regularCard.setManualProcessingLimit(newLimit);
-        }
+        regularCard.setAllowedLimit(newLimit);
         regularCardRepository.save(regularCard);
     }
 
-    /**
-     * Decrease the limit values of ALLOWED or MANUAL_PROCESSING.
-     *
-     * @param currentLimit       of fraud-detection algorithm 'allowed' or 'manual_processing' value.
-     * @param money              amount of current deposit.
-     * @param currentTransaction Transaction with current result(type) which limit will be decreased.
-     * @return Transaction with changed transaction result's limit values for card number.
-     */
-    private void decreaseLimit(Long currentLimit, Long money, Transaction currentTransaction) {
-        long newLimit = (long) Math.ceil(transactionProperty.currentLimitFactor() * currentLimit -
+    private void increaseManualLimit(RegularCard regularCard, Long money) {
+        long newLimit = (long) Math.ceil(transactionProperty.currentLimitFactor() * regularCard.getManualProcessingLimit() +
                 transactionProperty.currentDepositFactor() * money);
-        RegularCard regularCard = regularCardRepository.findByNumber(currentTransaction.getCardNumber());
-        if (TransactionResult.ALLOWED.equals(currentTransaction.getTransactionResult())) {
-            regularCard.setAllowedLimit(newLimit);
-        } else {
-            regularCard.setManualProcessingLimit(newLimit);
-        }
+        regularCard.setManualProcessingLimit(newLimit);
+        regularCardRepository.save(regularCard);
+    }
+
+    private void decreaseAllowedLimit(RegularCard regularCard, Long money) {
+        long newLimit = (long) Math.ceil(transactionProperty.currentLimitFactor() * regularCard.getAllowedLimit() -
+                transactionProperty.currentDepositFactor() * money);
+        regularCard.setAllowedLimit(newLimit);
+        regularCardRepository.save(regularCard);
+    }
+
+    private void decreaseManualLimit(RegularCard regularCard, Long money) {
+        long newLimit = (long) Math.ceil(transactionProperty.currentLimitFactor() * regularCard.getManualProcessingLimit() -
+                transactionProperty.currentDepositFactor() * money);
+        regularCard.setManualProcessingLimit(newLimit);
         regularCardRepository.save(regularCard);
     }
 

@@ -49,7 +49,6 @@ public record TransactionFeedbackDTO(@Min(1)
     }
 
     public Transaction toModel() {
-
         return TransactionFactory.createWithFeedback(transactionId,
                 TransactionResult.valueOf(feedback));
     }
