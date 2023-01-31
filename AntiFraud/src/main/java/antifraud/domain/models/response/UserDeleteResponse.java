@@ -10,8 +10,7 @@ import java.io.Serializable;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Getter @Setter
 public class UserDeleteResponse implements Serializable {
     private static final long serialVersionUID = 3055004851503946027L;
     @JsonProperty(value = "username")
