@@ -17,6 +17,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
@@ -38,7 +40,9 @@ public class Transaction {
     private Long id;
     private Long money;
     private String ipAddress;
-    private String cardNumber;
+    @ManyToOne
+    @JoinColumn(name = "card_number_id")
+    private Card cardNumber;
     @Enumerated(EnumType.STRING)
     private TransactionResult transactionResult;
     @Enumerated(EnumType.STRING)

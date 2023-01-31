@@ -29,4 +29,6 @@ public class Card {
     @Setter(value = AccessLevel.PRIVATE)
     private Long id;
     private String number;
+    private Long allowedLimit;
+    private Long manualProcessingLimit;
 }
