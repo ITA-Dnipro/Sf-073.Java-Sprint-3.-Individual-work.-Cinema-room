@@ -30,4 +30,6 @@ public class IpController {
     List<IpResponse> findAll(){
         return ipService.findAll();
     }
+    //TODO
+    
 }

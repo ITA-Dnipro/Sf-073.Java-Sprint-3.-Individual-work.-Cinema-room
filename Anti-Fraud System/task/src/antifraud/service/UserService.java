@@ -42,6 +42,7 @@ public class UserService {
                 userRepo.save(unauthorisedUser.get());
             }
         }
+
         var result = accessOperation.getOperation().equals("LOCK")
                 ? "locked!": "unlocked!";
         return new AccessResponse("User " + accessOperation.getUsername() + " " + result);
@@ -71,11 +72,11 @@ public class UserService {
     public List<User> findAll(){
         List<User> users = new ArrayList<>();
        for(var user: userRepo.findAll()){
-           User user1 = new User();
-           user1.setId(user.getId());
+           User user1 = new User(user.getId(),user.getName(), user.getUsername(), user.getRole());
+           /*user1.setId(user.getId());
            user1.setName(user.getName());
            user1.setUsername(user.getUsername());
-           user1.setRole(user.getRole());
+           user1.setRole(user.getRole());*/
            users.add(user1);
        }
        return users;

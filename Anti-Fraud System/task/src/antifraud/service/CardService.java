@@ -14,24 +14,24 @@ import java.util.List;
 @Service
 public class CardService {
     @Autowired
-    CardRepository cardRepo;
+    CardRepository cardRepository;
    public CardResponse saveCard(CardDTO cardDTO){
         if(!LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(cardDTO.getNumber())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        else if(cardRepo.findByNumber(cardDTO.getNumber()).isPresent()){
+        else if(cardRepository.findByNumber(cardDTO.getNumber()).isPresent()){
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
-        cardRepo.save(cardDTO);
+        cardRepository.save(cardDTO);
         return new CardResponse(cardDTO.getId(), cardDTO.getNumber());
     }
     public CardDeleteResponse deleteByNumber(String number){
         if(!LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(number)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        if(cardRepo.findByNumber(number).isPresent()){
-            CardDTO cardDTO = cardRepo.findByNumber(number).get();
-            cardRepo.deleteById(cardDTO.getId());
+        if(cardRepository.findByNumber(number).isPresent()){
+            CardDTO cardDTO = cardRepository.findByNumber(number).get();
+            cardRepository.deleteById(cardDTO.getId());
             return new CardDeleteResponse("Card " + cardDTO.getNumber() + " successfully removed!");
         }
         else{
@@ -41,7 +41,7 @@ public class CardService {
 
     public List<CardResponse> findAll() {
         List<CardResponse> cards = new ArrayList<>();
-        for(var card:cardRepo.findAll()){
+        for(var card: cardRepository.findAll()){
             CardResponse cardResponse = new CardResponse();
             cardResponse.setId(card.getId());
             cardResponse.setNumber(card.getNumber());

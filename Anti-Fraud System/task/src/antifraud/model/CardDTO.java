@@ -1,11 +1,15 @@
 package antifraud.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
 import javax.validation.constraints.NotEmpty;
 
 @Getter
@@ -20,4 +24,8 @@ public class CardDTO {
     Long id;
     @NotEmpty
     String number;
+    @Column(name = "MAX_ALLOWED")
+    Integer maxAllowed;
+    @Column(name = "MAX_MANUAL")
+    Integer maxManual;
 }
