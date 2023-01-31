@@ -21,7 +21,7 @@ public class AuthUserDetails implements UserDetails {
         this.userName = userEntity.getUserName();
         this.password = userEntity.getPassword();
         this.enabled = userEntity.isActive();
-        this.authorities = Arrays.stream(userEntity.getRoles().split(","))
+        this.authorities = Arrays.stream(userEntity.getRole().split(""))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }

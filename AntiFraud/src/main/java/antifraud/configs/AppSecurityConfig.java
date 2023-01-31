@@ -21,8 +21,6 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     @Autowired
-    DataSource dataSource;
-    @Autowired
     UserDetailsService userDetailsService;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -34,9 +32,11 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // manage access
                 .antMatchers(HttpMethod.POST, "/auth/user").permitAll()
-                .antMatchers(HttpMethod.GET, "/auth/list").hasAuthority("USER")
-                .antMatchers(HttpMethod.DELETE, "/auth/user/{username}").hasAuthority("USER")
-                .antMatchers(HttpMethod.POST, "/antifraud/transaction").hasAuthority("USER")
+                .antMatchers(HttpMethod.GET, "/auth/list").hasAnyRole("ADMINISTRATOR", "SUPPORT")
+                .antMatchers(HttpMethod.DELETE, "/auth/user/{username}").hasRole("ADMINISTRATOR")
+                .antMatchers(HttpMethod.POST, "/antifraud/transaction").hasRole("MERCHANT")
+                .antMatchers(HttpMethod.PUT, "/auth/access").hasRole("ADMINISTRATOR")
+                .antMatchers(HttpMethod.PUT, "/auth/role").hasRole("ADMINISTRATOR")
                 .antMatchers("/actuator/shutdown").permitAll()
                 .anyRequest().authenticated()
                 .and()
