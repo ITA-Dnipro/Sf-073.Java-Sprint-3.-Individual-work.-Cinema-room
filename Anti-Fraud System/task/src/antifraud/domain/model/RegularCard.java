@@ -23,7 +23,7 @@ import javax.persistence.Table;
 @Builder(access = AccessLevel.PACKAGE)
 @Entity
 @Table(name = "regular_cards", indexes = {
-        @Index(name = "number_idx", columnList = "number")
+        @Index(name = "regular_number_idx", columnList = "number")
 })
 public class RegularCard {
     @Id
