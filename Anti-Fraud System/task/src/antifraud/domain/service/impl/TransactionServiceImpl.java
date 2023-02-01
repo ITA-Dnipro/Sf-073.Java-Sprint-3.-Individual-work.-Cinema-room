@@ -7,7 +7,7 @@ import antifraud.domain.model.Transaction;
 import antifraud.domain.model.enums.TransactionResult;
 import antifraud.domain.service.TransactionService;
 import antifraud.exceptions.ExistingFeedbackException;
-import antifraud.exceptions.SameResulException;
+import antifraud.exceptions.SameResultException;
 import antifraud.exceptions.TransactionsNotFoundException;
 import antifraud.persistence.repository.RegularCardRepository;
 import antifraud.persistence.repository.StolenCardRepository;
@@ -202,7 +202,7 @@ public class TransactionServiceImpl implements TransactionService {
      */
     private void feedbackCheckForCollision(Transaction feedback, Transaction transactionFromDB) {
         if (feedback.getFeedback().equals(transactionFromDB.getTransactionResult())) {
-            throw new SameResulException();
+            throw new SameResultException();
         }
     }
 

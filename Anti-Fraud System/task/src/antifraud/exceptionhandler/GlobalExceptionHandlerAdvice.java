@@ -9,7 +9,7 @@ import antifraud.exceptions.ExistingFeedbackException;
 import antifraud.exceptions.ExistingIpException;
 import antifraud.exceptions.ExistingUsernameException;
 import antifraud.exceptions.IpNotFoundException;
-import antifraud.exceptions.SameResulException;
+import antifraud.exceptions.SameResultException;
 import antifraud.exceptions.TransactionsNotFoundException;
 import antifraud.rest.dto.CustomMessageDTO;
 import antifraud.rest.dto.ErrorDTO;
@@ -196,9 +196,9 @@ public class GlobalExceptionHandlerAdvice {
                 .body(new CustomMessageDTO(ExceptionConstants.CANNOT_BE_BLOCKED));
     }
 
-    @ExceptionHandler(SameResulException.class)
+    @ExceptionHandler(SameResultException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ResponseEntity<CustomMessageDTO> handleSameResulException(SameResulException ex) {
+    public ResponseEntity<CustomMessageDTO> handleSameResulException(SameResultException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.status(422)
                 .body(new CustomMessageDTO(ExceptionConstants.FEEDBACK_COLLISION));
