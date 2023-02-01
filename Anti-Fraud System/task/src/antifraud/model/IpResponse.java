@@ -7,7 +7,9 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 
-@Getter@Setter@AllArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
 public class IpResponse {
     Long id;

@@ -15,11 +15,12 @@ public class TransactionResultResponse {
         this.result = result;
     }
 
+    public TransactionResultResponse() {
+
+    }
+
     public TransactionResult getResult() {
         return result;
-    }
-    public TransactionResultResponse(){
-
     }
 
     public void setResult(TransactionResult result) {

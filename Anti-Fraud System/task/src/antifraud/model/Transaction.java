@@ -18,7 +18,9 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Getter@Setter@AllArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "transactions")
 public class Transaction {
@@ -44,15 +46,15 @@ public class Transaction {
 
     String feedback;
 
-    public String getFeedback() {
-        return Objects.requireNonNullElse(feedback, "");
-    }
-
     public Transaction(Long amount) {
         this.amount = amount;
     }
 
     public Transaction() {
 
+    }
+
+    public String getFeedback() {
+        return Objects.requireNonNullElse(feedback, "");
     }
 }

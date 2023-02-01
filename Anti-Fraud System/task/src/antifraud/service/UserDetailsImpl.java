@@ -7,14 +7,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+
 public class UserDetailsImpl implements UserDetails {
 
     private final UnauthorisedUser user;
     private final List<GrantedAuthority> rolesAndAuthorities;
 
-    public UserDetailsImpl(UnauthorisedUser user){
+    public UserDetailsImpl(UnauthorisedUser user) {
         this.user = user;
-        rolesAndAuthorities = List.of(new SimpleGrantedAuthority("ROLE_"+user.getRole()));
+        rolesAndAuthorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
     }
 
     @Override

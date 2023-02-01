@@ -41,7 +41,7 @@ public class TransactionService {
     double multiplierForCurrentLimit = 0.8;
     double multiplierForCurrentAmount = 0.2;
 
-    public static Set<String> getEnums() {
+    public static Set<String> getTransactionResultConstraints() {
         Set<String> values = new HashSet<>();
         for (TransactionResult c : TransactionResult.values()) {
             values.add(c.name());
@@ -136,7 +136,7 @@ public class TransactionService {
     }
 
     public Transaction updateFeedback(TransactionFeedback tsfb) {
-        if (!getEnums().contains(tsfb.getFeedback())) {
+        if (!getTransactionResultConstraints().contains(tsfb.getFeedback())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         Transaction foundTransaction = transactionRepository.findById(tsfb.getTransactionId())

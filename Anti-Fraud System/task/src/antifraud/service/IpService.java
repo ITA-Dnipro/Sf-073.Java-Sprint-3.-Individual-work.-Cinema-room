@@ -19,33 +19,33 @@ public class IpService {
     @Autowired
     IpRepository ipRepo;
 
-    public IpResponse saveIp(Ip ip){
-        if(!InetAddressValidator.getInstance().isValid(ip.getIp())){
+    public IpResponse saveIp(Ip ip) {
+        if (!InetAddressValidator.getInstance().isValid(ip.getIp())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        else if(ipRepo.findByIp(ip.getIp()).isPresent()){
+        } else if (ipRepo.findByIp(ip.getIp()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
         ipRepo.save(ip);
-        return new IpResponse(ip.getId(),ip.getIp());
+        return new IpResponse(ip.getId(), ip.getIp());
     }
-   public IpDeleteResponse deleteByIp(String ip){
-       if(!InetAddressValidator.getInstance().isValid(ip)){
-           throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-       }
-       Optional<Ip> byIp = ipRepo.findByIp(ip);
-       if(byIp.isPresent()){
+
+    public IpDeleteResponse deleteByIp(String ip) {
+        if (!InetAddressValidator.getInstance().isValid(ip)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        Optional<Ip> byIp = ipRepo.findByIp(ip);
+        if (byIp.isPresent()) {
             Ip ipToBeDeleted = byIp.get();
             ipRepo.deleteById(ipToBeDeleted.getId());
             return new IpDeleteResponse("IP " + ipToBeDeleted.getIp() + " successfully removed!");
-        }
-        else{
+        } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
-    public List<IpResponse> findAll(){
+
+    public List<IpResponse> findAll() {
         List<IpResponse> ips = new ArrayList<>();
-        for(var ip:ipRepo.findAll()){
+        for (var ip : ipRepo.findAll()) {
             ips.add(new IpResponse(ip.getId(), ip.getIp()));
         }
         return ips;

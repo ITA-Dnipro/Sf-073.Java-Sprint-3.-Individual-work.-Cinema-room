@@ -5,7 +5,6 @@ import antifraud.model.Region;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.Arrays;
 
 public class RegionValidator implements ConstraintValidator<RegionConstraint, String> {
 

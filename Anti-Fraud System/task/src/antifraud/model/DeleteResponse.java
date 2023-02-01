@@ -1,11 +1,14 @@
 package antifraud.model;
 
 
-
 public class DeleteResponse {
-    public DeleteResponse(){
+    String username;
+    String status;
+
+    public DeleteResponse() {
 
     }
+
     public DeleteResponse(String username) {
         this.username = username;
         this.status = "Deleted successfully!";
@@ -26,7 +29,4 @@ public class DeleteResponse {
     public void setStatus(String status) {
         this.status = status;
     }
-
-    String username;
-    String status;
 }
