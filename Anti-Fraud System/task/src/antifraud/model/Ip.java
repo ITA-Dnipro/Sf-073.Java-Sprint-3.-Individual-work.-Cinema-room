@@ -1,15 +1,15 @@
 package antifraud.model;
 
-import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
 import javax.validation.constraints.NotEmpty;
 
 @Getter
@@ -17,11 +17,11 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "sus_cards")
-public class CardDTO {
+@Table(name = "ip")
+public class Ip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @NotEmpty
-    String number;
+    String ip;
 }

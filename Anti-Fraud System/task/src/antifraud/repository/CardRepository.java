@@ -1,11 +1,11 @@
 package antifraud.repository;
 
-import antifraud.model.CardDTO;
+import antifraud.model.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface CardRepository extends JpaRepository<CardDTO, Long> {
+public interface CardRepository extends JpaRepository<Card, Long> {
 
-    Optional<CardDTO> findByNumber(String cardNumber);
+    Optional<Card> findByNumber(String cardNumber);
 }

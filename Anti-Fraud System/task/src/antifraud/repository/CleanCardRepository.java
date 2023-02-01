@@ -1,6 +1,5 @@
 package antifraud.repository;
 
-import antifraud.model.CardDTO;
 import antifraud.model.CleanCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 

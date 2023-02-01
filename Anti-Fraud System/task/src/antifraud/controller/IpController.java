@@ -1,10 +1,9 @@
 package antifraud.controller;
 
-import antifraud.model.IpDTO;
+import antifraud.model.Ip;
 import antifraud.model.IpDeleteResponse;
 import antifraud.model.IpResponse;
 import antifraud.service.IpService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class IpController {
     }
 
     @PostMapping("/api/antifraud/suspicious-ip")
-    IpResponse saveIp(@RequestBody IpDTO ip){
+    IpResponse saveIp(@RequestBody Ip ip){
     return ipService.saveIp(ip);
     }
     @DeleteMapping("/api/antifraud/suspicious-ip/{ip}")

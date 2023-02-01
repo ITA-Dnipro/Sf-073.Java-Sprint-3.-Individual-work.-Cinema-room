@@ -16,24 +16,25 @@ import java.util.Optional;
 public class CardService {
     @Autowired
     CardRepository cardRepository;
-   public CardResponse saveCard(CardDTO cardDTO){
-        if(!LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(cardDTO.getNumber())){
+
+    public CardResponse saveCard(Card card){
+        if(!LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(card.getNumber())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        else if(cardRepository.findByNumber(cardDTO.getNumber()).isPresent()){
+        else if(cardRepository.findByNumber(card.getNumber()).isPresent()){
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
-        cardRepository.save(cardDTO);
-        return new CardResponse(cardDTO.getId(), cardDTO.getNumber());
+        cardRepository.save(card);
+        return new CardResponse(card.getId(), card.getNumber());
     }
     public CardDeleteResponse deleteByNumber(String number){
         if(!LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(number)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        if(cardRepository.findByNumber(number).isPresent()){
-            CardDTO cardDTO = cardRepository.findByNumber(number).get();
-            cardRepository.deleteById(cardDTO.getId());
-            return new CardDeleteResponse("Card " + cardDTO.getNumber() + " successfully removed!");
+        Optional<Card> cardOptional = cardRepository.findByNumber(number);
+        if(cardOptional.isPresent()){
+            cardRepository.deleteById(cardOptional.get().getId());
+            return new CardDeleteResponse("Card " + cardOptional.get().getNumber() + " successfully removed!");
         }
         else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -43,14 +44,11 @@ public class CardService {
     public List<CardResponse> findAll() {
         List<CardResponse> cards = new ArrayList<>();
         for(var card: cardRepository.findAll()){
-            CardResponse cardResponse = new CardResponse();
-            cardResponse.setId(card.getId());
-            cardResponse.setNumber(card.getNumber());
-            cards.add(cardResponse);
+            cards.add(new CardResponse(card.getId(), card.getNumber()));
         }
         return cards;
     }
-    public Optional<CardDTO> findCardByNumber(String number){
+    public Optional<Card> findCardByNumber(String number){
        return cardRepository.findByNumber(number);
     }
 }

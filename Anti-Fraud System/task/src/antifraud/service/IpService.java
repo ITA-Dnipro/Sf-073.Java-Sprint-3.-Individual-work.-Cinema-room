@@ -1,6 +1,6 @@
 package antifraud.service;
 
-import antifraud.model.IpDTO;
+import antifraud.model.Ip;
 import antifraud.model.IpDeleteResponse;
 import antifraud.model.IpResponse;
 import antifraud.repository.IpRepository;
@@ -12,17 +12,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class IpService {
-    final
+    @Autowired
     IpRepository ipRepo;
 
-    public IpService(IpRepository ipRepo) {
-        this.ipRepo = ipRepo;
-    }
-
-    public IpResponse saveIp(IpDTO ip){
+    public IpResponse saveIp(Ip ip){
         if(!InetAddressValidator.getInstance().isValid(ip.getIp())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -36,10 +33,11 @@ public class IpService {
        if(!InetAddressValidator.getInstance().isValid(ip)){
            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
        }
-        if(ipRepo.findByIp(ip).isPresent()){
-            IpDTO ipDTO = ipRepo.findByIp(ip).get();
-            ipRepo.deleteById(ipDTO.getId());
-            return new IpDeleteResponse("IP " + ipDTO.getIp() + " successfully removed!");
+       Optional<Ip> byIp = ipRepo.findByIp(ip);
+       if(byIp.isPresent()){
+            Ip ipToBeDeleted = byIp.get();
+            ipRepo.deleteById(ipToBeDeleted.getId());
+            return new IpDeleteResponse("IP " + ipToBeDeleted.getIp() + " successfully removed!");
         }
         else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -48,10 +46,7 @@ public class IpService {
     public List<IpResponse> findAll(){
         List<IpResponse> ips = new ArrayList<>();
         for(var ip:ipRepo.findAll()){
-            IpResponse ipResponse = new IpResponse();
-            ipResponse.setId(ip.getId());
-            ipResponse.setIp(ip.getIp());
-            ips.add(ipResponse);
+            ips.add(new IpResponse(ip.getId(), ip.getIp()));
         }
         return ips;
     }
