@@ -36,6 +36,10 @@ public class TransactionService {
     CleanCardRepository cleanCardRepository;
     int maxAllowed = 200;
     int maxManual = 1500;
+    int distinctNumberAllowed = 2;
+    int distinctNumberManual = 3;
+    double multiplierForCurrentLimit = 0.8;
+    double multiplierForCurrentAmount = 0.2;
 
     public static Set<String> getEnums() {
         Set<String> values = new HashSet<>();
@@ -67,9 +71,7 @@ public class TransactionService {
                 newCard.setNumber(transaction.getNumber());
                 newCard.setMaxAllowed(maxAllowed);
                 newCard.setMaxManual(maxManual);
-                if (cleanCardRepository.findByNumber(transaction.getNumber()).isEmpty()) {
-                    cleanCardRepository.save(newCard);
-                }
+                cleanCardRepository.save(newCard);
             }
         }
         if (ipRepository.findByIp(transaction.getIp()).isPresent()) {
@@ -124,11 +126,13 @@ public class TransactionService {
     }
 
     private TransactionResult checkNumber(long number) {
-        if (number <= 2) {
+        if (number <= distinctNumberAllowed) {
             return TransactionResult.ALLOWED;
-        } else if (number == 3) {
-            return TransactionResult.MANUAL_PROCESSING;
-        } else return TransactionResult.PROHIBITED;
+        } else {
+            if (number == distinctNumberManual) {
+                return TransactionResult.MANUAL_PROCESSING;
+            } else return TransactionResult.PROHIBITED;
+        }
     }
 
     public Transaction updateFeedback(TransactionFeedback tsfb) {
@@ -147,25 +151,25 @@ public class TransactionService {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
         if (tsfb.getFeedback().equals(TransactionResult.ALLOWED.toString())) {
-            maxAllowed = (int) Math.ceil(0.8 * maxAllowed + 0.2 * foundTransaction.getAmount());
+            maxAllowed = increaseAllowed(foundTransaction);
             if (foundTransaction.getResult().equals(TransactionResult.PROHIBITED.toString())) {
-                maxManual = (int) Math.ceil(0.8 * maxManual + 0.2 * foundTransaction.getAmount());
+                maxManual = increaseManual(foundTransaction);
             }
         }
         if (tsfb.getFeedback().equals(TransactionResult.
                 MANUAL_PROCESSING.toString())) {
             if (foundTransaction.getResult().equals(TransactionResult.ALLOWED.toString())) {
-                maxAllowed = (int) Math.ceil(0.8 * maxAllowed - 0.2 * foundTransaction.getAmount());
+                maxAllowed = (int) Math.ceil(multiplierForCurrentLimit * maxAllowed - multiplierForCurrentAmount * foundTransaction.getAmount());
             } else if (foundTransaction.getResult().equals(TransactionResult.PROHIBITED.toString())) {
-                maxManual = (int) Math.ceil(0.8 * maxManual + 0.2 * foundTransaction.getAmount());
+                maxManual = increaseManual(foundTransaction);
             }
         }
         if (tsfb.getFeedback().equals(TransactionResult.PROHIBITED.toString())) {
             if (foundTransaction.getResult().equals(TransactionResult.ALLOWED.toString())) {
-                maxAllowed = (int) Math.ceil(0.8 * maxAllowed - 0.2 - foundTransaction.getAmount());
-                maxManual = (int) Math.ceil(0.8 * maxManual - 0.2 * foundTransaction.getAmount());
+                maxAllowed = decreaseAllowed(foundTransaction);
+                maxManual = decreaseManual(foundTransaction);
             } else if (foundTransaction.getResult().equals(TransactionResult.MANUAL_PROCESSING.toString())) {
-                maxManual = (int) Math.ceil(0.8 * maxManual - 0.2 * foundTransaction.getAmount());
+                maxManual = decreaseManual(foundTransaction);
             }
 
         }
@@ -176,6 +180,22 @@ public class TransactionService {
                 foundTransaction.getIp(), foundTransaction.getNumber(), foundTransaction.getRegion(),
                 foundTransaction.getDate(),
                 foundTransaction.getResult(), tsfb.getFeedback()));
+    }
+
+    private int decreaseManual(Transaction foundTransaction) {
+        return (int) Math.ceil(multiplierForCurrentLimit * maxManual - multiplierForCurrentAmount * foundTransaction.getAmount());
+    }
+
+    private int decreaseAllowed(Transaction foundTransaction) {
+        return (int) Math.ceil(multiplierForCurrentLimit * maxAllowed - multiplierForCurrentAmount - foundTransaction.getAmount());
+    }
+
+    private int increaseManual(Transaction foundTransaction) {
+        return (int) Math.ceil(multiplierForCurrentLimit * maxManual + multiplierForCurrentAmount * foundTransaction.getAmount());
+    }
+
+    private int increaseAllowed(Transaction foundTransaction) {
+        return (int) Math.ceil(multiplierForCurrentLimit * maxAllowed + multiplierForCurrentAmount * foundTransaction.getAmount());
     }
 
     public List<Transaction> historyForCard(String number) {
