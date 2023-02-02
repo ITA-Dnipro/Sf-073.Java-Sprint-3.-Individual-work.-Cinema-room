@@ -29,7 +29,7 @@ public class CardController {
     record DeleteCardResponse(String status) {
     }
 
-    @DeleteMapping("{number}")
+    @DeleteMapping("/{number}")
     public ResponseEntity<DeleteCardResponse> deleteCard(@PathVariable String number) {
         cardService.deleteCardFromDB(number);
         return ResponseEntity.status(200).body(new DeleteCardResponse(String.format(SUCCESSFUL_REMOVE, number)));

@@ -19,32 +19,33 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/antifraud")
 public class TransactionController {
 
     private final TransactionService transactionService;
 
-    @PostMapping("/api/antifraud/transaction")
+    @PostMapping("/transaction")
     @PreAuthorize("hasRole('MERCHANT')")
     public TransactionDTO transaction(@RequestBody @Valid Transaction req) throws CannotParseException, NegativeNumberException {
         log.info("Requested {}", req.getAmount());
         return transactionService.processing(req);
     }
 
-    @PutMapping("/api/antifraud/transaction")
+    @PutMapping("/transaction")
     @PreAuthorize("hasRole('SUPPORT')")
     public ResponseEntity<TransactionInfo> transactionFeedback(@RequestBody TransactionFeedback feedback) {
         TransactionInfo transaction = transactionService.feedbackInfo(feedback);
         return ResponseEntity.status(200).body(transaction);
     }
 
-    @GetMapping("/api/antifraud/history/{number}")
+    @GetMapping("/history/{number}")
     @PreAuthorize("hasRole('SUPPORT')")
     public ResponseEntity<List<TransactionInfo>> transactionsByCardNumber(@PathVariable String number) {
         List<TransactionInfo> transactionListByCardNumber = transactionService.getTransactions(number);
         return ResponseEntity.status(200).body(transactionListByCardNumber);
     }
 
-    @GetMapping("/api/antifraud/history")
+    @GetMapping("/history")
     @PreAuthorize("hasRole('SUPPORT')")
     public ResponseEntity<List<TransactionInfo>> transactionsHistory() {
         List<TransactionInfo> transactionListHistory = transactionService.getTransactionsHistory();

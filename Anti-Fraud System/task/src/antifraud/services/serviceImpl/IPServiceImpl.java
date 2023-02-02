@@ -1,12 +1,12 @@
-package antifraud.services;
+package antifraud.services.serviceImpl;
 
 import antifraud.models.database.IPs;
-import antifraud.errors.IncorrectIpInput;
 import antifraud.errors.IpDuplicateException;
 import antifraud.errors.IpNotFoundException;
 import antifraud.models.DTO.DeleteIPResponse;
 import antifraud.models.DTO.IPResponse;
 import antifraud.repositories.IPRepository;
+import antifraud.services.IPService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
@@ -24,7 +24,6 @@ public class IPServiceImpl implements IPService {
     private final ModelMapper mapper;
 
     @Override
-    @Transactional
     public IPResponse saveIp(IPs ip) throws IpDuplicateException {
 
         Optional<IPs> optionalIP = ipRepository.findIPsByIp(ip.getIp());
@@ -51,5 +50,10 @@ public class IPServiceImpl implements IPService {
         return ipRepository.findAll(Sort.sort(IPs.class).by(IPs::getId).ascending())
                 .stream()
                 .map(ip -> mapper.map(ip, IPResponse.class)).toList();
+    }
+
+    @Override
+    public Optional<IPs> findIPsByIp(String ip) {
+        return ipRepository.findIPsByIp(ip);
     }
 }

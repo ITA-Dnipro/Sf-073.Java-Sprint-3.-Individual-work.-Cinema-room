@@ -3,6 +3,7 @@ package antifraud.exceptionhandler;
 import antifraud.errors.*;
 import antifraud.errors.DTO.ErrorDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -28,56 +29,56 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     ResponseEntity<ErrorDTO> errorHandler(ExistingUserException exception) {
         log.info("User already exists user exception");
-        return ResponseEntity.status(409)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler
     ResponseEntity<ErrorDTO> errorHandler(UserNotFoundException exception) {
         log.info("User Not Found user exception");
-        return ResponseEntity.status(404)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler
     ResponseEntity<ErrorDTO> errorHandler(NotViableRoleException exception) {
         log.info("Role is not SUPPORT/MERCHANT exception");
-        return ResponseEntity.status(400)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler
     ResponseEntity<ErrorDTO> errorHandler(IllegalRoleUpdateException exception) {
         log.info("User is already assign to this role exception");
-        return ResponseEntity.status(409)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler
     ResponseEntity<ErrorDTO> errorHandler(IllegalActionException exception) {
         log.info("Unauthorized actions against ADMINISTRATOR user exception");
-        return ResponseEntity.status(404)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler
     ResponseEntity<ErrorDTO> errorHandler(IpDuplicateException exception) {
         log.info("Duplicate IP exception");
-        return ResponseEntity.status(409)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler
     ResponseEntity<ErrorDTO> errorHandler(IpNotFoundException exception) {
         log.info("IP not found in the database exception");
-        return ResponseEntity.status(404)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler
     ResponseEntity<ErrorDTO> errorHandler(IncorrectIpInput exception) {
         log.info("Wrong IP format exception");
-        return ResponseEntity.status(400)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorDTO(exception.getMessage()));
     }
 }

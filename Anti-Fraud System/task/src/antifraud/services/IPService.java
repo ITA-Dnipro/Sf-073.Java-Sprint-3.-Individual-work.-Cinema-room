@@ -8,6 +8,7 @@ import antifraud.models.DTO.DeleteIPResponse;
 import antifraud.models.DTO.IPResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IPService {
     IPResponse saveIp(IPs ip) throws IpDuplicateException;
@@ -15,4 +16,6 @@ public interface IPService {
     DeleteIPResponse deleteIp(String ip) throws IpNotFoundException;
 
     List<IPResponse> findAllIPs();
+
+    Optional<IPs> findIPsByIp(String ip);
 }

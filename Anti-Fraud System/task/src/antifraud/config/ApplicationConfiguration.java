@@ -1,6 +1,7 @@
 package antifraud.config;
 
 import antifraud.repositories.UserRepository;
+import antifraud.utils.Validator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +31,7 @@ public class ApplicationConfiguration {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -38,6 +40,11 @@ public class ApplicationConfiguration {
     @Bean
     public ModelMapper mapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    public Validator customValidator() {
+        return new Validator();
     }
 
 }

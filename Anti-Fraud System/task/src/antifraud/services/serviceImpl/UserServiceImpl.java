@@ -1,4 +1,4 @@
-package antifraud.services;
+package antifraud.services.serviceImpl;
 
 import antifraud.constants.UserRole;
 import antifraud.models.database.User;
@@ -9,6 +9,7 @@ import antifraud.models.DTO.UserRegisterResponse;
 import antifraud.models.DTO.UserRoleUpdateRequest;
 import antifraud.models.DTO.UserRegisterRequest;
 import antifraud.repositories.UserRepository;
+import antifraud.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
@@ -77,7 +78,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public UserRegisterResponse updateUserRole(UserRoleUpdateRequest user) throws UserNotFoundException, NotViableRoleException, IllegalRoleUpdateException {
         Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
         if (optionalUser.isEmpty()) throw new UserNotFoundException("User not found");
@@ -91,7 +91,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public AccessResponse updateAccess(AccessRequest request) throws UserNotFoundException, IllegalActionException {
         Optional<User> optionalUser = userRepository.findByUsername(request.getUsername());
         if (optionalUser.isEmpty()) throw new UserNotFoundException("User not found");

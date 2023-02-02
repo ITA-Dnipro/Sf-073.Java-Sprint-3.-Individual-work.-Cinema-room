@@ -6,7 +6,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class CardValidator {
 
     /**
-     * This class and its methods are not viable to use. It is not deleted because this project form https://hyperskill.org may not run properly.
+     * This class and its methods are not viable for use. It is not deleted because this project form https://hyperskill.org may not run properly.
      * For validations of Card Number and IP Format use antifraud.utils.Validator.class
      */
     @Deprecated

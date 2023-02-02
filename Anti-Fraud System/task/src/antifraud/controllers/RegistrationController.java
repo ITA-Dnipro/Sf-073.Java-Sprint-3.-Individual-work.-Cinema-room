@@ -14,38 +14,39 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/auth")
 public class RegistrationController {
 
     private final UserService userService;
     private static final String SUCCESSFUL_DELETE = "Deleted successfully!";
 
-    @PostMapping("/api/auth/user")
+    @PostMapping("/user")
     public ResponseEntity<UserRegisterResponse> userRegister(@RequestBody @Valid UserRegisterRequest user) throws ExistingUserException {
         UserRegisterResponse registerResponse = userService.register(user);
         return ResponseEntity.status(201).body(registerResponse);
     }
 
-    @GetMapping("/api/auth/list")
+    @GetMapping("/list")
     @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('SUPPORT')")
     public List<UserRegisterResponse> findAllUsers() {
         return userService.getAllUsers();
     }
 
-    @DeleteMapping("/api/auth/user/{username}")
+    @DeleteMapping("/user/{username}")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<DeleteUserResponse> deleteUser(@PathVariable String username) throws UserNotFoundException {
         userService.deleteUser(username);
         return ResponseEntity.ok(new DeleteUserResponse(username, SUCCESSFUL_DELETE));
     }
 
-    @PutMapping("/api/auth/role")
+    @PutMapping("/role")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<UserRegisterResponse> updateRole(@RequestBody UserRoleUpdateRequest user) throws UserNotFoundException, NotViableRoleException, IllegalRoleUpdateException {
         UserRegisterResponse response = userService.updateUserRole(user);
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/api/auth/access")
+    @PutMapping("/access")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<AccessResponse> grantAccess(@RequestBody AccessRequest request) throws UserNotFoundException, IllegalActionException {
         AccessResponse response = userService.updateAccess(request);

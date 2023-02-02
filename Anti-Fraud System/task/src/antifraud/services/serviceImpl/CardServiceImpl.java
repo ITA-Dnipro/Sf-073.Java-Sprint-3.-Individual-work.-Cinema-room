@@ -1,8 +1,9 @@
-package antifraud.services;
+package antifraud.services.serviceImpl;
 
 import antifraud.models.database.Card;
 import antifraud.models.DTO.CardResponse;
 import antifraud.repositories.CardRepository;
+import antifraud.services.CardService;
 import antifraud.utils.Validator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,6 +22,7 @@ public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
     private final ModelMapper mapper;
+    private final Validator validator;
 
     @Override
     public CardResponse saveCard(Card stolenCard) {
@@ -36,7 +38,7 @@ public class CardServiceImpl implements CardService {
     @Override
     @Transactional
     public void deleteCardFromDB(String number) {
-        Validator.validateCardNumber(number);
+        validator.validateCardNumber(number);
         Optional<Card> cardByNumber = cardRepository.findByNumber(number);
         if (cardByNumber.isPresent()) {
             cardRepository.deleteById(cardByNumber.get().getId());
@@ -50,5 +52,10 @@ public class CardServiceImpl implements CardService {
         return cardRepository.findAll(Sort.sort(Card.class).by(Card::getId).ascending())
                 .stream()
                 .map(card -> mapper.map(card, CardResponse.class)).toList();
+    }
+
+    @Override
+    public Optional<Card> findByCardNumber(String number) {
+        return cardRepository.findByNumber(number);
     }
 }

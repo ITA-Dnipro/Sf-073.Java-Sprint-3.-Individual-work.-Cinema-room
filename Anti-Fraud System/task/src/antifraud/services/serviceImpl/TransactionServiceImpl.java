@@ -1,4 +1,4 @@
-package antifraud.services;
+package antifraud.services.serviceImpl;
 
 import antifraud.constants.AmountVerification;
 import antifraud.constants.TransactionOutput;
@@ -15,6 +15,10 @@ import antifraud.repositories.CardRepository;
 import antifraud.repositories.IPRepository;
 import antifraud.repositories.TransactionRepository;
 import antifraud.repositories.UserCardRepository;
+import antifraud.services.CardService;
+import antifraud.services.IPService;
+import antifraud.services.TransactionService;
+import antifraud.services.UserCardService;
 import antifraud.utils.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,17 +39,17 @@ import java.util.stream.Collectors;
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
-    private final IPRepository ipRepository;
-    private final CardRepository cardRepository;
-    private final UserCardRepository userCardRepository;
+    private final IPService ipService;
+    private final CardService cardService;
+    private final UserCardService userCardService;
     private final ModelMapper mapper;
+    private final Validator validator;
     private static final int NUMBER_OF_REQUESTS = 3;
     private static final double LIMIT_MODIFIER = 0.8;
     private static final double TRANSACTION_MODIFIER = 0.2;
     private UserCard checkingCard;
 
     @Override
-    @Transactional
     public TransactionDTO processing(Transaction transaction) throws CannotParseException, NegativeNumberException {
 
         if ((transaction.getAmount() == null) || transaction.getAmount().startsWith("-") || transaction.getAmount().equals("0")) {
@@ -61,8 +65,9 @@ public class TransactionServiceImpl implements TransactionService {
         }
         Transaction newTransaction = transactionRepository.save(transaction);
 
-        Optional<IPs> ip = ipRepository.findIPsByIp(transaction.getIp());
-        Optional<Card> card = cardRepository.findByNumber(transaction.getNumber());
+
+        Optional<IPs> ip = ipService.findIPsByIp(transaction.getIp());
+        Optional<Card> card = cardService.findByCardNumber(transaction.getNumber());
         List<Transaction> listOfTransactions = transactionRepository
                 .findByNumberAndDateBetween(transaction.getNumber(), transaction.getDate().minusHours(1), transaction.getDate());
 
@@ -71,10 +76,10 @@ public class TransactionServiceImpl implements TransactionService {
         long regionRequests = listOfTransactions.stream().map(Transaction::getRegion).distinct().count();
 
         if (newTransaction.getNumber() != null && card.isEmpty()) {
-            if (userCardRepository.findLastByNumber(newTransaction.getNumber()).isEmpty()) {
-                checkingCard = userCardRepository.save(new UserCard(newTransaction.getNumber()));
+            if (userCardService.findLastUserCardByNumber(newTransaction.getNumber()).isEmpty()) {
+                checkingCard = userCardService.saveCard(new UserCard(newTransaction.getNumber()));
             } else {
-                checkingCard = userCardRepository.findLastByNumber(newTransaction.getNumber()).get();
+                checkingCard = userCardService.findLastUserCardByNumber(newTransaction.getNumber()).get();
             }
         }
 
@@ -91,15 +96,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    @Transactional
     public TransactionInfo feedbackInfo(TransactionFeedback feedback) {
         Optional<Transaction> transactionById = transactionRepository.findById(feedback.getTransactionId());
 
         checkForValidFeedback(feedback, transactionById);
         Transaction transaction = transactionById.get();
-        checkingCard = userCardRepository.findLastByNumber(transaction.getNumber()).get();
+        checkingCard = userCardService.findLastUserCardByNumber(transaction.getNumber()).get();
         setMaxAllowedValueAndMaxManualValue(feedback, transaction);
-        userCardRepository.save(checkingCard);
+        userCardService.saveCard(checkingCard);
         transaction.setFeedback(feedback.getFeedback());
         transactionRepository.save(transaction);
         return mapper.map(transaction, TransactionInfo.class);
@@ -146,7 +150,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionInfo> getTransactions(String number) {
-        Validator.validateCardNumber(number);
+        validator.validateCardNumber(number);
         Optional<Transaction> optionalTransaction = transactionRepository.findFirstByNumber(number);
         if (optionalTransaction.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

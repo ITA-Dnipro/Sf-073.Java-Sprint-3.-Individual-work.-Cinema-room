@@ -18,26 +18,27 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/antifraud/")
+@RequestMapping("/api/antifraud/suspicious-ip")
 @PreAuthorize("hasRole('SUPPORT')")
 public class IPController {
 
     private final IPService ipService;
+    private final Validator validator;
 
-    @PostMapping("/suspicious-ip")
+    @PostMapping
     public ResponseEntity<IPResponse> saveIPAddress(@RequestBody @Valid IPs ip) throws IpDuplicateException {
         IPResponse ipResponse = ipService.saveIp(ip);
         return ResponseEntity.status(200).body(ipResponse);
     }
 
-    @DeleteMapping("/suspicious-ip/{ip}")
+    @DeleteMapping("/{ip}")
     public ResponseEntity<DeleteIPResponse> deleteIp(@PathVariable String ip) throws IpNotFoundException, IncorrectIpInput {
-        Validator.validateIpFormat(ip);
+        validator.validateIpFormat(ip);
         DeleteIPResponse deleteIP = ipService.deleteIp(ip);
         return ResponseEntity.status(200).body(deleteIP);
     }
 
-    @GetMapping("/suspicious-ip")
+    @GetMapping
     public List<IPResponse> getAllIPs() {
         return ipService.findAllIPs();
     }

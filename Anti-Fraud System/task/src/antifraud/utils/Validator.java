@@ -2,18 +2,20 @@ package antifraud.utils;
 
 import antifraud.errors.IncorrectIpInput;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+@Component
 public class Validator {
 
-    public static void validateIpFormat(String ip) throws IncorrectIpInput {
+    public void validateIpFormat(String ip) throws IncorrectIpInput {
         String pattern = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\\.(?!$)|$)){4}$";
         if (!ip.matches(pattern)) {
             throw new IncorrectIpInput("Not a valid IP");
         }
     }
 
-    public static void validateCardNumber(String number) {
+    public void validateCardNumber(String number) {
         int cardDigits = number.length();
 
         int nSum = 0;
