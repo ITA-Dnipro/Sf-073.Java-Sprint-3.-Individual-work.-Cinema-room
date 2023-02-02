@@ -1,8 +1,10 @@
-package com.example.antifraud.model.dto;
+package com.example.antifraud.controller.dto.user;
+
+
 
 import com.example.antifraud.model.entities.UserEntity;
 import com.example.antifraud.model.enums.Role;
-import lombok.Value;
+import lombok.*;
 
 
 @Value

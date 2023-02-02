@@ -1,14 +1,11 @@
 package com.example.antifraud.controller;
 
-import com.example.antifraud.model.dto.DeleteUserResponse;
+
+import com.example.antifraud.controller.dto.user.*;
 import com.example.antifraud.model.entities.UserEntity;
 
-import com.example.antifraud.model.dto.UserResponse;
 
-import com.example.antifraud.model.dto.LockStatusRequest;
-import com.example.antifraud.model.dto.LockStatusResponse;
-import com.example.antifraud.model.dto.RoleRequest;
-import com.example.antifraud.service.UserService;
+import com.example.antifraud.service.user.UserService;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -67,3 +64,4 @@ public class UserController {
         return new LockStatusResponse(res);
     }
 }
+

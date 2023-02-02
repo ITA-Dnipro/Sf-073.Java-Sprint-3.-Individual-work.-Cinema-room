@@ -1,6 +1,7 @@
 package com.example.antifraud.model.entities;
 
 
+
 import com.example.antifraud.model.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -75,3 +76,4 @@ public class UserEntity implements UserDetails {
         return true;
     }
 }
+

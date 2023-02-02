@@ -1,9 +1,8 @@
-package com.example.antifraud.service;
+package com.example.antifraud.service.user;
 
 
+import com.example.antifraud.controller.dto.user.UserResponse;
 import com.example.antifraud.model.entities.UserEntity;
-
-import com.example.antifraud.model.dto.UserResponse;
 import com.example.antifraud.model.enums.LockStatus;
 import com.example.antifraud.model.enums.Role;
 import com.example.antifraud.repository.UserRepository;
@@ -22,9 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class UserServiceImpl implements UserService {
 
+
+@Service
+public class UserServiceImplementation implements UserService{
     @Autowired
     UserRepository userRepository;
 

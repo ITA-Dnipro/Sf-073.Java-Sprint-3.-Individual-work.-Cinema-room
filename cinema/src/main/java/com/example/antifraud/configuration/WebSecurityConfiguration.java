@@ -17,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    private static final String ADMIN =  "ADMINISTRATOR";
+    private static final String SUPPORT =  "SUPPORT";
+    private static final String MERCHANT =  "MERCHANT";
     @Autowired
     UserDetailsService userDetailsService;
 
@@ -41,13 +44,24 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .headers(c -> c
                         .frameOptions().disable())
                 .authorizeRequests(a -> a
-                        .mvcMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole("ADMINISTRATOR","SUPPORT")
-                        .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").hasRole("ADMINISTRATOR")
-                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasRole("MERCHANT")
+                        //GENERAL AND ADMIN ENDPOINTS
+                        .mvcMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole(ADMIN,SUPPORT)
+                        .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").hasRole(ADMIN)
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasRole(MERCHANT)
                         .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
-                        .mvcMatchers(HttpMethod.PUT, "/api/auth/role").hasRole("ADMINISTRATOR")
-                        .mvcMatchers(HttpMethod.PUT, "/api/auth/access").hasAnyRole("ADMINISTRATOR")
+                        .mvcMatchers(HttpMethod.PUT, "/api/auth/role").hasRole(ADMIN)
+                        //IP ENDPOINTS
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/suspicious-ip").hasAnyRole(SUPPORT)
+                        .mvcMatchers(HttpMethod.GET, "/api/antifraud/suspicious-ip").hasAnyRole(SUPPORT)
+                        .mvcMatchers(HttpMethod.DELETE, "/api/antifraud/suspicious-ip/*").hasAnyRole(SUPPORT)
+                        //CREDIT CARD ENDPOINTS
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/stolencard").hasAnyRole(SUPPORT)
+                        .mvcMatchers(HttpMethod.GET, "/api/antifraud/stolencard").hasAnyRole(SUPPORT)
+                        .mvcMatchers(HttpMethod.DELETE, "/api/antifraud/stolencard/*").hasAnyRole(SUPPORT)
+
+                        .mvcMatchers(HttpMethod.PUT, "/api/auth/access").hasAnyRole(ADMIN)
                         .mvcMatchers("/actuator/shutdown").permitAll()
+
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(a -> a.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

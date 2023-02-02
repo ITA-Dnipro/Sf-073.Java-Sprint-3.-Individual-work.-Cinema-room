@@ -1,5 +1,7 @@
-package com.example.antifraud.model.dto;
+package com.example.antifraud.controller.dto.ip;
 
+
+import com.example.antifraud.validation.Ipv4;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +12,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LockStatusResponse {
-    public String status;
-}
+public class IpRequest {
 
+    @Ipv4
+    String ip;
+
+}

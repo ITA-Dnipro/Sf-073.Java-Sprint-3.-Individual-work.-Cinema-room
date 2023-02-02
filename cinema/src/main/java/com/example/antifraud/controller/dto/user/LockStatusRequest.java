@@ -1,4 +1,5 @@
-package com.example.antifraud.model.dto;
+package com.example.antifraud.controller.dto.user;
+
 
 import com.example.antifraud.model.enums.LockStatus;
 import lombok.Getter;

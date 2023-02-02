@@ -6,7 +6,7 @@ public enum Role implements GrantedAuthority {
     ADMINISTRATOR,
     MERCHANT,
     SUPPORT;
-    final String role;
+    String role;
     Role() {
         this.role = "ROLE" + name();
     }
