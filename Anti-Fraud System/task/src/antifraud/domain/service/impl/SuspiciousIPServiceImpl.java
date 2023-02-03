@@ -36,4 +36,10 @@ public class SuspiciousIPServiceImpl implements SuspiciousIPService {
     public List<IP> showIpAddresses() {
         return suspiciousIPRepository.findAll();
     }
+
+    @Override
+    public boolean existsByIpAddress(String ipAddress) {
+
+        return suspiciousIPRepository.existsByIpAddress(ipAddress);
+    }
 }

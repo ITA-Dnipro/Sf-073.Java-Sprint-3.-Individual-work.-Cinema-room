@@ -1,6 +1,6 @@
 package antifraud.rest.controller;
 
-import antifraud.domain.model.Card;
+import antifraud.domain.model.StolenCard;
 import antifraud.domain.service.StolenCardService;
 import antifraud.exceptions.ExistingCardException;
 import antifraud.rest.dto.CardDTO;
@@ -31,7 +31,7 @@ public class CardController {
 
     @PostMapping()
     public CardDTO saveStolenCard(@Valid @RequestBody CardDTO cardDTO) {
-        Card storedCard = stolenCardService.storeStolenCardNumber(cardDTO.toModel())
+        StolenCard storedCard = stolenCardService.storeStolenCardNumber(cardDTO.toModel())
                 .orElseThrow(() -> new ExistingCardException(HttpStatus.CONFLICT));
         return CardDTO.fromModel(storedCard);
     }
@@ -45,7 +45,7 @@ public class CardController {
 
     @GetMapping()
     public List<CardDTO> getCardNumbers() {
-        List<Card> allCardNumbers = stolenCardService.showCardNumbers();
+        List<StolenCard> allCardNumbers = stolenCardService.showCardNumbers();
         return allCardNumbers.stream()
                 .map(CardDTO::fromModel)
                 .toList();

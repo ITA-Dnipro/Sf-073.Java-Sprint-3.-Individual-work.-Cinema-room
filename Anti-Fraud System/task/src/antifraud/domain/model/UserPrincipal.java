@@ -8,10 +8,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class UserPrincipal implements UserDetails {
-    private final transient User user;
+    private final transient CustomUser user;
     private final List<GrantedAuthority> roles;
 
-    public UserPrincipal(User user) {
+    public UserPrincipal(CustomUser user) {
         this.user = user;
         this.roles = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }

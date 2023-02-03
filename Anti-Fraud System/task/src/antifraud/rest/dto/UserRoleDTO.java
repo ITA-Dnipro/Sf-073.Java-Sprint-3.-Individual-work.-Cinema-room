@@ -1,7 +1,7 @@
 package antifraud.rest.dto;
 
-import antifraud.domain.model.User;
-import antifraud.domain.model.UserFactory;
+import antifraud.domain.model.CustomUser;
+import antifraud.domain.model.CustomUserFactory;
 import antifraud.domain.model.enums.UserRole;
 import antifraud.validation.AvailableRole;
 import lombok.Builder;
@@ -15,8 +15,8 @@ public record UserRoleDTO(@NotBlank
                           @AvailableRole
                           String role) {
 
-    public User toModel() {
-        return UserFactory.createWithRole(username,
+    public CustomUser toModel() {
+        return CustomUserFactory.createWithRole(username,
                 UserRole.valueOf(role));
     }
 }

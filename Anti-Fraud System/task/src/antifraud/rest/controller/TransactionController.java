@@ -2,12 +2,10 @@ package antifraud.rest.controller;
 
 import antifraud.domain.model.Transaction;
 import antifraud.domain.service.TransactionService;
-import antifraud.exceptions.ExistingFeedbackException;
 import antifraud.rest.dto.TransactionDTO;
 import antifraud.rest.dto.TransactionFeedbackDTO;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.CreditCardNumber;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;

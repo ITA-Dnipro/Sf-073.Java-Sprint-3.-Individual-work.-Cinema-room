@@ -22,10 +22,10 @@ import javax.persistence.Table;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PACKAGE)
 @Entity
-@Table(name = "cards", indexes = {
+@Table(name = "stolen_cards", indexes = {
         @Index(name = "number_idx", columnList = "number")
 })
-public class Card {
+public class StolenCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(value = AccessLevel.PRIVATE)

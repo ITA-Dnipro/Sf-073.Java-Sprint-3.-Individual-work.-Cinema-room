@@ -1,11 +1,10 @@
 package antifraud.domain.service.impl;
 
 import antifraud.domain.model.CustomUser;
-import antifraud.domain.model.User;
 import antifraud.domain.model.UserPrincipal;
 import antifraud.domain.model.enums.UserAccess;
 import antifraud.domain.model.enums.UserRole;
-import antifraud.domain.service.UserService;
+import antifraud.domain.service.CustomUserService;
 import antifraud.exceptions.AccessViolationException;
 import antifraud.exceptions.AlreadyProvidedException;
 import antifraud.exceptions.ExistingAdministratorException;
@@ -24,21 +23,21 @@ import java.util.Optional;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService {
+public class CustomUserServiceImpl implements CustomUserService {
     private final CustomUserRepository customUserRepository;
     private final PasswordEncoder encoder;
 
     @Transactional
     @Override
-    public Optional<User> registerUser(User userCredentials) {
+    public Optional<CustomUser> registerUser(CustomUser userCredentials) {
         userCredentials.setPassword(encoder.encode(userCredentials.getPassword()));
         authorize(userCredentials);
         return customUserRepository.existsByUsername(userCredentials.getUsername()) ?
                 Optional.empty() :
-                Optional.of(customUserRepository.save((CustomUser) userCredentials));
+                Optional.of(customUserRepository.save(userCredentials));
     }
 
-    private void authorize(User userCredentials) {
+    private void authorize(CustomUser userCredentials) {
         if (customUserRepository.count() == 0) {
             userCredentials.setRole(UserRole.ADMINISTRATOR);
             userCredentials.setAccess(UserAccess.UNLOCK);
@@ -49,34 +48,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsers() {
-        return customUserRepository.findAll().stream()
-                .map(User.class::cast)
-                .toList();
+    public List<CustomUser> getUsers() {
+        return customUserRepository.findAll();
     }
 
     @Transactional
     @Override
     public void deleteUser(String username) {
-        User foundUser = foundByUsername(username);
+        CustomUser foundUser = foundByUsername(username);
         customUserRepository.deleteById(foundUser.getId());
     }
 
-    private User foundByUsername(String username) {
+    private CustomUser foundByUsername(String username) {
         return customUserRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
     @Transactional
     @Override
-    public User changeUserRole(User userWithRole) {
-        User foundUser = foundByUsername(userWithRole.getUsername());
+    public CustomUser changeUserRole(CustomUser userWithRole) {
+        CustomUser foundUser = foundByUsername(userWithRole.getUsername());
         roleCheckForCollision(userWithRole, foundUser);
         if (UserRole.ADMINISTRATOR.equals(userWithRole.getRole())) {
             throw new ExistingAdministratorException();
         }
         foundUser.setRole(userWithRole.getRole());
-        return customUserRepository.save((CustomUser) foundUser);
+        return customUserRepository.save(foundUser);
     }
 
     /**
@@ -86,7 +83,7 @@ public class UserServiceImpl implements UserService {
      * @param providedRole User with the Role to be changed.
      * @param currentRole  User with current user's Role.
      */
-    private void roleCheckForCollision(User providedRole, User currentRole) {
+    private void roleCheckForCollision(CustomUser providedRole, CustomUser currentRole) {
         if (providedRole.getRole().equals(currentRole.getRole())) {
             throw new AlreadyProvidedException();
         }
@@ -94,11 +91,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User grantAccess(User userWithAccessLevel) {
-        User foundUser = foundByUsername(userWithAccessLevel.getUsername());
+    public CustomUser grantAccess(CustomUser userWithAccessLevel) {
+        CustomUser foundUser = foundByUsername(userWithAccessLevel.getUsername());
         roleCheckForAdmin(foundUser);
         foundUser.setAccess(userWithAccessLevel.getAccess());
-        return customUserRepository.save((CustomUser) foundUser);
+        return customUserRepository.save(foundUser);
     }
 
     /**
@@ -108,7 +105,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param currentRole User with current role.
      */
-    private void roleCheckForAdmin(User currentRole) {
+    private void roleCheckForAdmin(CustomUser currentRole) {
         if (UserRole.ADMINISTRATOR.equals(currentRole.getRole())) {
             throw new AccessViolationException();
         }
@@ -120,7 +117,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String retrieveRealUsername(String username) {
-        User foundUser = foundByUsername(username);
+        CustomUser foundUser = foundByUsername(username);
         return foundUser.getUsername();
     }
 

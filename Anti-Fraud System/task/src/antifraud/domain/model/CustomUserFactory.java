@@ -3,12 +3,12 @@ package antifraud.domain.model;
 import antifraud.domain.model.enums.UserAccess;
 import antifraud.domain.model.enums.UserRole;
 
-public class UserFactory {
+public class CustomUserFactory {
 
-    private UserFactory() {
+    private CustomUserFactory() {
     }
 
-    public static User create(String name, String username, String password) {
+    public static CustomUser create(String name, String username, String password) {
         return CustomUser.builder()
                 .name(name)
                 .username(username)
@@ -16,14 +16,14 @@ public class UserFactory {
                 .build();
     }
 
-    public static User createWithRole(String username, UserRole role) {
+    public static CustomUser createWithRole(String username, UserRole role) {
         return CustomUser.builder()
                 .username(username)
                 .role(role)
                 .build();
     }
 
-    public static User createWithAccess(String username, UserAccess access) {
+    public static CustomUser createWithAccess(String username, UserAccess access) {
         return CustomUser.builder()
                 .username(username)
                 .access(access)

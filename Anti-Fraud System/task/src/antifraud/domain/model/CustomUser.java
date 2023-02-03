@@ -29,7 +29,7 @@ import javax.persistence.Table;
 @Table(name = "users", indexes = {
         @Index(name = "username_idx", columnList = "username")
 })
-public class CustomUser implements User {
+public class CustomUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(value = AccessLevel.PRIVATE)
@@ -42,7 +42,6 @@ public class CustomUser implements User {
     @Enumerated(EnumType.STRING)
     private UserAccess access;
 
-    @Override
     public boolean isAccountNonLocked() {
         return UserAccess.UNLOCK.equals(getAccess());
     }

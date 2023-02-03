@@ -1,7 +1,7 @@
 package antifraud.rest.controller;
 
-import antifraud.domain.model.User;
-import antifraud.domain.service.UserService;
+import antifraud.domain.model.CustomUser;
+import antifraud.domain.service.CustomUserService;
 import antifraud.exceptions.ExistingUsernameException;
 import antifraud.rest.dto.DeletedUserDTO;
 import antifraud.rest.dto.UserAccessDTO;
@@ -27,12 +27,12 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/api/auth")
 public class UserController {
-    private final UserService userService;
+    private final CustomUserService userService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/user")
     public UserDTO createUser(@Valid @RequestBody UserDTO userDTO) {
-        User registeredUser = userService.registerUser(userDTO.toModel())
+        CustomUser registeredUser = userService.registerUser(userDTO.toModel())
                 .orElseThrow(() -> new ExistingUsernameException(HttpStatus.CONFLICT));
         return UserDTO.fromModel(registeredUser);
     }
@@ -40,7 +40,7 @@ public class UserController {
     @PreAuthorize("hasAnyRole('SUPPORT', 'ADMINISTRATOR')")
     @GetMapping("/list")
     public List<UserDTO> getUsers() {
-        List<User> allUsers = userService.getUsers();
+        List<CustomUser> allUsers = userService.getUsers();
         return allUsers.stream()
                 .map(UserDTO::fromModel)
                 .toList();
@@ -62,14 +62,14 @@ public class UserController {
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     @PutMapping("/role")
     UserDTO changeUserRole(@Valid @RequestBody UserRoleDTO userRoleDTO) {
-        User changedUserRole = userService.changeUserRole(userRoleDTO.toModel());
+        CustomUser changedUserRole = userService.changeUserRole(userRoleDTO.toModel());
         return UserDTO.fromModel(changedUserRole);
     }
 
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     @PutMapping("/access")
     UserAccessDTO grantAccess(@Valid @RequestBody UserAccessDTO userAccessDTO) {
-        User userPermission = userService.grantAccess(userAccessDTO.toModel());
+        CustomUser userPermission = userService.grantAccess(userAccessDTO.toModel());
         return UserAccessDTO.fromModel(userPermission);
     }
 }

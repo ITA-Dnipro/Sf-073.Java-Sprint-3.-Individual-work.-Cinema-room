@@ -1,6 +1,6 @@
 package antifraud.domain.service.impl;
 
-import antifraud.domain.model.Card;
+import antifraud.domain.model.StolenCard;
 import antifraud.domain.service.StolenCardService;
 import antifraud.exceptions.CardNotFoundException;
 import antifraud.persistence.repository.StolenCardRepository;
@@ -18,7 +18,7 @@ public class StolenCardServiceImpl implements StolenCardService {
 
     @Transactional
     @Override
-    public Optional<Card> storeStolenCardNumber(Card stolenCard) {
+    public Optional<StolenCard> storeStolenCardNumber(StolenCard stolenCard) {
         return stolenCardRepository.existsByNumber(stolenCard.getNumber()) ?
                 Optional.empty() :
                 Optional.of(stolenCardRepository.save(stolenCard));
@@ -27,13 +27,19 @@ public class StolenCardServiceImpl implements StolenCardService {
     @Transactional
     @Override
     public void removeCardNumber(String number) {
-        Card foundCard = stolenCardRepository.findByNumber(number)
+        StolenCard foundCard = stolenCardRepository.findByNumber(number)
                 .orElseThrow(() -> new CardNotFoundException(number));
         stolenCardRepository.deleteById(foundCard.getId());
     }
 
     @Override
-    public List<Card> showCardNumbers() {
+    public List<StolenCard> showCardNumbers() {
         return stolenCardRepository.findAll();
+    }
+
+    @Override
+    public boolean existsByNumber(String number) {
+
+        return stolenCardRepository.existsByNumber(number);
     }
 }

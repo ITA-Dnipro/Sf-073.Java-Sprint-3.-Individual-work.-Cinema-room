@@ -1,8 +1,7 @@
 package antifraud.rest.dto;
 
-
-import antifraud.domain.model.User;
-import antifraud.domain.model.UserFactory;
+import antifraud.domain.model.CustomUser;
+import antifraud.domain.model.CustomUserFactory;
 import antifraud.domain.model.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -21,7 +20,7 @@ public record UserDTO(@JsonProperty(access = JsonProperty.Access.READ_ONLY)
                       String password,
                       @JsonProperty(access = JsonProperty.Access.READ_ONLY)
                       UserRole role) {
-    public static UserDTO fromModel(User registeredUser) {
+    public static UserDTO fromModel(CustomUser registeredUser) {
         return UserDTO.builder()
                 .id(registeredUser.getId())
                 .name(registeredUser.getName())
@@ -30,7 +29,7 @@ public record UserDTO(@JsonProperty(access = JsonProperty.Access.READ_ONLY)
                 .build();
     }
 
-    public User toModel() {
-        return UserFactory.create(name, username, password);
+    public CustomUser toModel() {
+        return CustomUserFactory.create(name, username, password);
     }
 }

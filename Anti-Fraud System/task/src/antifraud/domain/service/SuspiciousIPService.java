@@ -12,4 +12,7 @@ public interface SuspiciousIPService {
     void removeIpAddress(String ipAddress);
 
     List<IP> showIpAddresses();
+
+    boolean existsByIpAddress(String ipAddress);
+
 }

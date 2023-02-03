@@ -1,7 +1,7 @@
 package antifraud.rest.dto;
 
-import antifraud.domain.model.User;
-import antifraud.domain.model.UserFactory;
+import antifraud.domain.model.CustomUser;
+import antifraud.domain.model.CustomUserFactory;
 import antifraud.domain.model.enums.UserAccess;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -18,7 +18,7 @@ public record UserAccessDTO(@NotBlank
                             UserAccess operation,
                             @JsonProperty(access = JsonProperty.Access.READ_ONLY)
                             String status) {
-    public static UserAccessDTO fromModel(User userPermission) {
+    public static UserAccessDTO fromModel(CustomUser userPermission) {
         String customMessage = String.format("User %s %sED!",
                 userPermission.getUsername(), userPermission.getAccess());
 
@@ -27,7 +27,7 @@ public record UserAccessDTO(@NotBlank
                 .build();
     }
 
-    public User toModel() {
-        return UserFactory.createWithAccess(username, operation);
+    public CustomUser toModel() {
+        return CustomUserFactory.createWithAccess(username, operation);
     }
 }
