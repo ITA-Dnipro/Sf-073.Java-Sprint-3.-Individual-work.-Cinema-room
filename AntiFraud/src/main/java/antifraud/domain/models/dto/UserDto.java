@@ -9,9 +9,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter@Setter
 public class UserDto implements Serializable {
-
-    @Setter(AccessLevel.NONE)
-    @Getter(AccessLevel.NONE)
     private static final long serialVersionUID = -2462354268805405694L;
     private long id;
     private String name;

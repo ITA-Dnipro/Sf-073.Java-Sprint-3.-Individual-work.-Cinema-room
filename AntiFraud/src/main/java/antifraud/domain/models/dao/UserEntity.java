@@ -1,4 +1,4 @@
-package antifraud.domain.models.entity;
+package antifraud.domain.models.dao;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

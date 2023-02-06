@@ -1,6 +1,6 @@
 package antifraud.services;
 
-import antifraud.domain.models.entity.UserEntity;
+import antifraud.domain.models.dao.UserEntity;
 import antifraud.domain.security.AuthUserDetails;
 import antifraud.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ public class AuthUserService implements UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserEntity> userRecord = userRepository.findByUserName(username);

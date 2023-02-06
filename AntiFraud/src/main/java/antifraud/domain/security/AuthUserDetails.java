@@ -1,6 +1,6 @@
 package antifraud.domain.security;
 
-import antifraud.domain.models.entity.UserEntity;
+import antifraud.domain.models.dao.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
