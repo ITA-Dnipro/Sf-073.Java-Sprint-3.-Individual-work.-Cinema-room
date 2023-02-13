@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.models.UserDetailsMixin;
 import org.example.models.enums.RoleEnum;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
 @Setter
@@ -13,7 +15,7 @@ import org.example.models.enums.RoleEnum;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-public class UserEntity {
+public class UserEntity implements UserDetails, UserDetailsMixin {
     @Id
     @GeneratedValue()
     Long id;

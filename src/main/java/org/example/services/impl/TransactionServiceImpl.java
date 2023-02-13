@@ -40,11 +40,12 @@ public class TransactionServiceImpl implements TransactionService {
     final StolenCardService stolenCardService;
     final CardLimitService cardLimitService;
 
+
     @Transactional
     @Override
     public TransactionResponse transaction(TransactionAmountRequest request) {
         Optional<UserEntity> loggedUser = userService.getLoggedUser();
-        if (!loggedUser.get().isAccountLocked()) {
+        if (loggedUser.isPresent() && !loggedUser.get().isAccountLocked()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
